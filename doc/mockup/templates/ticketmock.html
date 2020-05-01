@@ -1,0 +1,89 @@
+[[extend 'layout.html']]
+
+<div class="section">
+<div class="container">
+   <div class="columns">
+      <div class="column">
+         <div class="buttons">
+            <p class="button is-link">< Back</p>
+         </div>
+      </div>
+      <div class="column is-two-thirds"></div>
+      <div class="column">
+         <div class="buttons">
+            <p class="button is-static">Complete</p>
+            <p class="button">Edit</p>
+         </div>
+      </div>
+   </div>
+   <div class="columns">
+      <div class="column">
+         <div class="box">
+            <div class="columns">
+               <div class="column">
+                  <h1 class="title">Coral Reef Identification for Autonomous Mode</h1>
+                  <p class="subtitle">Ticket 7 | #auto | Due May 25, 2020 | High Priority</p>
+               </div>
+            </div>
+            <div class="columns">
+               <div class="column">
+                  <p class="is-size-4 has-text-weight-semibold">Description</p>
+                  <p class="">The ROV must implement coral reef detection on the 
+                     topside computer using OpenCV, in order to satisfy the
+                     competition tasks in the manual. This task will enable us to 
+                     determine coral health, as well as satisfy the requirements for 
+                     automatic detection in the manual.
+
+                     This ticket will be satisfied when the computer draws a bounding box
+                     around the coral reef when it appears onscreen.
+                  </p>
+               </div>
+            </div>
+            <div class="columns">
+               <div class="column">
+                  <p class="is-size-4 has-text-weight-semibold">Progress</p>
+                  <progress class="progress is-info" value="50" max="100">50%</progress>
+                  <p><span class="has-text-weight-bold">2</span> tickets complete, <span class="has-text-weight-bold">2</span> tickets remain.</p>
+                  <p class="">50% complete</p>
+               </div>
+            </div>
+            <div class="columns">
+               <div class="column">
+                  <p class="is-size-4 has-text-weight-semibold">Assignees</p>
+                  <!-- Isaac -->
+                  <article class="level notification">
+                     <div class="level-item level-left">
+                        <div class="level-item">
+                           <img src="[[=URL('static', 'images/isaac-trimble-pederson.jpg')]]" width="80">
+                        </div>
+                        <div class="level-item">
+                           <p class= "subtitle is-5">Isaac Trimble-Pederson</p>
+                        </div>
+                     </div>
+                  </article>
+               </div>
+            </div>
+            <div class="columns">
+               <div class="column">
+                  <p class="is-size-4 has-text-weight-semibold">Dependencies</p>
+                  <div class="notification is-danger">
+                     Ticket 9 | Implement Bounding Box Rendering
+                  </div>
+                  <div class="notification is-danger">
+                     Ticket 10 | Implement Blurring on Reef Image
+                  </div>
+                  <div class="notification is-success">
+                     Ticket 8 | Setup OpenCV in Development VM Image
+                  </div>
+                  <div class="notification is-success">
+                     Ticket 11 | Pipe Video Feed into OpenCV Frame
+                  </div>
+               </div>
+            </div>
+         
+
+         </div>
+      </div>
+   </div>
+</div>
+</div>
