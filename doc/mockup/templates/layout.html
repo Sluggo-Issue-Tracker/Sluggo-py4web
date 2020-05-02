@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base href="[[=URL('static')]]/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/bulma.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    [[block page_head]]<!-- individual pages can customize header here -->[[end]]
+  </head>
+  <body>
+      <nav class="navbar is-spaced is-link" role="navigation" aria-label="main navigation">
+         <div class="navbar-brand">
+            <div class="navbar-item" href="[[=URL('index')]]">
+               <h1 class="has-text-white is-size-3 has-text-weight-bold">Sluggo</h1>
+            </div>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navigation">
+              <span aria-hidden="true"></span>
+              <span aria-hidden="true"></span>
+              <span aria-hidden="true"></span>
+            </a>
+         </div>
+
+         <div id="navigation" class="navbar-menu">
+            <div class="navbar-start">
+              <a class="navbar-item" href="[[=URL('index')]]">
+                <span class="navbar-item-name is-size-4" >Tickets</span>
+              </a>
+              <a class="navbar-item">
+                <span class="navbar-item-name is-size-4">Projects</span>
+              </a>
+              <a class="navbar-item" href="[[=URL('users')]]">
+                <span class="navbar-item-name is-size-4">Team</span>
+              </a>
+              <a class="navbar-item">
+                <span class="navbar-item-name is-size-4">Help</span>
+              </a>
+            </div>
+            <div class="navbar-end">
+               <div class="navbar-item has-dropdown is-hoverable is-size-4">
+                  <a class="navbar-link has-text-white">
+                     Welcome, Lorem
+                     <img src="[[=URL('static', 'images/isaac-trimble-pederson.jpg')]]">
+                  </a>
+                  <div class="navbar-dropdown is-boxed is-size-4">
+                     <a class="navbar-item">Login</a>
+                     <a class="navbar-item">Profile</a>
+                     <hr class="navbar-divider">
+                     <a class="navbar-item">Report an issue</a>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </nav>
+    <!-- beginning of HTML inserted by extending template -->
+    [[include]]
+    <!-- end of HTML inserted by extending template -->
+  </body>
+  [[block page_scripts]]<!-- individual pages can add scripts here -->[[end]]
+</html>
