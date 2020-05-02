@@ -1,3 +1,7 @@
+# controllers.py - mockup controller for use in py4web
+# Copyright (c) 2020 Andrew Gavgavian, Samuel Schmidt, and Isaac
+# Trimble-Pederson, All Rights Reserved
+
 from py4web.core import action
 
 @action("index")
