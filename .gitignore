@@ -1,0 +1,5 @@
+# Ignore macOS DS_Store files
+.DS_Store
+
+# Todo any server-generated files when we actually create this as an app
+# for py4web
