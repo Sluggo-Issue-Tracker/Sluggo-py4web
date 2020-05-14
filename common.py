@@ -10,6 +10,7 @@ from py4web.utils.mailer import Mailer
 from py4web.utils.auth import Auth
 from py4web.utils.tags import Tags
 from py4web.utils.factories import ActionFactory
+from py4web.utils.url_signer import URLSigner
 from . import settings
 
 # implement custom loggers form settings.LOGGERS
@@ -43,7 +44,7 @@ elif settings.SESSION_TYPE == "redis":
     host, port = settings.REDIS_SERVER.split(":")
     # for more options: https://github.com/andymccurdy/redis-py/blob/master/redis/client.py
     conn = redis.Redis(host=host, port=int(port))
-    conn.set = lambda k, v, e, cs=conn.set, ct=conn.ttl: cs(k, v, ct(k)) if ct(k) >= 0 else cs(k, v, e) 
+    conn.set = lambda k, v, e, cs=conn.set, ct=conn.ttl: cs(k, v, ct(k)) if ct(k) >= 0 else cs(k, v, e)
     session = Session(secret=settings.SESSION_SECRET_KEY, storage=conn)
 elif settings.SESSION_TYPE == "memcache":
     import memcache, time
@@ -123,3 +124,5 @@ auth.enable(uses=(session, T, db), env=dict(T=T))
 
 unauthenticated = ActionFactory(db, session, T, auth)
 authenticated = ActionFactory(db, session, T, auth.user)
+
+signed_url = URLSigner(session)

@@ -1,8 +1,9 @@
 """
 This file defines the database models
 """
+import datetime
 
-from .common import db, Field
+from . common import db, Field, auth
 from pydal.validators import *
 
 ### Define your table below
@@ -15,7 +16,13 @@ from pydal.validators import *
 #
 
 def get_user_email():
-    return auth.current_user.get('email')
+    return auth.current_user.get('email') if auth.current_user else None
+
+def get_user_title():
+    return auth.current_user.get('first_name') + " " + auth.current_user.get('last_name')
+
+def get_time():
+    return datetime.datetime.utcnow()
 
 # TODO: Do we want separate projects to be included in the db?
 
@@ -27,22 +34,38 @@ db.define_table(
     Field('role')
 )
 
-db.define_table(
-    'ticket',
-    Field('title'),
-    Field('due_date'), # TODO find date format + serialize
-    Field('description')
+# db.define_table(
+#     'ticket',
+#     Field('title'),
+#     Field('due_date'), # TODO find date format + serialize
+#     Field('description')
 
-    # Additional properties that must be queried:
-    # Dependenencies -> select all children from ticket_rels
-    # Dependents -> select all parents from ticket_rels
-    # Percentage -> BFS and give proportion (should cache longterm)
+#     # Additional properties that must be queried:
+#     # Dependenencies -> select all children from ticket_rels
+#     # Dependents -> select all parents from ticket_rels
+#     # Percentage -> BFS and give proportion (should cache longterm)
+# )
+
+
+db.define_table(
+    'tickets',
+    Field('user_email', default=get_user_email),
+    Field('ticket_title', 'text'),
+    Field('ticket_text', 'text'),
+    Field('ticket_status'),
+    Field('created', 'datetime', default=get_time),
+    Field('activated', 'datetime'),
+    Field('deactivated', 'datetime')
 )
+
+
+
+
 
 db.define_table( # credit tdimhcsleumas for design
     'ticket_rels',
-    Field('parent', 'reference ticket'),
-    Field('child', 'reference ticket')
+    Field('parent', 'reference tickets'),
+    Field('child', 'reference tickets')
 )
 
 # TODO tags, roles, other fun things that require relationships

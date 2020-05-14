@@ -1,5 +1,49 @@
 [[extend 'layout.html']]
+<div id="vue-target">
 
-<div class="vars">
-    [[=message]]
+  <section class="section">
+    <div class="title">Tickets</div>
+  </section>
+
+  <section class="section">
+    <div class="">
+      <div class="is-fullwidth">
+        <div class="field">
+          <textarea class="textarea is-fullwidth" placeholder="Enter new post here"></textarea>
+        </div>
+        <button class="button is-primary is-size-6">Post</button>
+        <button class="button is-warning is-size-6">Cancel</button>
+      </div>
+      <div>
+        <button class="button is-primary is-size-6">
+          <i class="fa fa-plus fa-fw"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="tile is-ancestor">
+      <div class="tile is-vertical">
+        <!-- This div contains each post -->
+        <div class="tile is-child notification is-light">
+          <div class="">
+            <div>This is the post text.</div>
+            <div class="is-size-6 has-text-grey">This is the post author.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
+
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script>
+  let get_tickets_url = "[[=XML(get_tickets_url)]]";
+  // Complete with other URLs you need.
+  let user_email = "[[=XML(user_email)]]";
+  let username = "[[=XML(username)]]";
+</script>
+<script src="js/index.js"></script>
+[[end]]

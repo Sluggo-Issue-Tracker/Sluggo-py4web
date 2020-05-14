@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAAQEAAAEAIAAwAAAAFgAAACgAAAABAAAAAgAAAAEAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAA=="/>
     <link rel="stylesheet" href="css/bulma.css">
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <link rel="stylesheet" href="css/elements.css">
+    <link rel="stylesheet" href="[[=URL('static', 'font-awesome-4.7.0/css/font-awesome.css')]]">
     [[block page_head]]<!-- individual pages can customize header here -->[[end]]
   </head>
-  <body>    
-    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+  <body>
+    <nav class="navbar is-link" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
-        <a class="navbar-item" href=".">
-          <strong>APP LOGO</strong>
+        <a class="navbar-item" href="[[=URL('index')]]">
+            <h1 class="has-text-white is-size-3 has-text-weight-bold">Sluggo</h1>
         </a>
         <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="left-navbar"
            onclick="this.classList.toggle('is-active');document.getElementById(this.dataset.target).classList.toggle('is-active');">
@@ -22,12 +23,26 @@
         </a>
       </div>
       <div id="left-navbar" class="navbar-menu">
-        <div class="navbar-start">       
-          <a class="navbar-item" href="[[=URL('index')]]">Home</a>
+        <div class="navbar-start">
+          <a class="navbar-item" href="[[=URL('index')]]">
+            <span class="navbar-item-name is-size-4" >Tickets</span>
+          </a>
           [[block page_menu_items]]<!-- individual pages can add menu items here -->[[end]]
         </div>
         <div class="navbar-end">
           <div class="navbar-item">
+            <div class="navbar-item has-dropdown is-hoverable is-size-4">
+              <a class="navbar-link has-text-white">
+                 Welcome, [[=username]]
+                 <img src="">
+              </a>
+              <div class="navbar-dropdown is-boxed is-size-4">
+                 <a class="navbar-item">Login</a>
+                 <a class="navbar-item">Profile</a>
+                 <hr class="navbar-divider">
+                 <a class="navbar-item">Report an issue</a>
+              </div>
+           </div>
             <div class="buttons">
               [[if globals().get('user'):]]
               <a class="button is-primary" href="[[=URL('auth/logout')]]">Sign out</a>
@@ -40,24 +55,13 @@
         </div>
       </div>
     </nav>
-    <section class="section">
-      <div class="container">
-        <h1 class="title">PAGE TITLE</h1>
-      </div>
-    </section>
-    <section class="section">
-      <!-- beginning of HTML inserted by extending template -->
-      [[include]]
-      <!-- end of HTML inserted by extending template -->
-    </section>
-    <footer class="footer">
-      <div class="content has-text-centered">
-        Made with py4web
-      </div>
-    </footer>
+    <!-- beginning of HTML inserted by extending template -->
+    [[include]]
+    <!-- end of HTML inserted by extending template -->
   </body>
   <script src="js/sugar.min.js"></script>
   <script src="js/axios.min.js"></script>
   <script src="js/vue.min.js"></script>
+  <script src="js/utils.js"></script>
   [[block page_scripts]]<!-- individual pages can add scripts here -->[[end]]
 </html>

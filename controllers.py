@@ -27,11 +27,22 @@ Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app w
 
 from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
-from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated
+from . common import db, session, T, cache, auth, signed_url
+from . models import get_user_email, get_user_title
 
 
-@authenticated()
+@action('index')
+@action.uses('index.html', signed_url, auth.user)
 def index():
-    user = auth.get_user()
-    message = T("Hello {first_name}".format(**user))
-    return dict(message=message)
+    return dict(
+        get_tickets_url = URL('get_tickets', signer=signed_url),
+        user_email = get_user_email(),
+        username = get_user_title(),
+        user=auth.get_user()
+    )
+
+@action('get_tickets')
+@action.uses(signed_url.verify(), auth.user)
+def get_tickets():
+    tickets = [] # Just to keep code from breaking.
+    return dict(tickets=tickets)
