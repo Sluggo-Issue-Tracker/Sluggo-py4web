@@ -91,7 +91,7 @@ T.format = function(text, args) {
     var n = ('n' in args)?args.n:1;
     if (translations) {
         var k = 0;
-        for (var key in translations) {                    
+        for (var key in translations) {
             var i = parseInt(key);
             if (i<=n) k = i; else break;
         }
@@ -116,29 +116,29 @@ utils.app = function() {
     // sets a variable
     self.methods.set = function(obj, key, value) { obj[key] = value; };
     // goto a given page and state (state should be 1 level deep dict
-    self.methods.go = function(page, state, push) { 
-        self.v.loading++; 
+    self.methods.go = function(page, state, push) {
+        self.v.loading++;
         var pagecall = self.pages[page];
         if (pagecall) pagecall(state, function(){
                 if(push) {
                     var path = self.base + '/' + page;
                     if(state) for(var key in state) path += '/' + key + '/' + state[key];
-                    window.history.pushState(self.v, page, path); 
+                    window.history.pushState(self.v, page, path);
                 }
                 self.v.loading--;
-                self.v.page = page; 
+                self.v.page = page;
                 self.v.state = state;
-            }); 
+            });
     };
-    // Restores state when navigating history
+    // restores state when navigaing history
     self.onpopstate = function(event) {
         for(var key in event.state) self.v[key] = event.state[key];
     };
     self.start = function(base) {
         self.base = base = base || window.location.href;;
-        self.v = new Vue({el: '#' + self.element_id, 
-                          data: self.data, 
-                          methods: self.methods, 
+        self.v = new Vue({el: '#' + self.element_id,
+                          data: self.data,
+                          methods: self.methods,
                           watch: self.watch,
                           filters: self.filters});
         var parts = window.location.href.substr(base.length);

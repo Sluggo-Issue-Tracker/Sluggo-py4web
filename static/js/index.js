@@ -9,11 +9,68 @@ let init = (app) => {
     // This is the Vue data.
     app.data = {
         user_email: user_email,
+        username: username,
         tickets: [],
+        add_ticket_text:  "",
+        add_ticket_title:  "",
+        selected_priority: "",
+        is_add_empty: false,
+        page: 'list',
+
         // Complete.
     };
 
     // Add here the various functions you need.
+    app.add_ticket = () => {
+        let error = false;
+        if(app.vue.add_ticket_text.trim().length === 0) {
+            app.vue.is_add_empty = true;
+            error = true;
+        }
+        if(!error) {
+            app.perform_insertion();
+        }
+    };
+
+    app.perform_insertion = () => {
+
+        axios.post(add_tickets_url, {
+            ticket_text: app.vue.add_ticket_text,
+            ticket_title: app.vue.add_ticket_title,
+            ticket_status: "in progress",
+            ticket_priority: app.vue.selected_priority
+        }).then((result) => {
+            app.vue.tickets.unshift({
+                id: result.data.id,
+                ticket_text: app.vue.add_ticket_text,
+                ticket_title: app.vue.add_ticket_title,
+                ticket_author: app.vue.username,
+                ticket_status: "in progress",
+                ticket_priority: app.vue.selected_priority
+            });
+            app.reindex(app.vue.tickets);
+            app.reset_input();
+            app.goto('list');
+        });
+    };
+
+    app.reset_input = () => {
+        app.vue.add_ticket_text = "";
+        app.vue.is_add_empty = false;
+    }
+
+    app.check_ticket_text = () => {
+        app.vue.is_add_empty = (app.vue.add_ticket_text.trim().length === 0);
+    };
+
+    app.delete_ticket = (ticket_idx) => {
+        let t = app.vue.tickets[ticket_idx];
+
+        axios.post(delete_tickets_url, {id:t.id}).then(() => {
+            app.vue.tickets.splice(ticket_idx, 1);
+            app.reindex(app.vue.tickets);
+        })
+    };
 
 
     // Use this function to reindex the posts, when you get them, and when
@@ -22,15 +79,24 @@ let init = (app) => {
         let idx = 0;
         for (p of a) {
             p._idx = idx++;
-            // Add here whatever other attributes should be part of a post.
         }
         return a;
+    };
+
+    app.goto = (destination) => {
+        app.vue.page = destination;
+        // app.vue.add_post_text = "";
     };
 
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
         // Complete.
+        goto: app.goto,
+        add_ticket: app.add_ticket,
+        check_ticket_text: app.check_ticket_text,
+        delete_ticket: app.delete_ticket,
+
     };
 
     // This creates the Vue instance.
@@ -43,7 +109,10 @@ let init = (app) => {
     // And this initializes it.
     app.init = () => {
         axios.get(get_tickets_url).then((result) => {
-            app.vue.posts = app.reindex(result.data.posts);
+            let tickets = result.data.tickets;
+            app.reindex(tickets);
+            app.vue.tickets = tickets;
+
         })
     };
 

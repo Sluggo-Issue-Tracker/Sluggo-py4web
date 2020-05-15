@@ -28,7 +28,7 @@ Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app w
 from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
 from . common import db, session, T, cache, auth, signed_url
-from . models import get_user_email, get_user_title
+from . models import get_user_email, get_user_title, get_user_name
 
 
 @action('index')
@@ -36,6 +36,8 @@ from . models import get_user_email, get_user_title
 def index():
     return dict(
         get_tickets_url = URL('get_tickets', signer=signed_url),
+        add_tickets_url = URL('add_tickets', signer=signed_url),
+        delete_tickets_url = URL('delete_tickets', signer=signed_url),
         user_email = get_user_email(),
         username = get_user_title(),
         user=auth.get_user()
@@ -44,5 +46,30 @@ def index():
 @action('get_tickets')
 @action.uses(signed_url.verify(), auth.user)
 def get_tickets():
-    tickets = [] # Just to keep code from breaking.
+    tickets = db(db.tickets).select(orderby=~db.tickets.created).as_list()
+
+    for ticket in tickets:
+        ticket["ticket_author"] = get_user_name(ticket)
     return dict(tickets=tickets)
+
+
+@action('add_tickets', method="POST")
+@action.uses(signed_url.verify(), auth.user, db)
+def add_tickets():
+    id = db.tickets.insert(
+        ticket_title=request.json.get('ticket_title'),
+        ticket_text=request.json.get('ticket_text'),
+        ticket_status=request.json.get('ticket_status'),
+        ticket_priority=request.json.get('ticket_priority')
+    )
+    return dict(id=id)
+
+
+
+@action('delete_tickets', method="POST")
+@action.uses(signed_url.verify(), auth.user, db)
+def delete_tickets():
+    id = request.json.get('id')
+    if id is not None:
+        db(db.tickets.id == id).delete()
+        return "ok"

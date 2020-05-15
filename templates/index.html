@@ -6,16 +6,32 @@
   </section>
 
   <section class="section">
-    <div class="">
-      <div class="is-fullwidth">
+    <div class="add">
+      <div class="is-fullwidth" v-if="page=='add'">
         <div class="field">
-          <textarea class="textarea is-fullwidth" placeholder="Enter new post here"></textarea>
+            <span class="subtitle">Title</span>
+            <input type="text" v-model="add_ticket_title" class="input" placeholder="Enter new title here">
         </div>
-        <button class="button is-primary is-size-6">Post</button>
-        <button class="button is-warning is-size-6">Cancel</button>
+        <div class="field">
+            <span class="subtitle">Description</span>
+            <textarea v-model="add_ticket_text" class="textarea is-fullwidth" placeholder="Enter new ticket here"></textarea>
+        </div>
+        <div class="field">
+            <span class="subtitle">Priority</span>
+            <div class="select">
+                <select v-model="selected_priority">
+                    <option>Done Yesterday</option>
+                    <option>High Priority</option>
+                    <option>Meh</option>
+                    <option>Low</option>
+                </select>
+            </div>
+        </div>
+        <button @click="add_ticket" class="button is-primary is-size-6">Post</button>
+        <button @click="goto('list')" class="button is-warning is-size-6">Cancel</button>
       </div>
       <div>
-        <button class="button is-primary is-size-6">
+        <button v-if="page=='list'" @click="goto('add')" class="button is-primary is-size-6">
           <i class="fa fa-plus fa-fw"></i>
         </button>
       </div>
@@ -26,10 +42,25 @@
     <div class="tile is-ancestor">
       <div class="tile is-vertical">
         <!-- This div contains each post -->
-        <div class="tile is-child notification is-light">
-          <div class="">
-            <div>This is the post text.</div>
-            <div class="is-size-6 has-text-grey">This is the post author.</div>
+        <div v-for="t in tickets" class="tile is-child notification is-light">
+          <div class="content">
+            <h1 class="title">{{t.ticket_title}}</h1>
+            <div>{{t.ticket_text}}</div>
+            <div class="is-size-6 has-text-grey">{{t.ticket_author}}</div>
+          </div>
+
+          <div class="ticket-attrib">
+            <div class="thumbs is-size-4">
+              <span class="has-text-danger is-pulled-right" @click="delete_ticket(t._idx)">
+                <i class="fa fa-trash fa-fw"></i>
+              </span>
+              <span class="has-text-info">
+                  Created: Today
+              </span>
+              <span>
+                  Priority: {{t.ticket_priority}}
+                </span>
+            </div>
           </div>
         </div>
       </div>
@@ -41,6 +72,8 @@
 <!-- Loads the index-specific js for Vue -->
 <script>
   let get_tickets_url = "[[=XML(get_tickets_url)]]";
+  let add_tickets_url = "[[=XML(add_tickets_url)]]";
+  let delete_tickets_url = "[[=XML(delete_tickets_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";
   let username = "[[=XML(username)]]";

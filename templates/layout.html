@@ -31,26 +31,25 @@
         </div>
         <div class="navbar-end">
           <div class="navbar-item">
-            <div class="navbar-item has-dropdown is-hoverable is-size-4">
-              <a class="navbar-link has-text-white">
-                 Welcome, [[=username]]
-                 <img src="">
-              </a>
-              <div class="navbar-dropdown is-boxed is-size-4">
-                 <a class="navbar-item">Login</a>
-                 <a class="navbar-item">Profile</a>
-                 <hr class="navbar-divider">
-                 <a class="navbar-item">Report an issue</a>
+            [[if globals().get('user'):]]
+              <div class="navbar-item has-dropdown is-hoverable is-size-4">
+                <a class="navbar-link has-text-white">
+                   Welcome, [[=username]]
+                   <img src="">
+                </a>
+                <div class="navbar-dropdown is-boxed is-size-4">
+                   <a class="navbar-item" href="[[=URL('auth/logout')]]">Logout</a>
+                   <a class="navbar-item">Profile</a>
+                   <hr class="navbar-divider">
+                   <a class="navbar-item">Report an issue</a>
+                </div>
+             </div>
+           [[else:]]
+              <div class="buttons">
+                <a class="button is-primary" href="[[=URL('auth/register')]]">Sign up</a>
+                <a class="button is-light" href="[[=URL('auth/login')]]">Sign in</a>
               </div>
-           </div>
-            <div class="buttons">
-              [[if globals().get('user'):]]
-              <a class="button is-primary" href="[[=URL('auth/logout')]]">Sign out</a>
-              [[else:]]
-              <a class="button is-primary" href="[[=URL('auth/register')]]">Sign up</a>
-              <a class="button is-light" href="[[=URL('auth/login')]]">Sign in</a>
-              [[pass]]
-            </div>
+            [[pass]]
           </div>
         </div>
       </div>
