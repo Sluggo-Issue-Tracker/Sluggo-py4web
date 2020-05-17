@@ -72,6 +72,10 @@ let init = (app) => {
         })
     };
 
+    app.edit_ticket = (ticket_idx) => {
+       // show the edit / add modal  
+    };
+
 
     // Use this function to reindex the posts, when you get them, and when
     // you add / delete one of them.
@@ -96,7 +100,7 @@ let init = (app) => {
         add_ticket: app.add_ticket,
         check_ticket_text: app.check_ticket_text,
         delete_ticket: app.delete_ticket,
-
+        edit_ticket: app.edit_ticket
     };
 
     // This creates the Vue instance.

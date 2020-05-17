@@ -38,6 +38,23 @@
     </div>
   </section>
 
+  <div class="modal is-clipped">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Modal title</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <!-- Content ... -->
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-success">Save changes</button>
+      <button class="button">Cancel</button>
+    </footer>
+  </div>
+  </div>
+
   <section class="section">
     <div class="tile is-ancestor">
       <div class="tile is-vertical">
@@ -53,6 +70,9 @@
             <div class="thumbs is-size-4">
               <span class="has-text-danger is-pulled-right" @click="delete_ticket(t._idx)">
                 <i class="fa fa-trash fa-fw"></i>
+              </span>
+              <span class="is-pulled-right" @click="edit_ticket(t._idx)">
+                <i class="fa fa-cog fa-fw"></i>
               </span>
               <span class="has-text-info">
                   Created: Today

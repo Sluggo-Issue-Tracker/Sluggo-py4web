@@ -69,13 +69,15 @@ db.define_table(
 )
 
 
-
-
-
 db.define_table( # credit tdimhcsleumas for design
     'ticket_rels',
     Field('parent', 'reference tickets'),
     Field('child', 'reference tickets')
+)
+
+db.define_table(
+    'post_tag',
+    Field('Text')
 )
 
 # TODO tags, roles, other fun things that require relationships
