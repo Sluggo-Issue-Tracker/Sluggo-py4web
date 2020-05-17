@@ -1,3 +1,23 @@
+// vanilla javascript for tracking if click is registered outside of object
+
+Vue.directive('click-outside', {
+    bind(el, binding, vnode) {
+        var vm = vnode.context;
+        var callback = binding.value;
+
+        el.clickOutsideEvent = function (event) {
+            if (!(el == event.target || el.contains(event.target))) {
+                return callback.call(vm, event);
+            }
+        };
+        document.body.addEventListener('click', el.clickOutsideEvent);
+    },
+    unbind(el) {
+        document.body.removeEventListener('click', el.clickOutsideEvent);
+    }
+});
+
+
 // This will be the object that will contain the Vue attributes
 // and be used to initialize it.
 let app = {};
@@ -16,6 +36,7 @@ let init = (app) => {
         selected_priority: "",
         is_add_empty: false,
         page: 'list',
+        showModal: false,
 
         // Complete.
     };
@@ -72,8 +93,16 @@ let init = (app) => {
         })
     };
 
+    app.show_modal = function() {
+       this.data.showModal = true; 
+    }
+
     app.edit_ticket = (ticket_idx) => {
-       // show the edit / add modal  
+       app.show_modal(); 
+    };
+
+    app.cancel_modal = (event) => {
+        if(app.data.showModal) app.data.showModal = false;
     };
 
 
@@ -100,7 +129,9 @@ let init = (app) => {
         add_ticket: app.add_ticket,
         check_ticket_text: app.check_ticket_text,
         delete_ticket: app.delete_ticket,
-        edit_ticket: app.edit_ticket
+        edit_ticket: app.edit_ticket,
+        show_modal: app.show_modal,
+        cancel_modal: app.cancel_modal
     };
 
     // This creates the Vue instance.
@@ -127,3 +158,4 @@ let init = (app) => {
 // This takes the (empty) app object, and initializes it,
 // putting all the code i
 init(app);
+        console.log("shit");
