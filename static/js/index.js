@@ -77,6 +77,8 @@ let init = (app) => {
 
     app.reset_input = () => {
         app.vue.add_ticket_text = "";
+        app.vue.add_ticket_title = "";
+        app.vue.selected_priority = "";
         app.vue.is_add_empty = false;
     }
 
@@ -94,11 +96,11 @@ let init = (app) => {
     };
 
     app.show_modal = function() {
-       this.data.showModal = true; 
+       this.data.showModal = true;
     }
 
     app.edit_ticket = (ticket_idx) => {
-       app.show_modal(); 
+       app.show_modal();
     };
 
     app.close_modal = (event) => {
