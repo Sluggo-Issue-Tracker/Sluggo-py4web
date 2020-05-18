@@ -43,15 +43,33 @@
                      <div class="field">
                         <p class="title is-size-4">Name</p>
                         <div class="control">
-                           <input v-model="current_name" class="input is-hovered" type="text" value="">
+                           <input v-model="current_name" class="input is-hovered" type="text">
                         </div>
                      </div>
 
                      <!-- Proj Field -->
-                     <div class="field">
-                        <p class="title is-size-4">Project Tags</p>
+                     <p class="title is-size-4">Project Tags</p>
+                     <div class="field is-grouped">
+
                         <div class="control">
-                           <input v-model="current_tag" class="input is-hovered" type="text" value="#software, #admin, #business">
+                           <div class="tags has-addons">
+                              <a class="tag is-danger">Software</a>
+                              <a class="tag is-delete"></a>
+                           </div>
+                        </div>
+
+                        <div class="control">
+                           <div class="tags has-addons">
+                              <a class="tag is-link">Admin</a>
+                              <a class="tag is-delete"></a>
+                           </div>
+                        </div>
+
+                        <div class="control">
+                           <div class="tags has-addons">
+                              <a class="tag is-warning">Business</a>
+                              <a class="tag is-delete"></a>
+                           </div>
                         </div>
                      </div>
 
@@ -60,7 +78,7 @@
                         <p class="title is-size-4">Role</p>
                         <div class="select">
                            <select>
-                              <option>Administrator</option>
+                              <option>{{current_user.role}}</option>
                               <option>With options</option>
                            </select>
                         </div>
@@ -70,7 +88,7 @@
                      <div class="field">
                         <p class="title is-size-4">Bio</p>
                         <div class="control">
-                           <textarea v-model="current_bio" class="textarea" placeholder="" rows="10"></textarea>
+                           <textarea v-model="current_bio" class="textarea" rows="10"></textarea>
                         </div>
                      </div>
                   </div>

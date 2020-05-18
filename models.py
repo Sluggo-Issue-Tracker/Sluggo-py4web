@@ -79,6 +79,12 @@ db.define_table( # credit tdimhcsleumas for design
     Field('child', 'reference tickets')
 )
 
+db.define_table(
+    'user_tags',
+    Field('tag'),
+    Field('user', 'reference users')
+    )
+
 # TODO tags, roles, other fun things that require relationships
 
 # TODO readables vs not readables (relevant? can we even use default forms?)
