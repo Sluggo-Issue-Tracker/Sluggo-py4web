@@ -12,6 +12,10 @@ let init = (app) => {
         username: username,
         users: [],
         page: 'list',
+        current_user: {},
+        current_name: "",
+        current_tag: "",
+        current_bio: ""
 
         // Complete.
     };
@@ -30,10 +34,23 @@ let init = (app) => {
         // app.vue.add_post_text = "";
     };
 
+    app.show_user = (user_index) => {
+        let t = app.vue.users[user_index];
+        app.vue.current_user = t;
+        app.vue.current_name = t['full_name'];
+        app.vue.current_tag = "#software, #admin, #business";
+        app.vue.current_bio = t['bio'];
+        app.goto('user');
+    };
+
+
+
+
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
         goto: app.goto,
+        show_user: app.show_user,
 
     };
 

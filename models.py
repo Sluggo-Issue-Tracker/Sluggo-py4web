@@ -39,7 +39,8 @@ db.define_table(
     Field('first_name'),
     Field('last_name'),
     Field('user_email'),
-    Field('role')
+    Field('role'),
+    Field('bio'),
 )
 
 # db.define_table(
