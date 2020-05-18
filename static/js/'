@@ -56,18 +56,18 @@ let init = (app) => {
     app.perform_insertion = () => {
 
         axios.post(add_tickets_url, {
-            ticket_text: app.vue.add_ticket_text,
-            ticket_title: app.vue.add_ticket_title,
-            ticket_status: "in progress",
-            ticket_priority: app.vue.selected_priority
+            body: app.vue.add_ticket_text,
+            title: app.vue.add_ticket_title,
+            status: "in progress",
+            priority: app.vue.selected_priority
         }).then((result) => {
             app.vue.tickets.unshift({
                 id: result.data.id,
-                ticket_text: app.vue.add_ticket_text,
-                ticket_title: app.vue.add_ticket_title,
-                ticket_author: app.vue.username,
-                ticket_status: "in progress",
-                ticket_priority: app.vue.selected_priority
+                body: app.vue.add_ticket_text,
+                title: app.vue.add_ticket_title,
+                author: app.vue.username,
+                status: "in progress",
+                priority: app.vue.selected_priority
             });
             app.reindex(app.vue.tickets);
             app.reset_input();
@@ -101,7 +101,7 @@ let init = (app) => {
        app.show_modal(); 
     };
 
-    app.close_modal = (event) => {
+    app.cancel_modal = (event) => {
         app.data.showModal = false;
     };
 
@@ -131,7 +131,7 @@ let init = (app) => {
         delete_ticket: app.delete_ticket,
         edit_ticket: app.edit_ticket,
         show_modal: app.show_modal,
-        close_modal: app.close_modal
+        cancel_modal: app.cancel_modal
     };
 
     // This creates the Vue instance.
@@ -158,24 +158,3 @@ let init = (app) => {
 // This takes the (empty) app object, and initializes it,
 // putting all the code i
 init(app);
-
-Vue.component('ticket-modal', {
-    template:  `<div class="modal is-active">
-                    <div class="modal-background"></div>
-                    <div class="modal-card" v-click-outside="close_modal">
-                        <section class="modal-card-body">
-                            <div class="content">
-                            <slot></slot>
-                            </div>
-                        </section>
-                        <footer class="modal-card-foot">
-                            <button class="button is-success" @click="$emit('confirm')">Save changes</button>
-                            <button class="button" @click="$emit('cancel')">Cancel</button>
-                        </footer>
-                    </div>
-                </div>`,
-    methods: {
-        close_modal: function(event) { app.close_modal() }
-    }
-});
-
