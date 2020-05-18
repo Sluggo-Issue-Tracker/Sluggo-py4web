@@ -37,7 +37,7 @@
     </div>
   </section>
 
-  <ticket-modal v-if="showModal" @cancel="close_modal" @success="update_or_insert_ticket">
+  <ticket-modal v-if="showModal" @cancel="close_modal" @confirm="submit_modal">
     <div class="field">
             <span class="subtitle">Title</span>
             <input type="text" v-model="add_ticket_title" class="input" placeholder="Enter new title here">
