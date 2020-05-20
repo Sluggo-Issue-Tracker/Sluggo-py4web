@@ -33,56 +33,97 @@ let init = (app) => {
         tickets: [],
         add_ticket_text:  "",
         add_ticket_title:  "",
-        selected_priority: "",
+        add_ticket_priority: "",
+        add_ticket_status: "",
         is_add_empty: false,
         page: 'list',
         showModal: false,
-
+        selectedIdx: false,
+        submitCallback: false,
         // Complete.
     };
 
     // Add here the various functions you need.
     app.add_ticket = () => {
+        app.data.submitCallback = app.submit_add;
+        app.data.showModal = true;
+    };
+
+    app.submit_add = () => {
         let error = false;
-        if(app.vue.add_ticket_text.trim().length === 0) {
-            app.vue.is_add_empty = true;
-            error = true;
-        }
-        if(!error) {
-            app.perform_insertion();
-        }
-    };
-
-    app.perform_insertion = () => {
-
-        axios.post(add_tickets_url, {
-            ticket_text: app.vue.add_ticket_text,
-            ticket_title: app.vue.add_ticket_title,
-            ticket_status: "in progress",
-            ticket_priority: app.vue.selected_priority
-        }).then((result) => {
-            app.vue.tickets.unshift({
-                id: result.data.id,
-                ticket_text: app.vue.add_ticket_text,
-                ticket_title: app.vue.add_ticket_title,
-                ticket_author: app.vue.username,
-                ticket_status: "in progress",
-                ticket_priority: app.vue.selected_priority
+        if(!app.check_ticket_text()) {
+            // do a post request
+            ticket = {
+                ticket_title: app.data.add_ticket_title,
+                ticket_text: app.data.add_ticket_text,
+                ticket_status: app.data.add_ticket_status,
+                ticket_priority: app.data.add_ticket_priority,
+                ticket_author: app.data.username
+            }
+            
+            axios.post(add_tickets_url, ticket).then((response) => {
+                ticket.id = response.data.id
+                app.data.tickets.unshift(ticket);
+                app.reset_input();
+                app.data.showModal = false;
+                app.data.submitCallback;
+            }).catch((error) => {
+                console.log(error);
             });
-            app.reindex(app.vue.tickets);
-            app.reset_input();
-            app.goto('list');
-        });
+        }
     };
+
+    app.edit_ticket = (ticket_idx) => {
+       app.data.selectedIdx = ticket_idx;
+       selected = app.data.tickets[ticket_idx];
+
+       if(selected !== false) {
+           app.data.add_ticket_text = selected.ticket_text;
+           app.data.add_ticket_title = selected.ticket_title; 
+           app.data.add_ticket_status = selected.ticket_status; 
+           app.data.add_ticket_priority = selected.ticket_priority;
+       }
+
+       app.data.submitCallback = app.submit_edit;
+       app.data.showModal = true;
+    };
+
+    app.submit_edit = () => {
+        console.log(app.data.selectedIdx);
+        if((idx = app.data.selectedIdx) !== false) {
+            ticket = app.data.tickets[idx];
+            
+            ticket = {
+                id: ticket.id,
+                ticket_title: app.data.add_ticket_title,
+                ticket_text: app.data.add_ticket_text,
+                ticket_status: app.data.add_ticket_status,
+                ticket_priority: app.data.add_ticket_priority,
+                ticket_author: ticket.ticket_author,
+            }
+
+            axios.post(edit_ticket_url, ticket).then((response) => {
+                app.data.tickets[idx] = ticket; // only reassign if post was successful
+                app.reset_input();
+                app.data.showModal = false;
+            }).catch((error) => {
+                console.log(error);
+            });
+        }
+    }
 
     app.reset_input = () => {
-        app.vue.add_ticket_text = "";
+        app.data.add_ticket_text = "";
+        app.data.add_ticket_title = "";
+        app.data.add_ticket_priority = "";
+        app.data.add_ticket_status = "";
         app.vue.is_add_empty = false;
     }
 
     app.check_ticket_text = () => {
-        app.vue.is_add_empty = (app.vue.add_ticket_text.trim().length === 0);
+       return (app.vue.add_ticket_text.trim().length === 0);
     };
+
 
     app.delete_ticket = (ticket_idx) => {
         let t = app.vue.tickets[ticket_idx];
@@ -93,15 +134,9 @@ let init = (app) => {
         })
     };
 
-    app.show_modal = function() {
-       this.data.showModal = true; 
-    }
-
-    app.edit_ticket = (ticket_idx) => {
-       app.show_modal(); 
-    };
-
     app.close_modal = (event) => {
+        app.data.selectedIdx = false;
+        app.reset_input();
         app.data.showModal = false;
     };
 
@@ -130,8 +165,7 @@ let init = (app) => {
         check_ticket_text: app.check_ticket_text,
         delete_ticket: app.delete_ticket,
         edit_ticket: app.edit_ticket,
-        show_modal: app.show_modal,
-        close_modal: app.close_modal
+        close_modal: app.close_modal,
     };
 
     // This creates the Vue instance.

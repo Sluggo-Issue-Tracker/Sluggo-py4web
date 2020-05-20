@@ -5,39 +5,14 @@
   </section>
 
   <section class="section">
-    <div class="add">
-      <div class="is-fullwidth" v-if="page=='add'">
-        <div class="field">
-            <span class="subtitle">Title</span>
-            <input type="text" v-model="add_ticket_title" class="input" placeholder="Enter new title here">
-        </div>
-        <div class="field">
-            <span class="subtitle">Description</span>
-            <textarea v-model="add_ticket_text" class="textarea is-fullwidth" placeholder="Enter new ticket here"></textarea>
-        </div>
-        <div class="field">
-            <span class="subtitle">Priority</span>
-            <div class="select">
-                <select v-model="selected_priority">
-                    <option>Done Yesterday</option>
-                    <option>High Priority</option>
-                    <option>Meh</option>
-                    <option>Low</option>
-                </select>
-            </div>
-        </div>
-        <button @click="add_ticket" class="button is-primary is-size-6">Post</button>
-        <button @click="goto('list')" class="button is-warning is-size-6">Cancel</button>
-      </div>
-      <div>
-        <button v-if="page=='list'" @click="goto('add')" class="button is-primary is-size-6">
+    <div>
+        <button v-if="page=='list'" @click.stop="add_ticket" class="button is-primary is-size-6">
           <i class="fa fa-plus fa-fw"></i>
         </button>
-      </div>
     </div>
   </section>
 
-  <ticket-modal v-if="showModal" @cancel="close_modal" @confirm="submit_modal">
+  <ticket-modal v-if="showModal" @cancel="close_modal" @confirm="submitCallback">
     <div class="field">
             <span class="subtitle">Title</span>
             <input type="text" v-model="add_ticket_title" class="input" placeholder="Enter new title here">
@@ -49,11 +24,18 @@
         <div class="field">
             <span class="subtitle">Priority</span>
             <div class="select">
-                <select v-model="selected_priority">
+                <select v-model="add_ticket_priority">
                     <option>Done Yesterday</option>
                     <option>High Priority</option>
                     <option>Meh</option>
                     <option>Low</option>
+                </select>
+            </div>
+            <div class="select">
+                <select v-model="add_ticket_status">
+                    <option>To do</option>
+                    <option>In Progress</option>
+                    <option>Completed</option>
                 </select>
             </div>
         </div>
@@ -99,6 +81,7 @@
   let get_tickets_url = "[[=XML(get_tickets_url)]]";
   let add_tickets_url = "[[=XML(add_tickets_url)]]";
   let delete_tickets_url = "[[=XML(delete_tickets_url)]]";
+  let edit_ticket_url = "[[=XML(edit_ticket_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";
   let username = "[[=XML(username)]]";
