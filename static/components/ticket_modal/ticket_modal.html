@@ -1,6 +1,9 @@
 <div class="modal is-active">
     <div class="modal-background"></div>
     <div class="modal-card" v-click-outside="close">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Ticket</p>
+        </header>
         <section class="modal-card-body">
             <div class="content">
                 <div class="field">
@@ -12,16 +15,22 @@
                     <textarea v-model="ticket.ticket_text" class="textarea is-fullwidth" placeholder="Enter new ticket here"></textarea>
                 </div>
                 <div class="field">
-                    <span class="subtitle">Priority</span>
-                    <div class="select">
-                        <select v-model="ticket.ticket_priority" >
-                            <option v-for="priority in priority_list">{{priority}}}</option>
-                        </select>
+                    <div class="is-pulled-left">
+                        <span class="subtitle">Priority</span>
+                        <div class="select">
+                            <select v-model="ticket.ticket_priority" >
+                                <option v-for="priority in priority_list">{{priority}}</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="select">
-                        <select v-model="ticket.ticket_status">
-                            <option v-for="status in status_list">{{status}}</option>
-                        </select>
+
+                    <div class="is-pulled-right">
+                        <span class="subtitle">Status</span>
+                        <div class="select">
+                            <select v-model="ticket.ticket_status">
+                                <option v-for="status in status_list">{{status}}</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -143,7 +143,7 @@ let init = (app) => {
 
     app.filter_list = () => {
         app.data.tickets = app.data.master.filter((ticket) => {
-            return ticket.ticket_text.includes(app.data.searchText.trim());
+            return ticket.ticket_text.toLowerCase().includes(app.data.searchText.trim().toLowerCase());
         });
     };
 
