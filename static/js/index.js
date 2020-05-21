@@ -60,10 +60,11 @@ let init = (app) => {
                 ticket_priority: app.data.add_ticket_priority,
                 ticket_author: app.data.username
             }
-            
+
             axios.post(add_tickets_url, ticket).then((response) => {
                 ticket.id = response.data.id
                 app.data.tickets.unshift(ticket);
+                app.reindex(app.data.tickets);
                 app.reset_input();
                 app.data.showModal = false;
                 app.data.submitCallback;
@@ -79,8 +80,8 @@ let init = (app) => {
 
        if(selected !== false) {
            app.data.add_ticket_text = selected.ticket_text;
-           app.data.add_ticket_title = selected.ticket_title; 
-           app.data.add_ticket_status = selected.ticket_status; 
+           app.data.add_ticket_title = selected.ticket_title;
+           app.data.add_ticket_status = selected.ticket_status;
            app.data.add_ticket_priority = selected.ticket_priority;
        }
 
@@ -92,7 +93,7 @@ let init = (app) => {
         console.log(app.data.selectedIdx);
         if((idx = app.data.selectedIdx) !== false) {
             ticket = app.data.tickets[idx];
-            
+
             ticket = {
                 id: ticket.id,
                 ticket_title: app.data.add_ticket_title,
