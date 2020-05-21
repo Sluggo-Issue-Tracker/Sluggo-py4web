@@ -30,14 +30,19 @@ import uuid
 
 
 from py4web import action, request, abort, redirect, URL
+from py4web.utils.form import Form, FormStyleBulma
 from yatl.helpers import A
 from . common import db, session, T, cache, auth, signed_url
-from . models import get_user_email, get_user_title, get_user_name
+from . models import get_user_email, get_user_title, get_user_name, get_user
 
 # --------------------------------------------------- TICKETS --------------------------------------------------- #
 @action('index')
 @action.uses('index.html', signed_url, auth.user)
 def index():
+    user = db(db.users.auth == get_user()).select().first()
+    if user == None:
+        redirect(URL('create_profile'))
+
     return dict(
         get_tickets_url = URL('get_tickets', signer=signed_url),
         add_tickets_url = URL('add_tickets', signer=signed_url),
@@ -107,6 +112,29 @@ def users():
         username = get_user_title(),
         user=auth.get_user()
     )
+
+
+@action('create_profile', method=['GET', 'POST'])
+@action.uses('create_profile.html', db, session, auth.user)
+def create_user():
+    user = db(db.users.auth == get_user()).select().first()
+    if user != None:
+        redirect(URL('index'))
+
+    form = Form(db.users,
+                csrf_session=session,
+                formstyle=FormStyleBulma)
+
+
+
+    if form.accepted:
+        redirect(URL('index'))
+
+    return dict(form=form, user=auth.get_user(), username = get_user_title())
+
+
+
+
 
 
 @action('users/get_users')

@@ -25,6 +25,9 @@ def get_user_name(entry):
     r = db(db.auth_user.email == entry.get("user_email")).select().first()
     return r.first_name + " " + r.last_name if r is not None else "Unknown"
 
+def get_user():
+    return auth.current_user.get('id') if auth.current_user else None
+
 def get_time():
     return datetime.now(timezone.utc)
 
@@ -36,6 +39,7 @@ def time_str():
 
 db.define_table(
     'users',
+    Field('auth', 'reference auth_user', default=get_user()),
     Field('first_name'),
     Field('last_name'),
     Field('user_email'),
