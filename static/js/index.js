@@ -31,11 +31,6 @@ let init = (app) => {
         user_email: user_email,
         username: username,
         tickets: [],
-        add_ticket_text:  "",
-        add_ticket_title:  "",
-        add_ticket_priority: "",
-        add_ticket_status: "",
-        is_add_empty: false,
         page: 'list',
         showModal: false,
         selectedIdx: false,
@@ -48,32 +43,23 @@ let init = (app) => {
 
     // Add here the various functions you need.
     app.add_ticket = () => {
+        // this initializes the modal to handle adding
         app.data.submitCallback = app.submit_add;
-        app.data.cancelCallback = app.close_modal;
         app.data.selected_ticket = {};
         app.data.showModal = true;
     };
 
     app.submit_add = () => {
         let error = false;
-        console.log(app.data.selected_ticket);
-        if(!app.check_ticket_text()) {
+        let ticket = app.data.selected_ticket;
+        if(app.check_ticket_text(ticket)) {
             // do a post request
-            let ticket = {
-                ticket_title: app.data.add_ticket_title,
-                ticket_text: app.data.add_ticket_text,
-                ticket_status: app.data.add_ticket_status,
-                ticket_priority: app.data.add_ticket_priority,
-                ticket_author: app.data.username
-            };
-
             axios.post(add_tickets_url, ticket).then((response) => {
                 ticket.id = response.data.id;
                 app.data.tickets.unshift(ticket);
                 app.reindex(app.data.tickets);
-                app.reset_input();
                 app.data.showModal = false;
-                app.data.submitCallback = false;
+                app.data.submitCallback = null;
             }).catch((error) => {
                 console.log(error);
             });
@@ -81,57 +67,49 @@ let init = (app) => {
     };
 
     app.edit_ticket = (ticket_idx) => {
-       app.data.selectedIdx = ticket_idx;
-       let selected = app.data.tickets[ticket_idx];
+        // this initializes the modal to handle editing
+        app.data.submitCallback = app.submit_edit;
+        let ticket = app.data.tickets[ticket_idx];
 
-       if(selected !== false) {
-           app.data.add_ticket_text = selected.ticket_text;
-           app.data.add_ticket_title = selected.ticket_title;
-           app.data.add_ticket_status = selected.ticket_status;
-           app.data.add_ticket_priority = selected.ticket_priority;
-       }
-
-       app.data.submitCallback = app.submit_edit;
-       app.data.showModal = true;
-    };
-
-    app.submit_edit = () => {
-        console.log(app.data.selectedIdx);
-        let idx = app.data.selectedIdx;
-        if(idx !== false) {
-            let ticket = app.data.tickets[idx];
-
-            ticket = {
+        if(ticket !== false) {
+            app.data.selected_ticket = {
+                _idx: ticket._idx,
                 id: ticket.id,
-                ticket_title: app.data.add_ticket_title,
-                ticket_text: app.data.add_ticket_text,
-                ticket_status: app.data.add_ticket_status,
-                ticket_priority: app.data.add_ticket_priority,
-                ticket_author: ticket.ticket_author,
+                ticket_title: ticket.ticket_title,
+                ticket_text: ticket.ticket_text,
+                ticket_priority: ticket.ticket_priority,
+                ticket_status: ticket.ticket_status
             };
-
-            axios.post(edit_ticket_url, ticket).then((response) => {
-                app.data.tickets[idx] = ticket; // only reassign if post was successful
-                app.reset_input();
-                app.data.showModal = false;
-            }).catch((error) => {
-                console.log(error);
-            });
+            app.data.showModal = true;
         }
     };
 
-    app.reset_input = () => {
-        app.data.add_ticket_text = "";
-        app.data.add_ticket_title = "";
-        app.data.add_ticket_priority = "";
-        app.data.add_ticket_status = "";
-        app.vue.is_add_empty = false;
+    app.submit_edit = () => {
+        console.log(app.data.selected_ticket);
+        let ticket = app.data.selected_ticket;
+
+        axios.post(edit_ticket_url, ticket).then((response) => {
+            let old_ticket = app.data.tickets[ticket._idx];
+
+            old_ticket.ticket_title = ticket.ticket_title;
+            old_ticket.ticket_text = ticket.ticket_text;
+            old_ticket.ticket_priority = ticket.ticket_priority;
+            old_ticket.ticket_status = ticket.ticket_status;
+
+            app.reindex(app.data.tickets);
+        }).catch((error) => {
+            console.log(error);
+        });
+
+        app.data.showModal = false;
     };
 
-    app.check_ticket_text = () => {
-       return (app.vue.add_ticket_text.trim().length === 0);
+    app.check_ticket_text = (ticket) => {
+      return (ticket.ticket_text.trim().length > 0 &&
+              ticket.ticket_title.trim().length > 0 &&
+              ticket.ticket_status.trim().length > 0 &&
+              ticket.ticket_priority.trim().length > 0);
     };
-
 
     app.delete_ticket = (ticket_idx) => {
         let t = app.vue.tickets[ticket_idx];
@@ -144,7 +122,6 @@ let init = (app) => {
 
     app.close_modal = () => {
         app.data.selectedIdx = false;
-        app.reset_input();
         app.data.showModal = false;
     };
 
@@ -159,11 +136,6 @@ let init = (app) => {
         return a;
     };
 
-    app.goto = (destination) => {
-        app.vue.page = destination;
-        // app.vue.add_post_text = "";
-    };
-
     app.filterList = (event) => {
         app.data.tickets.filter(ticket => ticket.ticket_text.includes(app.data.searchText));
     };
@@ -172,7 +144,6 @@ let init = (app) => {
     // to the Vue app in a single blow.
     app.methods = {
         // Complete.
-        goto: app.goto,
         add_ticket: app.add_ticket,
         check_ticket_text: app.check_ticket_text,
         delete_ticket: app.delete_ticket,
