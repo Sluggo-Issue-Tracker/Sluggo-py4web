@@ -31,6 +31,7 @@ let init = (app) => {
         user_email: user_email,
         username: username,
         tickets: [],
+        master: [],
         page: 'list',
         showModal: false,
         selectedIdx: false,
@@ -88,18 +89,22 @@ let init = (app) => {
         console.log(app.data.selected_ticket);
         let ticket = app.data.selected_ticket;
 
-        axios.post(edit_ticket_url, ticket).then((response) => {
-            let old_ticket = app.data.tickets[ticket._idx];
+        if(ticket !== false) {
 
-            old_ticket.ticket_title = ticket.ticket_title;
-            old_ticket.ticket_text = ticket.ticket_text;
-            old_ticket.ticket_priority = ticket.ticket_priority;
-            old_ticket.ticket_status = ticket.ticket_status;
+            axios.post(edit_ticket_url, ticket).then((response) => {
+                let old_ticket = app.data.tickets[ticket._idx];
 
-            app.reindex(app.data.tickets);
-        }).catch((error) => {
-            console.log(error);
-        });
+                old_ticket.ticket_title = ticket.ticket_title;
+                old_ticket.ticket_text = ticket.ticket_text;
+                old_ticket.ticket_priority = ticket.ticket_priority;
+                old_ticket.ticket_status = ticket.ticket_status;
+
+                app.reindex(app.data.tickets);
+            }).catch((error) => {
+                console.log(error);
+            });
+
+        }
 
         app.data.showModal = false;
     };
@@ -136,8 +141,10 @@ let init = (app) => {
         return a;
     };
 
-    app.filterList = (event) => {
-        app.data.tickets.filter(ticket => ticket.ticket_text.includes(app.data.searchText));
+    app.filter_list = () => {
+        app.data.tickets = app.data.master.filter((ticket) => {
+            return ticket.ticket_text.includes(app.data.searchText.trim());
+        });
     };
 
     // We form the dictionary of all methods, so we can assign them
@@ -150,7 +157,7 @@ let init = (app) => {
         edit_ticket: app.edit_ticket,
         close_modal: app.close_modal,
         submit_add: app.submit_add,
-        filterList: app.filterList,
+        filter_list: app.filter_list,
     };
 
     // This creates the Vue instance.
@@ -165,8 +172,8 @@ let init = (app) => {
         axios.get(get_tickets_url).then((result) => {
             let tickets = result.data.tickets;
             app.reindex(tickets);
-            app.vue.tickets = tickets;
-
+            app.vue.master = tickets;
+            app.vue.tickets = app.vue.master;
         })
     };
 

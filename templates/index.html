@@ -4,14 +4,26 @@
     <div class="title">Tickets</div>
   </section>
 
+
   <section class="section">
-    <div class="field">
-        <input type="text" v-model="searchText" @input="filterList" class="input">
-    </div>
-    <div>
-        <button v-if="page=='list'" @click.stop="add_ticket" class="button is-primary is-size-6">
+    <div class="columns">
+      <div class="column is-four-fifths">
+        <div class="field">
+          <div class="control">
+            <input class="input" type="text" @input="filter_list" v-model="searchText" placeholder="Text input">
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <span>
+        <div class="button is-pulled-left">
+          <i class="fa fa-search"></i>
+        </div>
+        <button v-if="page=='list'" @click.stop="add_ticket" class="button is-primary is-size-6 is-pulled-right">
           <i class="fa fa-plus fa-fw"></i>
         </button>
+        </span>
+      </div>
     </div>
   </section>
 
@@ -19,36 +31,37 @@
                 @submit="submitCallback" @cancel="close_modal">
   </ticket-modal>
 
-
   <section class="section">
-    <div class="tile is-ancestor">
-      <div class="tile is-vertical">
-        <!-- This div contains each post -->
-        <div v-for="t in tickets" class="tile is-child notification is-light">
-          <div class="content">
-            <h1 class="title">{{t.ticket_title}}</h1>
-            <div>{{t.ticket_text}}</div>
-            <div class="is-size-6 has-text-grey">{{t.ticket_author}}</div>
-          </div>
+    <div class="columns">
+      <div class="column is-four-fifths">
+        <div class="tile is-ancestor">
+          <div class="tile is-vertical">
+            <!-- This div contains each post -->
+            <div v-for="t in tickets" class="tile is-child notification">
+                <div class="content">
+                  <p>{{t.ticket_text}}</p>
+                </div>
+                <div class="ticket-attrib">
+                  <div class="thumbs is-size-4">
+                    <span class="has-text-danger is-pulled-right" @click="delete_ticket(t._idx)">
+                      <i class="fa fa-trash fa-fw"></i>
+                    </span>
+                    <span class="is-pulled-right" @click.stop="edit_ticket(t._idx)">
+                      <i class="fa fa-cog fa-fw"></i>
+                    </span>
 
-          <div class="ticket-attrib">
-            <div class="thumbs is-size-4">
-              <span class="has-text-danger is-pulled-right" @click="delete_ticket(t._idx)">
-                <i class="fa fa-trash fa-fw"></i>
-              </span>
-              <span class="is-pulled-right" @click.stop="edit_ticket(t._idx)">
-                <i class="fa fa-cog fa-fw"></i>
-              </span>
-              <span class="has-text-info">
-                  Status: {{t.ticket_status}}.
-              </span>
-              <span>
-                  Priority: {{t.ticket_priority}}
-                </span>
+                  </div>
+                    <span class="has-text-info">
+                        Status: {{t.ticket_status}}.
+                    </span>
+                    <span>
+                        Priority: {{t.ticket_priority}}
+                      </span>
+              </div>
             </div>
           </div>
-        </div>
       </div>
+    </div>
     </div>
   </section>
 </div>
