@@ -29,17 +29,30 @@ import pathlib
 import uuid
 
 
-from py4web import action, request, abort, redirect, URL
+from py4web import action, request, abort, redirect, URL, Field
 from py4web.utils.form import Form, FormStyleBulma
 from yatl.helpers import A
+from pydal.validators import *
 from . common import db, session, T, cache, auth, signed_url
 from . models import get_user_email, get_user_title, get_user_name, get_user
+
+
+
+@action('clean')
+@action.uses( auth.user, db)
+def clean():
+    db(db.users).delete()
+    db(db.tickets).delete()
+    db(db.auth_user).delete()
+    return "ok"
+
+
 
 # --------------------------------------------------- TICKETS --------------------------------------------------- #
 @action('index')
 @action.uses('index.html', signed_url, auth.user)
 def index():
-    user = db(db.users.auth == get_user()).select().first()
+    user = db(db.users.user == get_user()).select().first()
     if user == None:
         redirect(URL('create_profile'))
 
@@ -117,23 +130,22 @@ def users():
 @action('create_profile', method=['GET', 'POST'])
 @action.uses('create_profile.html', db, session, auth.user)
 def create_user():
-    user = db(db.users.auth == get_user()).select().first()
+    user = db(db.users.user == get_user()).select().first()
     if user != None:
         redirect(URL('index'))
 
-    form = Form(db.users,
+    form = Form([Field('role', requires=IS_NOT_EMPTY()),
+                 Field('bio', requires=IS_NOT_EMPTY())],
                 csrf_session=session,
                 formstyle=FormStyleBulma)
 
-
-
     if form.accepted:
+        db.users.insert(role=form.vars['role'],
+                        bio=form.vars['bio'],
+                        user=get_user())
         redirect(URL('index'))
 
     return dict(form=form, user=auth.get_user(), username = get_user_title())
-
-
-
 
 
 
@@ -143,8 +155,11 @@ def get_users():
     users = db(db.users).select().as_list()
 
     for user in users:
-        user["icon"] = "%s-%s.jpg" % (user.get('first_name').lower(), user.get('last_name').lower())
-        user["full_name"] = "%s %s" % (user.get('first_name'), user.get('last_name'))
+        person = db(db.auth_user.id == user.get('user')).select().first()
+        user["icon"] = "%s-%s.jpg" % \
+            (person.get('first_name').lower(), person.get('last_name').lower()) if person else "Unknown"
+        user["full_name"] = "%s %s" % \
+            (person.get('first_name'), person.get('last_name')) if person else "Unknown"
     return dict(users=users)
 
 
@@ -155,6 +170,8 @@ def get_img():
     # Reads the image.
     img_name = request.params.img
     img_file = pathlib.Path(__file__).resolve().parent / 'static' / 'images' / img_name
+    if not img_file.exists():
+        img_file = pathlib.Path(__file__).resolve().parent / 'static' / 'images' / "default.jpg"
     with img_file.open(mode='rb') as f:
         img_bytes = f.read()
         b64_image = base64.b64encode(img_bytes).decode('utf-8')

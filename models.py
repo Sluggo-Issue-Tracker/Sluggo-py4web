@@ -39,10 +39,7 @@ def time_str():
 
 db.define_table(
     'users',
-    Field('auth', 'reference auth_user', default=get_user()),
-    Field('first_name'),
-    Field('last_name'),
-    Field('user_email'),
+    Field('user', 'reference auth_user', default=get_user()),
     Field('role'),
     Field('bio'),
 )
@@ -95,5 +92,4 @@ db.define_table(
 # TODO requirements for forms (again, is this even relevant?)
 
 db.ticket_rels.ondelete = 'NO ACTION' # We don't want relationships to affect tickets
-
 db.commit()
