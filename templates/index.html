@@ -5,6 +5,9 @@
   </section>
 
   <section class="section">
+    <div class="field">
+        <input type="text" v-model="searchText" @input="filterList" class="input">
+    </div>
     <div>
         <button v-if="page=='list'" @click.stop="add_ticket" class="button is-primary is-size-6">
           <i class="fa fa-plus fa-fw"></i>
@@ -12,34 +15,9 @@
     </div>
   </section>
 
-  <ticket-modal v-if="showModal" @cancel="close_modal" @confirm="submitCallback">
-    <div class="field">
-            <span class="subtitle">Title</span>
-            <input type="text" v-model="add_ticket_title" class="input" placeholder="Enter new title here">
-        </div>
-        <div class="field">
-            <span class="subtitle">Description</span>
-            <textarea v-model="add_ticket_text" class="textarea is-fullwidth" placeholder="Enter new ticket here"></textarea>
-        </div>
-        <div class="field">
-            <span class="subtitle">Priority</span>
-            <div class="select">
-                <select v-model="add_ticket_priority">
-                    <option>Done Yesterday</option>
-                    <option>High Priority</option>
-                    <option>Meh</option>
-                    <option>Low</option>
-                </select>
-            </div>
-            <div class="select">
-                <select v-model="add_ticket_status">
-                    <option>To do</option>
-                    <option>In Progress</option>
-                    <option>Completed</option>
-                </select>
-            </div>
-        </div>
-    </ticket-modal>
+  <ticket-modal v-if="showModal" v-bind:ticket="selected_ticket"
+                @submit="submit_add" @cancel="close_modal">
+  </ticket-modal>
 
 
   <section class="section">
@@ -86,5 +64,6 @@
   let user_email = "[[=XML(user_email)]]";
   let username = "[[=XML(username)]]";
 </script>
+<script src="components/ticket_modal/ticket_modal.js"></script>
 <script src="js/index.js"></script>
 [[end]]

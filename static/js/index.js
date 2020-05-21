@@ -5,8 +5,8 @@ Vue.directive('click-outside', {
         var vm = vnode.context;
         var callback = binding.value;
 
-        el.clickOutsideEvent = function (event) {
-            if (!(el == event.target || el.contains(event.target))) {
+        el.clickOutsideEvent = function (event){
+            if (!(el === event.target || el.contains(event.target))) {
                 return callback.call(vm, event);
             }
         };
@@ -39,35 +39,41 @@ let init = (app) => {
         page: 'list',
         showModal: false,
         selectedIdx: false,
-        submitCallback: false,
+        submitCallback: null,
+        cancelCallback: null,
+        searchText: "",
+        selected_ticket: {},
         // Complete.
     };
 
     // Add here the various functions you need.
     app.add_ticket = () => {
         app.data.submitCallback = app.submit_add;
+        app.data.cancelCallback = app.close_modal;
+        app.data.selected_ticket = {};
         app.data.showModal = true;
     };
 
     app.submit_add = () => {
         let error = false;
+        console.log(app.data.selected_ticket);
         if(!app.check_ticket_text()) {
             // do a post request
-            ticket = {
+            let ticket = {
                 ticket_title: app.data.add_ticket_title,
                 ticket_text: app.data.add_ticket_text,
                 ticket_status: app.data.add_ticket_status,
                 ticket_priority: app.data.add_ticket_priority,
                 ticket_author: app.data.username
-            }
+            };
 
             axios.post(add_tickets_url, ticket).then((response) => {
-                ticket.id = response.data.id
+                ticket.id = response.data.id;
                 app.data.tickets.unshift(ticket);
                 app.reindex(app.data.tickets);
                 app.reset_input();
                 app.data.showModal = false;
-                app.data.submitCallback;
+                app.data.submitCallback = false;
             }).catch((error) => {
                 console.log(error);
             });
@@ -76,7 +82,7 @@ let init = (app) => {
 
     app.edit_ticket = (ticket_idx) => {
        app.data.selectedIdx = ticket_idx;
-       selected = app.data.tickets[ticket_idx];
+       let selected = app.data.tickets[ticket_idx];
 
        if(selected !== false) {
            app.data.add_ticket_text = selected.ticket_text;
@@ -91,8 +97,9 @@ let init = (app) => {
 
     app.submit_edit = () => {
         console.log(app.data.selectedIdx);
-        if((idx = app.data.selectedIdx) !== false) {
-            ticket = app.data.tickets[idx];
+        let idx = app.data.selectedIdx;
+        if(idx !== false) {
+            let ticket = app.data.tickets[idx];
 
             ticket = {
                 id: ticket.id,
@@ -101,7 +108,7 @@ let init = (app) => {
                 ticket_status: app.data.add_ticket_status,
                 ticket_priority: app.data.add_ticket_priority,
                 ticket_author: ticket.ticket_author,
-            }
+            };
 
             axios.post(edit_ticket_url, ticket).then((response) => {
                 app.data.tickets[idx] = ticket; // only reassign if post was successful
@@ -111,7 +118,7 @@ let init = (app) => {
                 console.log(error);
             });
         }
-    }
+    };
 
     app.reset_input = () => {
         app.data.add_ticket_text = "";
@@ -119,7 +126,7 @@ let init = (app) => {
         app.data.add_ticket_priority = "";
         app.data.add_ticket_status = "";
         app.vue.is_add_empty = false;
-    }
+    };
 
     app.check_ticket_text = () => {
        return (app.vue.add_ticket_text.trim().length === 0);
@@ -135,7 +142,7 @@ let init = (app) => {
         })
     };
 
-    app.close_modal = (event) => {
+    app.close_modal = () => {
         app.data.selectedIdx = false;
         app.reset_input();
         app.data.showModal = false;
@@ -157,6 +164,10 @@ let init = (app) => {
         // app.vue.add_post_text = "";
     };
 
+    app.filterList = (event) => {
+        app.data.tickets.filter(ticket => ticket.ticket_text.includes(app.data.searchText));
+    };
+
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
@@ -167,6 +178,8 @@ let init = (app) => {
         delete_ticket: app.delete_ticket,
         edit_ticket: app.edit_ticket,
         close_modal: app.close_modal,
+        submit_add: app.submit_add,
+        filterList: app.filterList,
     };
 
     // This creates the Vue instance.
@@ -193,24 +206,3 @@ let init = (app) => {
 // This takes the (empty) app object, and initializes it,
 // putting all the code i
 init(app);
-
-Vue.component('ticket-modal', {
-    template:  `<div class="modal is-active">
-                    <div class="modal-background"></div>
-                    <div class="modal-card" v-click-outside="close_modal">
-                        <section class="modal-card-body">
-                            <div class="content">
-                            <slot></slot>
-                            </div>
-                        </section>
-                        <footer class="modal-card-foot">
-                            <button class="button is-success" @click="$emit('confirm')">Save changes</button>
-                            <button class="button" @click="$emit('cancel')">Cancel</button>
-                        </footer>
-                    </div>
-                </div>`,
-    methods: {
-        close_modal: function(event) { app.close_modal() }
-    }
-});
-
