@@ -9,10 +9,7 @@ app.data = {
 }
 
 app.setFormattedDate = () => {
-    const jsDate = new Date(date)
-    app.data.formatted_date = jsDate.toLocaleDateString('default', {weekday: 'long'})
-        + ", " + jsDate.toLocaleDateString('default', {month: 'long', day: 'numeric', year: 'numeric'})
-        + ".";
+    app.data.formatted_date = sluggo.formatDate(new Date(date));
 }
 
 app.methods = {
