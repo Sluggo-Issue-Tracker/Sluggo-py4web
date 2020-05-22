@@ -45,16 +45,23 @@ def clean():
     db(db.tickets).delete()
     return "ok"
 
-
-
-# --------------------------------------------------- TICKETS --------------------------------------------------- #
+# MARK: Index
 @action('index')
 @action.uses('index.html', signed_url, auth.user)
-def index():
+def tickets():
     user = db(db.users.user == get_user()).select().first()
     if user == None:
         redirect(URL('create_profile'))
+        # TODO: is this ^ a comprehensive enough redirect?
+    
+    # For now, redirect to index
+    # TODO: implement homepage logics
+    redirect(URL('tickets'))
 
+# --------------------------------------------------- TICKETS --------------------------------------------------- #
+@action('tickets')
+@action.uses('tickets.html', signed_url, auth.user)
+def tickets():
     return dict(
         get_tickets_url=URL('get_tickets', signer=signed_url),
         add_tickets_url=URL('add_tickets', signer=signed_url),
