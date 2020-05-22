@@ -11,48 +11,9 @@
     <div class="container">
       <div class="columns">
         <div class="column">
-          <div class="button">
-            <span><p>Tag &nbsp;</p></span>
-            <span><i class="fa fa-angle-down"></i></span>
-          </div>
-          <div class="dropdown is-active">
-            <div class="dropdown-trigger">
-              <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-                <span>Dropdown button</span>
-                <span class="icon is-small">
-                  <i class="fa fa-angle-down" aria-hidden="true"></i>
-                </span>
-              </button>
-            </div>
-            <div class="dropdown-menu is-hidden" id="dropdown-menu" role="menu">
-              <div class="dropdown-content">
-                <a href="#" class="dropdown-item">
-                  Dropdown item
-                </a>
-                <a class="dropdown-item">
-                  Other dropdown item
-                </a>
-                <a href="#" class="dropdown-item is-active">
-                  Active dropdown item
-                </a>
-                <a href="#" class="dropdown-item">
-                  Other dropdown item
-                </a>
-                <hr class="dropdown-divider">
-                <a href="#" class="dropdown-item">
-                  With a divider
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="button">
-            <span><p>Completion Status &nbsp;</p></span>
-            <span><i class="fa fa-angle-down"></i></span>
-          </div>
-          <div class="button">
-            <span><p>Assignment Status &nbsp;</p></span>
-            <span><i class="fa fa-angle-down"></i></span>
-          </div>
+          <dropdown v-bind:list="tagList" v-bind:result="tagString" v-bind:placeholder="'Tag'"></dropdown>
+          <dropdown v-bind:list="tagList" v-bind:result="tagString" v-bind:placeholder="'Completion Status'"></dropdown>
+          <dropdown v-bind:list="tagList" v-bind:result="tagString" v-bind:placeholder="'Assignment Status'"></dropdown>
         </div>
         <div class="column">
             <div class="field is-pulled-right">
@@ -126,5 +87,6 @@
   let username = "[[=XML(username)]]";
 </script>
 <script src="components/ticket_modal/ticket_modal.js"></script>
+<script src="components/dropdown/dropdown.js"></script>
 <script src="js/ticket.js"></script>
 [[end]]

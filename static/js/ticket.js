@@ -41,6 +41,9 @@ let init = (app) => {
         searchTag: "",
         searchStatus: "",
         selected_ticket: {},
+        tagList: ["", "hello", "there"],
+        tagString: "",
+        placeHolder: "tag"
         // Complete.
     };
 
