@@ -1,11 +1,11 @@
 [[extend "layout.html"]]
 
-<div class="section">
+<div id="hp-target" class="section">
     <div class="container">
        <div class="columns">
           <div class="column is-two-thirds">
-             <p class="title">Hey, Lorem!</p>
-             <p class="subtitle">It's Friday, April 4, 2020. Here's your overview:</p>
+             <p class="title">Hey, [[=username]]</p>
+             <p class="subtitle">It's {{formatted_date}} Here's your overview:</p>
              <div class="level">
                 <div class="level-item level-left">
                    <p class="is-size-4 has-text-weight-semibold">Priority Tasks</p>
@@ -161,3 +161,9 @@
     </div>
     </div>
     
+    [[block page_scripts]]
+    <script>
+      let date = "[[=XML(date)]]";
+    </script>
+    <script src="js/index.js"></script>
+    [[end]]

@@ -27,6 +27,7 @@ Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app w
 import base64
 import pathlib
 import uuid
+from datetime import datetime, timezone
 
 
 from py4web import action, request, abort, redirect, URL, Field
@@ -57,7 +58,8 @@ def tickets():
     return(dict(
         user_email=get_user_email(),
         username=get_user_title(),
-        user=auth.get_user()
+        user=auth.get_user(),
+        date=str(datetime.now(timezone.utc).isoformat())
     ))
 
 # --------------------------------------------------- TICKETS --------------------------------------------------- #
