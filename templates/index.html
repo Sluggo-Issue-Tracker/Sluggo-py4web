@@ -1,2 +1,163 @@
-[[extend 'layout.html']]
+[[extend "layout.html"]]
 
+<div class="section">
+    <div class="container">
+       <div class="columns">
+          <div class="column is-two-thirds">
+             <p class="title">Hey, Lorem!</p>
+             <p class="subtitle">It's Friday, April 4, 2020. Here's your overview:</p>
+             <div class="level">
+                <div class="level-item level-left">
+                   <p class="is-size-4 has-text-weight-semibold">Priority Tasks</p>
+                </div>
+                <div class="level-item level-right buttons">
+                   <div class="button">
+                      Edit
+                   </div>
+                </div>
+             </div>
+             <div class="notification is-danger">
+                <div class="columns">
+                   <div class="column is-four-fifths">
+                      <p class="is-size-5">Ticket 15 | #admin, #s-lab | Contact Lab Manager about 2300 Delaware</p>
+                      <p>Due April 21, 2020. <span class="has-text-weight-bold">Three days overdue.</span></p>
+                   </div>
+                   <div class="column"></div>
+                   <div class="column">
+                      <div class="buttons">
+                         <div class="button is-inverted is-danger is-outlined">
+                            <p>Complete</p>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+             </div>
+             <div class="notification is-info">
+                <div class="columns">
+                   <div class="column is-four-fifths">
+                      <p class="is-size-5">Ticket 21 | #software | Submit project proposal for issue tracker in CSE183</p>
+                      <p>Due April 24, 2020.</p>
+                   </div>
+                   <div class="column"></div>
+                   <div class="column">
+                      <div class="buttons">
+                         <div class="button is-inverted is-info is-outlined">
+                            <p>Complete</p>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+             </div>
+    
+             <div>
+                <p class="is-size-4 has-text-weight-semibold">Recent Updates</p>
+                <article class="notification">
+                   <div class="columns">
+                      <div class="column">
+                         <div class="">
+                            <div class="level-item">
+                               <img src="[[=URL('static', 'images/default.JPG')]]" width="80">
+                            </div>
+                            
+                         </div>
+                      </div>
+                      <div class="column is-four-fifths">
+                         <p><span class="has-text-weight-bold">Andrew Gavgavian posted on Ticket 21 "Submitting software proposal for...": </span> 
+                         </p><p>"Great work! I think we can start moving this proposal forward. I cleaned up some of the wording 
+                            and described some more technical mechanisms.""
+                         </p>
+                      </div>
+                   </div>
+                </article>
+                <article class="notification">
+                   <div class="columns">
+                      <div class="column">
+                         <div class="">
+                            <div class="level-item">
+                               <img src="[[=URL('static', 'images/default.JPG')]]" width="80">
+                            </div>
+                            
+                         </div>
+                      </div>
+                      <div class="column is-four-fifths">
+                         <p><span class="has-text-weight-bold">Sam Schmidt posted on Ticket 21 "Submitting software proposal for...": </span> 
+                         </p><p>"Added a mockup for the ticket board to the proposal."
+                         </p>
+                      </div>
+                   </div>
+                </article>
+             </div>
+          </div>
+          <div class="column is-one-third">
+             <div class="box">
+                <div class="level">
+                   <div class="level-item level-left">
+                      <p class="is-size-4 has-text-weight-semibold">Pinned Tickets</p>
+                   </div>
+                   <div class="level-item level-right buttons">
+                      <div class="button">
+                         Edit
+                      </div>
+                   </div>
+                </div>
+                <div class="notification is-info">
+                   <div class="columns">
+                      <div class="column is-two-thirds">
+                         <p class="is-size-5">Ticket 21 | #software | Submit project proposal for issue tracker in CSE183</p>
+                         <p>Due May 25, 2020.</p>
+                      </div>
+                      <div class="column">
+                         <div class="buttons">
+                            <div class="button is-static">
+                               <p>Complete</p>
+                            </div>
+                         </div>
+                      </div>
+                   </div>
+                   <div class="columns">
+                      <div class="column">
+                         <p class="is-size-6 has-text-weight-semibold">50% Complete (2/4)</p>
+                         <progress class="progress" value="50" max="100">50%</progress>
+                      </div>
+                   </div>
+                </div>
+             </div>
+             <div class="box">
+                <div class="level">
+                   <div class="level-item level-left">
+                      <p class="is-size-4 has-text-weight-semibold">Your Tags</p>
+                   </div>
+                   <div class="level-item level-right buttons">
+                      <div class="button">
+                         Edit
+                      </div>
+                   </div>
+                </div>
+                <div class="tile is-ancestor">
+                   <div class="tile is-parent is-vertical">
+                      <article class="tile is-child notification is-grey-lighter">
+                         <p>Admin <span class="has-text-weight-bold has-text-danger">(1 Overdue Assigned)</span></p>
+                      </article>
+                      <article class="tile is-child notification is-grey-lighter">
+                         <p>Auto <span class="has-text-weight-bold">(4 New)</span></p>
+                      </article>
+                       <article class="tile is-child notification is-grey-lighter">
+                         <p>Electronics</p>
+                      </article>
+                      <article class="tile is-child notification is-grey-lighter">
+                         <p>Software <span class="has-text-weight-bold">(1 New)</span></p>
+                      </article>
+                      <article class="tile is-child notification is-grey-lighter">
+                         <p>Systems <span class="has-text-weight-bold">(1 New)</span></p>
+                      </article>
+                      <article class="tile is-child notification is-grey-lighter">
+                         <p>S-Lab</p>
+                      </article>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+    </div>
+    

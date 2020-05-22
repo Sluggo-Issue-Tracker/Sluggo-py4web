@@ -54,9 +54,11 @@ def tickets():
         redirect(URL('create_profile'))
         # TODO: is this ^ a comprehensive enough redirect?
     
-    # For now, redirect to index
-    # TODO: implement homepage logics
-    redirect(URL('tickets'))
+    return(dict(
+        user_email=get_user_email(),
+        username=get_user_title(),
+        user=auth.get_user()
+    ))
 
 # --------------------------------------------------- TICKETS --------------------------------------------------- #
 @action('tickets')
