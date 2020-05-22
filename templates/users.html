@@ -1,0 +1,112 @@
+<!-- users.html - mockup page for viewing users
+# Copyright (c) 2020 Andrew Gavgavian, Samuel Schmidt, and Isaac
+# Trimble-Pederson, All Rights Reserved-->
+
+[[extend 'layout.html']]
+<div class="section" id="vue-users">
+   <div class="container">
+
+      <p class="title">Team Members</p>
+      <div class="columns">
+         <!-- Member Selection Panel -->
+         <div class="column is-4">
+
+            <!-- User Selection loop -->
+            <article @click="show_user(user._idx)" v-for="user in users"
+               :class="(current_user === user ? 'level notification has-background-grey-light' : 'level notification has-background-grey-lighter')" >
+               <div class="level-item level-left">
+                  <div class="level-item">
+                     <img v-bind:src="user.url" width="80">
+                  </div>
+                  <div class="level-item">
+                     <p class= "subtitle is-5">{{user.full_name}}</p>
+                  </div>
+               </div>
+            </article>
+         </div>
+
+         <!-- Right Side Column -->
+         <div class="column">
+            <div v-if="page=='user'" class="box has-background-grey-lighter">
+
+               <div class="tile is-ancestor">
+                  <!-- Person Image -->
+                  <div class="tile is-vertical is-parent is-4">
+                     <figure class="image is-square">
+                        <img v-bind:src="current_user.url">
+                     </figure>
+                  </div>
+                  <!-- Text Fields -->
+                  <div class="tile is-parent is-vertical">
+
+                     <!-- Name Field -->
+                     <div class="field">
+                        <p class="title is-size-4">Name</p>
+                        <div class="control">
+                           <input v-model="current_name" class="input is-hovered" type="text">
+                        </div>
+                     </div>
+
+                     <!-- Proj Field -->
+                     <p class="title is-size-4">Project Tags</p>
+                     <div class="field is-grouped">
+
+                        <div class="control">
+                           <div class="tags has-addons">
+                              <a class="tag is-danger">Software</a>
+                              <a class="tag is-delete"></a>
+                           </div>
+                        </div>
+
+                        <div class="control">
+                           <div class="tags has-addons">
+                              <a class="tag is-link">Admin</a>
+                              <a class="tag is-delete"></a>
+                           </div>
+                        </div>
+
+                        <div class="control">
+                           <div class="tags has-addons">
+                              <a class="tag is-warning">Business</a>
+                              <a class="tag is-delete"></a>
+                           </div>
+                        </div>
+                     </div>
+
+                     <!-- Role Field -->
+                     <div class="field">
+                        <p class="title is-size-4">Role</p>
+                        <div class="select">
+                           <select>
+                              <option>{{current_user.role}}</option>
+                              <option>With options</option>
+                           </select>
+                        </div>
+                     </div>
+
+                     <!-- Bio Field -->
+                     <div class="field">
+                        <p class="title is-size-4">Bio</p>
+                        <div class="control">
+                           <textarea v-model="current_bio" class="textarea" rows="10"></textarea>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script>
+  let get_users_url = "[[=XML(get_users_url)]]";
+  let get_icon_url = "[[=XML(get_icons_url)]]";
+  // Complete with other URLs you need.
+  let user_email = "[[=XML(user_email)]]";
+  let username = "[[=XML(username)]]";
+</script>
+<script src="js/users.js"></script>
+[[end]]

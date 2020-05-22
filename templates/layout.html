@@ -6,6 +6,7 @@
     <link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAAQEAAAEAIAAwAAAAFgAAACgAAAABAAAAAgAAAAEAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAA=="/>
     <link rel="stylesheet" href="css/bulma.css">
     <link rel="stylesheet" href="css/elements.css">
+    <link rel="stylesheet" href="css/vue-select.css">
     <link rel="stylesheet" href="[[=URL('static', 'font-awesome-4.7.0/css/font-awesome.css')]]">
     <link rel="import" href="[[=URL('templates', 'ticket-modal.html')]]">
     [[block page_head]]<!-- individual pages can customize header here -->[[end]]
@@ -27,6 +28,9 @@
         <div class="navbar-start">
           <a class="navbar-item" href="[[=URL('index')]]">
             <span class="navbar-item-name is-size-4" >Tickets</span>
+          </a>
+          <a class="navbar-item" href="[[=URL('users')]]">
+            <span class="navbar-item-name is-size-4" >Users</span>
           </a>
           [[block page_menu_items]]<!-- individual pages can add menu items here -->[[end]]
         </div>

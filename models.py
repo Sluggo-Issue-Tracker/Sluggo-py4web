@@ -25,6 +25,9 @@ def get_user_name(entry):
     r = db(db.auth_user.email == entry.get("user_email")).select().first()
     return r.first_name + " " + r.last_name if r is not None else "Unknown"
 
+def get_user():
+    return auth.current_user.get('id') if auth.current_user else None
+
 def get_time():
     return datetime.now(timezone.utc)
 
@@ -36,10 +39,9 @@ def time_str():
 
 db.define_table(
     'users',
-    Field('first_name'),
-    Field('last_name'),
-    Field('user_email'),
-    Field('role')
+    Field('user', 'reference auth_user', default=get_user()),
+    Field('role'),
+    Field('bio'),
 )
 
 # db.define_table(
@@ -80,11 +82,16 @@ db.define_table(
     Field('Text')
 )
 
+db.define_table(
+    'user_tags',
+    Field('tag'),
+    Field('user', 'reference users')
+)
+
 # TODO tags, roles, other fun things that require relationships
 
 # TODO readables vs not readables (relevant? can we even use default forms?)
 # TODO requirements for forms (again, is this even relevant?)
 
 db.ticket_rels.ondelete = 'NO ACTION' # We don't want relationships to affect tickets
-
 db.commit()

@@ -24,16 +24,37 @@ The path follows the bottlepy syntax.
 session, db, T, auth, and tempates are examples of Fixtures.
 Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app will result in undefined behavior
 """
+import base64
+import pathlib
+import uuid
 
-from py4web import action, request, abort, redirect, URL
+
+from py4web import action, request, abort, redirect, URL, Field
+from py4web.utils.form import Form, FormStyleBulma
 from yatl.helpers import A
-from .common import db, session, T, cache, auth, signed_url
-from .models import get_user_email, get_user_title, get_user_name
+from pydal.validators import *
+from . common import db, session, T, cache, auth, signed_url
+from . models import get_user_email, get_user_title, get_user_name, get_user
 
 
+
+@action('clean')
+@action.uses( auth.user, db)
+def clean():
+    db(db.users).delete()
+    db(db.tickets).delete()
+    return "ok"
+
+
+
+# --------------------------------------------------- TICKETS --------------------------------------------------- #
 @action('index')
 @action.uses('index.html', signed_url, auth.user)
 def index():
+    user = db(db.users.user == get_user()).select().first()
+    if user == None:
+        redirect(URL('create_profile'))
+
     return dict(
         get_tickets_url=URL('get_tickets', signer=signed_url),
         add_tickets_url=URL('add_tickets', signer=signed_url),
@@ -87,3 +108,75 @@ def delete_tickets():
     if id is not None:
         db(db.tickets.id == id).delete()
         return "ok"
+
+
+# --------------------------------------------------- USERS --------------------------------------------------- #
+
+@action('users')
+@action.uses('users.html', signed_url, auth.user)
+def users():
+    return dict(
+        get_users_url = URL('users/get_users', signer=signed_url),
+        get_icons_url = URL('users/get_icons', signer=signed_url),
+        user_email = get_user_email(),
+        username = get_user_title(),
+        user=auth.get_user()
+    )
+
+
+@action('create_profile', method=['GET'])
+@action.uses('create_profile.html', db, session, auth.user, signed_url)
+def create_user():
+    user = db(db.users.user == get_user()).select().first()
+    if user != None:
+        redirect(URL('index'))
+
+    return dict(
+        add_user_url = URL('add_user', signer=signed_url),
+        user=auth.get_user(),
+        username = get_user_title()
+    )
+
+
+
+@action('add_user', method="POST")
+@action.uses(signed_url.verify(), auth.user, db)
+def add_user():
+    id = db.users.insert(
+        role="admin" if db(db.users).isempty() else "member",
+        bio=request.json.get('bio'),
+        user=get_user(),
+    )
+    tags = request.json.get('tags')
+    for tag in tags:
+        print(tag)
+
+
+@action('users/get_users')
+@action.uses(signed_url.verify(), auth.user)
+def get_users():
+    users = db(db.users).select().as_list()
+
+    for user in users:
+        person = db(db.auth_user.id == user.get('user')).select().first()
+        user["icon"] = "%s-%s.jpg" % \
+            (person.get('first_name').lower(), person.get('last_name').lower()) if person else "Unknown"
+        user["full_name"] = "%s %s" % \
+            (person.get('first_name'), person.get('last_name')) if person else "Unknown"
+    return dict(users=users)
+
+
+@action('users/get_icons')
+@action.uses(signed_url.verify())
+def get_img():
+    """Returns a single image, URL encoded."""
+    # Reads the image.
+    img_name = request.params.img
+    img_file = pathlib.Path(__file__).resolve().parent / 'static' / 'images' / img_name
+    if not img_file.exists():
+        img_file = pathlib.Path(__file__).resolve().parent / 'static' / 'images' / "default.jpg"
+    with img_file.open(mode='rb') as f:
+        img_bytes = f.read()
+        b64_image = base64.b64encode(img_bytes).decode('utf-8')
+    # Returns the image bytes, base64 encoded, and with the correct prefix.
+    return dict(imgbytes="data:image/jpeg;base64," + b64_image)
