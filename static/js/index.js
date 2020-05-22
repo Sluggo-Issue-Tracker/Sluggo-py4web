@@ -48,7 +48,7 @@ let init = (app) => {
     app.add_ticket = () => {
         // this initializes the modal to handle adding
         app.data.submitCallback = app.submit_add;
-        app.data.selected_ticket = {};
+        app.data.selected_ticket = {show: false};
         app.data.showModal = true;
     };
 
@@ -146,7 +146,10 @@ let init = (app) => {
 
     app.filter_list = () => {
         app.data.tickets = app.data.master.filter((ticket) => {
-            return ticket.ticket_text.toLowerCase().includes(app.data.searchText.trim().toLowerCase());
+            return ticket.ticket_text.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
+                   ticket.ticket_title.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
+                   ticket.ticket_status.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
+                   ticket.ticket_priority.toLowerCase().includes(app.data.searchText.trim().toLowerCase());
         });
     };
 
