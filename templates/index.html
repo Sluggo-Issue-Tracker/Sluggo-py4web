@@ -8,15 +8,10 @@
              <p class="subtitle">It's {{formatted_date}} Here's your overview:</p>
              <div class="level">
                 <div class="level-item level-left">
-                   <p class="is-size-4 has-text-weight-semibold">Priority Tasks</p>
-                </div>
-                <div class="level-item level-right buttons">
-                   <div class="button">
-                      Edit
-                   </div>
+                   <p class="is-size-4 has-text-weight-semibold">Priority Tasks (placeholder)</p>
                 </div>
              </div>
-             <div class="notification is-danger">
+             <div @click="placeholder()" class="notification is-danger">
                 <div class="columns">
                    <div class="column is-four-fifths">
                       <p class="is-size-5">Ticket 15 | #admin, #s-lab | Contact Lab Manager about 2300 Delaware</p>
@@ -32,7 +27,7 @@
                    </div>
                 </div>
              </div>
-             <div class="notification is-info">
+             <div @click="placeholder()" class="notification is-info">
                 <div class="columns">
                    <div class="column is-four-fifths">
                       <p class="is-size-5">Ticket 21 | #software | Submit project proposal for issue tracker in CSE183</p>
@@ -50,8 +45,8 @@
              </div>
     
              <div>
-                <p class="is-size-4 has-text-weight-semibold">Recent Updates</p>
-                <article class="notification">
+                <p class="is-size-4 has-text-weight-semibold">Recent Updates (placeholder)</p>
+                <article @click="placeholder()" class="notification">
                    <div class="columns">
                       <div class="column">
                          <div class="">
@@ -69,7 +64,7 @@
                       </div>
                    </div>
                 </article>
-                <article class="notification">
+                <article @click="placeholder()" class="notification">
                    <div class="columns">
                       <div class="column">
                          <div class="">
@@ -89,10 +84,10 @@
              </div>
           </div>
           <div class="column is-one-third">
-             <div class="box">
+             <div @click="placeholder()" class="box">
                 <div class="level">
                    <div class="level-item level-left">
-                      <p class="is-size-4 has-text-weight-semibold">Pinned Tickets</p>
+                      <p class="is-size-4 has-text-weight-semibold">Pinned Tickets (placeholder)</p>
                    </div>
                    <div class="level-item level-right buttons">
                       <div class="button">
@@ -125,32 +120,32 @@
              <div class="box">
                 <div class="level">
                    <div class="level-item level-left">
-                      <p class="is-size-4 has-text-weight-semibold">Your Tags</p>
+                      <p class="is-size-4 has-text-weight-semibold">Your Tags (placeholder)</p>
                    </div>
                    <div class="level-item level-right buttons">
-                      <div class="button">
+                      <div @click="placeholder()" class="button">
                          Edit
                       </div>
                    </div>
                 </div>
                 <div class="tile is-ancestor">
                    <div class="tile is-parent is-vertical">
-                      <article class="tile is-child notification is-grey-lighter">
+                      <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
                          <p>Admin <span class="has-text-weight-bold has-text-danger">(1 Overdue Assigned)</span></p>
                       </article>
-                      <article class="tile is-child notification is-grey-lighter">
+                      <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
                          <p>Auto <span class="has-text-weight-bold">(4 New)</span></p>
                       </article>
-                       <article class="tile is-child notification is-grey-lighter">
+                       <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
                          <p>Electronics</p>
                       </article>
-                      <article class="tile is-child notification is-grey-lighter">
+                      <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
                          <p>Software <span class="has-text-weight-bold">(1 New)</span></p>
                       </article>
-                      <article class="tile is-child notification is-grey-lighter">
+                      <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
                          <p>Systems <span class="has-text-weight-bold">(1 New)</span></p>
                       </article>
-                      <article class="tile is-child notification is-grey-lighter">
+                      <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
                          <p>S-Lab</p>
                       </article>
                    </div>

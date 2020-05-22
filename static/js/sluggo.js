@@ -5,3 +5,7 @@ sluggo.formatDate = (date) => { // consistent date formatting
     + ", " + date.toLocaleDateString('default', {month: 'long', day: 'numeric', year: 'numeric'})
     + ".";
 }
+
+sluggo.placeholder = () => {
+    alert("This has not been implemented yet.");
+}

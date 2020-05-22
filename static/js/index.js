@@ -10,8 +10,13 @@ app.setFormattedDate = () => {
     app.data.formatted_date = sluggo.formatDate(new Date(date));
 }
 
+app.placeholder = () => {
+    sluggo.placeholder();
+}
+
 app.methods = {
-    setFormattedDate: app.setFormattedDate
+    setFormattedDate: app.setFormattedDate,
+    placeholder: app.placeholder
 }
 
 app.vm = new Vue({
