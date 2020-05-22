@@ -1,8 +1,37 @@
 [[extend 'layout.html']]
+<div id="vue-target">
+    <section class="section">
+        <div class="title">
+            Hello [[=username]]
+        </div>
+        <p class="subtitle">
+            Welcome to Sluggo! As this is your first time logging in, please select which tags you are interested in (you can change this later) and fill out a Bio.
+        </p>
+        <div class="add">
+          <div class="is-fullwidth">
+            <div class="field">
+                <span class="subtitle">Tags</span>
+                <v-select multiple placeholder="Choose some interests" v-model="selected" :options="options" />
+            </div>
+            <div class="field">
+                <span class="subtitle">Bio</span>
+                <textarea v-model="bio_text" class="textarea is-fullwidth" placeholder="I like long walks in the park..."></textarea>
+                <p v-if="bio_empty" class="has-text-danger">Please enter a non-blank value</p>
+            </div>
 
-<section class="section">
-    <div class="title">
-        Hello
-    </div>
-        [[=form]]
-</section>
+            <button @click="add_user" class="button is-primary is-size-6">Post</button>
+          </div>
+        </div>
+    </section>
+</div>
+
+
+
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script src="js/vue-select.min.js"></script>
+<script src="js/creation.js"></script>
+<script>
+    let add_user_url = "[[=XML(add_user_url)]]";
+</script>
+[[end]]

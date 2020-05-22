@@ -43,7 +43,6 @@ from . models import get_user_email, get_user_title, get_user_name, get_user
 def clean():
     db(db.users).delete()
     db(db.tickets).delete()
-    db(db.auth_user).delete()
     return "ok"
 
 
@@ -99,22 +98,6 @@ def delete_tickets():
 
 # --------------------------------------------------- USERS --------------------------------------------------- #
 
-USERS = [ {"first_name": "Andrew", "last_name": "Gavgavian", "user_email" : "agavgavi@ucsc.edu", "role": "Administrator", "bio":"Hi mom!"},
-          {"first_name": "Isaac", "last_name": "Trimble-Pederson", "user_email" : "itrimble@ucsc.edu", "role": "Administrator", "bio":"Test Bio"},
-          {"first_name": "Samuel", "last_name": "Schmidt", "user_email" : "sadschmi@ucsc.edu", "role": "Systems", "bio":"Shit"}]
-
-@action('users/setup')
-@action.uses( auth.user, db)
-def setup():
-    db(db.users).delete()
-    for u in USERS:
-        db.users.insert(first_name=u.get('first_name'),
-                        last_name=u.get('last_name'),
-                        user_email=u.get('user_email'),
-                        role=u.get('role'),
-                        bio=u.get('bio'))
-    return "ok"
-
 @action('users')
 @action.uses('users.html', signed_url, auth.user)
 def users():
@@ -127,26 +110,32 @@ def users():
     )
 
 
-@action('create_profile', method=['GET', 'POST'])
-@action.uses('create_profile.html', db, session, auth.user)
+@action('create_profile', method=['GET'])
+@action.uses('create_profile.html', db, session, auth.user, signed_url)
 def create_user():
     user = db(db.users.user == get_user()).select().first()
     if user != None:
         redirect(URL('index'))
 
-    form = Form([Field('role', requires=IS_NOT_EMPTY()),
-                 Field('bio', requires=IS_NOT_EMPTY())],
-                csrf_session=session,
-                formstyle=FormStyleBulma)
+    return dict(
+        add_user_url = URL('add_user', signer=signed_url),
+        user=auth.get_user(),
+        username = get_user_title()
+    )
 
-    if form.accepted:
-        db.users.insert(role=form.vars['role'],
-                        bio=form.vars['bio'],
-                        user=get_user())
-        redirect(URL('index'))
 
-    return dict(form=form, user=auth.get_user(), username = get_user_title())
 
+@action('add_user', method="POST")
+@action.uses(signed_url.verify(), auth.user, db)
+def add_user():
+    id = db.users.insert(
+        role="admin" if db(db.users).isempty() else "member",
+        bio=request.json.get('bio'),
+        user=get_user(),
+    )
+    tags = request.json.get('tags')
+    for tag in tags:
+        print(tag)
 
 
 @action('users/get_users')
