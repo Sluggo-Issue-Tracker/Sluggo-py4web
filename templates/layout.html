@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base href="[[=URL('static')]]/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAAQEAAAEAIAAwAAAAFgAAACgAAAABAAAAAgAAAAEAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAA=="/>
+    <link rel="stylesheet" href="css/bulma.css">
+    <link rel="stylesheet" href="css/elements.css">
+    <link rel="stylesheet" href="[[=URL('static', 'font-awesome-4.7.0/css/font-awesome.css')]]">
+    <link rel="import" href="[[=URL('templates', 'ticket-modal.html')]]">
+    [[block page_head]]<!-- individual pages can customize header here -->[[end]]
+  </head>
+  <body>
+    <nav class="navbar is-link" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="[[=URL('index')]]">
+            <h1 class="has-text-white is-size-3 has-text-weight-bold">Sluggo</h1>
+        </a>
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="left-navbar"
+           onclick="this.classList.toggle('is-active');document.getElementById(this.dataset.target).classList.toggle('is-active');">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+      <div id="left-navbar" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="[[=URL('index')]]">
+            <span class="navbar-item-name is-size-4" >Tickets</span>
+          </a>
+          [[block page_menu_items]]<!-- individual pages can add menu items here -->[[end]]
+        </div>
+        <div class="navbar-end">
+          <div class="navbar-item">
+            [[if globals().get('user'):]]
+              <div class="navbar-item has-dropdown is-hoverable is-size-4">
+                <a class="navbar-link has-text-white">
+                   Welcome, [[=username]]
+                   <img src="">
+                </a>
+                <div class="navbar-dropdown is-boxed is-size-4">
+                   <a class="navbar-item" href="[[=URL('auth/logout')]]">Logout</a>
+                   <a class="navbar-item">Profile</a>
+                   <hr class="navbar-divider">
+                   <a class="navbar-item">Report an issue</a>
+                </div>
+             </div>
+           [[else:]]
+              <div class="buttons">
+                <a class="button is-primary" href="[[=URL('auth/register')]]">Sign up</a>
+                <a class="button is-light" href="[[=URL('auth/login')]]">Sign in</a>
+              </div>
+            [[pass]]
+          </div>
+        </div>
+      </div>
+    </nav>
+    <!-- beginning of HTML inserted by extending template -->
+    [[include]]
+    <!-- end of HTML inserted by extending template -->
+  </body>
+  <script src="js/sugar.min.js"></script>
+  <script src="js/axios.min.js"></script>
+  <script src="js/vue.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
+   <!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
+   <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
+
+  [[block page_scripts]]<!-- individual pages can add scripts here -->[[end]]
+</html>
