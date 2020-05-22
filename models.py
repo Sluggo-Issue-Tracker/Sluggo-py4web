@@ -62,30 +62,28 @@ db.define_table(
     Field('user_email', default=get_user_email),
     Field('ticket_title', 'text'),
     Field('ticket_text', 'text'),
-    Field('ticket_status'),
-    Field('ticket_priority'),
-    Field('created', 'text',
-                     default=time_str),
+    Field('created', 'datetime', default=get_time),
     Field('activated', 'datetime', default=get_time),
-    Field('deactivated', 'datetime', default=get_time)
+    Field('completed', 'datetime', default=get_time)
 )
 
 
 db.define_table( # credit tdimhcsleumas for design
-    'ticket_rels',
+    'sub_tickets',
     Field('parent', 'reference tickets'),
     Field('child', 'reference tickets')
 )
 
 db.define_table(
-    'post_tag',
-    Field('Text')
+    'ticket_tag',
+    Field('ticket_id', 'reference tickets'),
+    Field('tag_name', 'text')
 )
 
 db.define_table(
     'user_tags',
-    Field('tag'),
-    Field('user', 'reference users')
+    Field('user_id', 'reference users'),
+    Field('tag_name'),
 )
 
 # TODO tags, roles, other fun things that require relationships
