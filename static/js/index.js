@@ -38,6 +38,8 @@ let init = (app) => {
         submitCallback: null,
         cancelCallback: null,
         searchText: "",
+        searchTag: "",
+        searchStatus: "",
         selected_ticket: {},
         // Complete.
     };
@@ -137,6 +139,7 @@ let init = (app) => {
         let idx = 0;
         for (p of a) {
             p._idx = idx++;
+            p.show = false;
         }
         return a;
     };

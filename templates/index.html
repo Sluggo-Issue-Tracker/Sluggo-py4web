@@ -1,25 +1,44 @@
 [[extend 'layout.html']]
 <div id="vue-target">
 <section class="section">
+  <div class="container">
     <div class="title">Tickets</div>
-  </section>
+  </div>
+</section>
 
 
   <section class="section">
-    <div class="columns">
-      <div class="column is-four-fifths">
-        <div class="field">
-          <div class="control">
-            <input class="input" type="text" @input="filter_list" v-model="searchText" placeholder="Text input">
+    <div class="container">
+      <div class="columns">
+        <div class="column">
+          <div class="button">
+            <span><p>Tag &nbsp;</p></span>
+            <span><i class="fa fa-angle-down"></i></span>
+          </div>
+          <div class="button">
+            <span><p>Completion Status &nbsp;</p></span>
+            <span><i class="fa fa-angle-down"></i></span>
+          </div>
+          <div class="button">
+            <span><p>Assignment Status &nbsp;</p></span>
+            <span><i class="fa fa-angle-down"></i></span>
           </div>
         </div>
-      </div>
-      <div class="column">
-        <span>
-        <button v-if="page=='list'" @click.stop="add_ticket" class="button is-primary is-size-6 is-pulled-right">
-          <i class="fa fa-plus fa-fw"></i>
-        </button>
-        </span>
+        <div class="column">
+            <div class="field has-addons is-pulled-right">
+              <div class="control has-icons-left">
+                <span class="icon is-medium">
+                  <i class="fa fa-search"></i>
+                </span>
+                <input class="input" type="text" @input="filter_list" v-model="searchText" placeholder="Text input">
+              </div>
+              <div class="control">
+                <button v-if="page=='list'" @click.stop="add_ticket" class="button is-primary is-size-6">
+                  <i class="fa fa-plus fa-fw"></i>
+                </button>
+              </div>
+            </div>
+        </div>
       </div>
     </div>
   </section>
@@ -30,30 +49,26 @@
 
 
 
-  <!-- TODO: Samuel Schmidt 5 / 21 / 2020 add some way to see the description optionally -->
+  <!-- TODO: Samuel Schmidt 5 / 21 / 2020 move this into a vue component -->
   <section class="section">
-    <div class="columns">
-      <div class="column is-four-fifths">
-        <div class="button">
-          <span><p>Tag &nbsp;</p></span>
-          <span><i class="fa fa-angle-down"></i></span>
-        </div>
-        <div class="button">
-          <span><p>Completion Status &nbsp;</p></span>
-          <span><i class="fa fa-angle-down"></i></span>
-        </div>
-        <div class="button">
-          <span><p>Assignment Status &nbsp;</p></span>
-          <span><i class="fa fa-angle-down"></i></span>
-        </div>
-        <div class="tile is-ancestor">
-          <div class="tile is-vertical">
-            <!-- This div contains each post -->
-            <div v-for="t in tickets" class="tile is-child notification">
-                <div class="content">
-                  <p>{{t.ticket_text}}</p>
+    <div class="container">
+      <div v-for="t in tickets" class="tile is-child">
+        <div class="card is-fullwidth">
+          <header class="card-header">
+            <p class="card-header-title">Issue {{t.id}} | #tag | {{t.ticket_title}} | {{t.ticket_status}}</p>
+            <a class="card-header-icon card-toggle" @click="t.show = !t.show">
+              <i class="fa fa-angle-down" v-if="!t.show"></i>
+              <i class="fa fa-angle-up" v-if="t.show"></i>
+            </a>
+          </header>
+          <div class="card-content" :class="{'is-hidden': !t.show}">
+            <div class="content">
+              <div class="columns">
+                <div class="column">
+                  <b class="is-bold">Description</b>
+                  <p>{{ t.ticket_text }}</p>
                 </div>
-                <div class="ticket-attrib">
+                <div class="column is-1">
                   <div class="thumbs is-size-4">
                     <span class="has-text-danger is-pulled-right" @click="delete_ticket(t._idx)">
                       <i class="fa fa-trash fa-fw"></i>
@@ -61,14 +76,8 @@
                     <span class="is-pulled-right" @click.stop="edit_ticket(t._idx)">
                       <i class="fa fa-cog fa-fw"></i>
                     </span>
-
                   </div>
-                    <span class="has-text-info">
-                        Status: {{t.ticket_status}}.
-                    </span>
-                    <span>
-                        Priority: {{t.ticket_priority}}
-                      </span>
+                </div>
               </div>
             </div>
           </div>

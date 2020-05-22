@@ -27,22 +27,23 @@ Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app w
 
 from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
-from . common import db, session, T, cache, auth, signed_url
-from . models import get_user_email, get_user_title, get_user_name
+from .common import db, session, T, cache, auth, signed_url
+from .models import get_user_email, get_user_title, get_user_name
 
 
 @action('index')
 @action.uses('index.html', signed_url, auth.user)
 def index():
     return dict(
-        get_tickets_url = URL('get_tickets', signer=signed_url),
-        add_tickets_url = URL('add_tickets', signer=signed_url),
-        delete_tickets_url = URL('delete_tickets', signer=signed_url),
-        edit_ticket_url = URL('edit_ticket', signer=signed_url),
-        user_email = get_user_email(),
-        username = get_user_title(),
+        get_tickets_url=URL('get_tickets', signer=signed_url),
+        add_tickets_url=URL('add_tickets', signer=signed_url),
+        delete_tickets_url=URL('delete_tickets', signer=signed_url),
+        edit_ticket_url=URL('edit_ticket', signer=signed_url),
+        user_email=get_user_email(),
+        username=get_user_title(),
         user=auth.get_user()
     )
+
 
 @action('get_tickets')
 @action.uses(signed_url.verify(), auth.user)
@@ -65,17 +66,19 @@ def add_tickets():
     )
     return dict(id=id)
 
+
 @action('edit_ticket', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def edit_ticket():
-    print(request.json);
+    print(request.json)
     row = db(db.tickets.id == request.json.get('id')).select().first()
     print(row)
-    row.update_record(ticket_title = request.json.get('ticket_title'),
-                      ticket_text = request.json.get('ticket_text'),
-                      ticket_status = request.json.get('ticket_status'),
-                      ticket_priority = request.json.get('ticket_priority'))
+    row.update_record(ticket_title=request.json.get('ticket_title'),
+                      ticket_text=request.json.get('ticket_text'),
+                      ticket_status=request.json.get('ticket_status'),
+                      ticket_priority=request.json.get('ticket_priority'))
     return "ok"
+
 
 @action('delete_tickets', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
