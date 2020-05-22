@@ -1,7 +1,5 @@
 // index.js - Vue/JavaScript code for homepage
 
-const DATES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
 app = {};
 
 app.data = {
