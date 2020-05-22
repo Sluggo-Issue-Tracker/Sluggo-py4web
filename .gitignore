@@ -11,3 +11,6 @@ celerybeat-schedule.db
 
 # Private files that we do not ever want to share
 settings_private.py
+
+# ignore pycharm
+.idea
