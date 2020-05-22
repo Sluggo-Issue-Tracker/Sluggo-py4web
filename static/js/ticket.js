@@ -43,7 +43,8 @@ let init = (app) => {
         selected_ticket: {},
         tagList: ["", "hello", "there"],
         tagString: "",
-        placeHolder: "tag"
+        placeHolder: "tag",
+        ticket_tags: [],
         // Complete.
     };
 
@@ -51,7 +52,7 @@ let init = (app) => {
     app.add_ticket = () => {
         // this initializes the modal to handle adding
         app.data.submitCallback = app.submit_add;
-        app.data.selected_ticket = {show: false};
+        app.data.selected_ticket = {show: false, tag_list: []};
         app.data.showModal = true;
     };
 
@@ -60,7 +61,7 @@ let init = (app) => {
         let ticket = app.data.selected_ticket;
         if(app.check_ticket_text(ticket)) {
             // do a post request
-            axios.post(add_tickets_url, ticket).then((response) => {
+            axios.post(add_tickets_url, ticket).then((response) => { // TODO: Sam 5 / 22 / 2020 implement tag submission
                 ticket.id = response.data.id;
                 app.data.tickets.unshift(ticket);
                 app.reindex(app.data.tickets);
@@ -183,6 +184,7 @@ let init = (app) => {
             app.reindex(tickets);
             app.vue.master = tickets;
             app.vue.tickets = app.vue.master;
+            app.vue.ticket_tags = result.data.ticket_tags
         })
     };
 

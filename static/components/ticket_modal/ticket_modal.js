@@ -10,6 +10,8 @@
         let data = {
             priority_list: [],
             status_list: [],
+            selected: [],
+            options: ["lorem", "ipsum", "placeholder"],
         };
 
         ticket_modal.methods.load.call(data);

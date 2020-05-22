@@ -28,22 +28,21 @@ import base64
 import pathlib
 import uuid
 
-
 from py4web import action, request, abort, redirect, URL, Field
 from py4web.utils.form import Form, FormStyleBulma
 from yatl.helpers import A
 from pydal.validators import *
-from . common import db, session, T, cache, auth, signed_url
-from . models import get_user_email, get_user_title, get_user_name, get_user
-
+from .common import db, session, T, cache, auth, signed_url
+from .models import get_user_email, get_user_title, get_user_name, get_user
 
 
 @action('clean')
-@action.uses( auth.user, db)
+@action.uses(auth.user, db)
 def clean():
     db(db.users).delete()
     db(db.tickets).delete()
     return "ok"
+
 
 # MARK: Index
 @action('index')
@@ -53,10 +52,11 @@ def tickets():
     if user == None:
         redirect(URL('create_profile'))
         # TODO: is this ^ a comprehensive enough redirect?
-    
+
     # For now, redirect to index
     # TODO: implement homepage logics
     redirect(URL('tickets'))
+
 
 # --------------------------------------------------- TICKETS --------------------------------------------------- #
 @action('tickets')
@@ -67,6 +67,7 @@ def tickets():
         add_tickets_url=URL('add_tickets', signer=signed_url),
         delete_tickets_url=URL('delete_tickets', signer=signed_url),
         edit_ticket_url=URL('edit_ticket', signer=signed_url),
+        add_ticket_tag_url=URL('add_ticket_tag', signer=signed_url),
         user_email=get_user_email(),
         username=get_user_title(),
         user=auth.get_user()
@@ -77,23 +78,41 @@ def tickets():
 @action.uses(signed_url.verify(), auth.user)
 def get_tickets():
     tickets = db(db.tickets).select(orderby=~db.tickets.created).as_list()
+    ticket_tags = db(db.global_tag).select().as_list()
 
     for ticket in tickets:
         ticket["ticket_author"] = get_user_name(ticket)
-    return dict(tickets=tickets)
+
+        ticket["child_list"] = db(db.sub_tickets.parent_id == ticket.get("id")).select(db.tickets.ALL,
+                                left=db.tickets.on(db.tickets.id == db.sub_tickets.child_id)).as_list()
+
+        ticket["tag_list"] = db(db.ticket_tag.ticket_id == ticket.get("id")).select(db.global_tag.tag_name,
+                                left=db.global_tag.on(db.global_tag.id == db.ticket_tag.tag_id)).as_list()
+
+    return dict(tickets=tickets, ticket_tags=ticket_tags)
 
 
 @action('add_tickets', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def add_tickets():
-    id = db.tickets.insert(
+    ticket_id = db.tickets.insert(
         ticket_title=request.json.get('ticket_title'),
         ticket_text=request.json.get('ticket_text'),
-        ticket_status=request.json.get('ticket_status'),
-        ticket_priority=request.json.get('ticket_priority')
     )
-    return dict(id=id)
+    return dict(id=ticket_id)
 
+@action('add_ticket_tag', method="POST")
+@action.uses(signed_url.verify(), auth.user, db)
+def add_ticket_tag():
+    ticket_id = request.json.get('ticket_id')
+    for tag in request.json.get('tags'):
+        tag_name = tag.name
+        if tag_name is not None and ticket_id is not None:
+            tag = db(db.global_tag.tag_name == tag_name).select().first()
+            tag_id = db.global_tag.insert(tag_name=tag_name) if tag is None else tag.id
+            db.ticket_tag.insert(tag_id=tag_id, ticket_id=ticket_id)
+
+    return 'ok'
 
 @action('edit_ticket', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
@@ -123,10 +142,10 @@ def delete_tickets():
 @action.uses('users.html', signed_url, auth.user)
 def users():
     return dict(
-        get_users_url = URL('users/get_users', signer=signed_url),
-        get_icons_url = URL('users/get_icons', signer=signed_url),
-        user_email = get_user_email(),
-        username = get_user_title(),
+        get_users_url=URL('users/get_users', signer=signed_url),
+        get_icons_url=URL('users/get_icons', signer=signed_url),
+        user_email=get_user_email(),
+        username=get_user_title(),
         user=auth.get_user()
     )
 
@@ -139,11 +158,10 @@ def create_user():
         redirect(URL('index'))
 
     return dict(
-        add_user_url = URL('add_user', signer=signed_url),
+        add_user_url=URL('add_user', signer=signed_url),
         user=auth.get_user(),
-        username = get_user_title()
+        username=get_user_title()
     )
-
 
 
 @action('add_user', method="POST")
@@ -167,9 +185,9 @@ def get_users():
     for user in users:
         person = db(db.auth_user.id == user.get('user')).select().first()
         user["icon"] = "%s-%s.jpg" % \
-            (person.get('first_name').lower(), person.get('last_name').lower()) if person else "Unknown"
+                       (person.get('first_name').lower(), person.get('last_name').lower()) if person else "Unknown"
         user["full_name"] = "%s %s" % \
-            (person.get('first_name'), person.get('last_name')) if person else "Unknown"
+                            (person.get('first_name'), person.get('last_name')) if person else "Unknown"
     return dict(users=users)
 
 

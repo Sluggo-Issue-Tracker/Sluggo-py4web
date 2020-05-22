@@ -15,23 +15,8 @@
                     <textarea v-model="ticket.ticket_text" class="textarea is-fullwidth" placeholder="Enter new ticket here"></textarea>
                 </div>
                 <div class="field">
-                    <div class="is-pulled-left">
-                        <span class="subtitle">Priority</span>
-                        <div class="select">
-                            <select v-model="ticket.ticket_priority">
-                                <option v-for="priority in priority_list">{{priority}}</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="is-pulled-right">
-                        <span class="subtitle">Status</span>
-                        <div class="select">
-                            <select v-model="ticket.ticket_status">
-                                <option v-for="status in status_list">{{status}}</option>
-                            </select>
-                        </div>
-                    </div>
+                    <span class="subtitle">Tags</span>
+                    <v-select multiple placeholder="Choose some interests" v-model="selected" :options="options" />
                 </div>
             </div>
         </section>
