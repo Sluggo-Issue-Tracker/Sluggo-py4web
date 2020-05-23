@@ -37,15 +37,57 @@ let init = (app) => {
     };
 
     app.show_user = (user_index) => {
-        let t = app.vue.users[user_index];
-        app.vue.current_user = t;
-        app.vue.current_name = t['full_name'];
-        app.vue.current_tag = t['tags_list'];
-        app.vue.current_bio = t['bio'];
+        let user = app.vue.users[user_index];
+        if(user !== false) {
+            app.data.current_user = {
+                _idx: user._idx,
+                id: user.id,
+                bio: user.bio,
+                full_name: user.full_name,
+                url: user.url,
+                role: user.role,
+                tags_list: user.tags_list,
+                user_email: user.user_email
+            };
+        }
         app.goto('user');
     };
 
 
+    app.resetCurrent = () => {
+        app.show_user(app.vue.current_user._idx);
+    };
+
+
+    app.updateCurrent = () => {
+        let user = app.data.current_user;
+
+        if(user !== false) {
+
+            axios.post(edit_user_url, { bio : user.bio,
+                                        role : user.role,
+                                        tags_list : user.tags_list,
+                                        full_name : user.full_name,
+                                        id : user.id }).then((response) => {
+                let old_user = app.data.users[user._idx];
+
+                old_user.bio = user.bio,
+                old_user.full_name = user.full_name,
+                old_user.url = user.url,
+                old_user.role = user.role,
+                old_user.tags_list = user.tags_list,
+                old_user.user_email = user.user_email
+
+                app.reindex(app.data.users);
+            }).catch((error) => {
+                console.log(error);
+            });
+        }
+    };
+
+    app.checkUser = () => {
+        return app.vue.user_email == app.vue.current_user.user_email;
+    };
 
 
     // We form the dictionary of all methods, so we can assign them
@@ -53,7 +95,9 @@ let init = (app) => {
     app.methods = {
         goto: app.goto,
         show_user: app.show_user,
-
+        updateCurrent: app.updateCurrent,
+        resetCurrent: app.resetCurrent,
+        checkUser: app.checkUser,
     };
 
     // This creates the Vue instance.

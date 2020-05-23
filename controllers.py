@@ -128,6 +128,7 @@ def users():
     return dict(
         get_users_url = URL('users/get_users', signer=signed_url),
         get_icons_url = URL('users/get_icons', signer=signed_url),
+        edit_user_url = URL('edit_user', signer=signed_url),
         user_email = get_user_email(),
         username = get_user_title(),
         user=auth.get_user()
@@ -189,9 +190,30 @@ def get_users():
         user["full_name"] = "%s %s" % \
             (person.get('first_name'), person.get('last_name')) if person else "Unknown"
         user['tags_list'] = get_user_tags_by_name(user)
+        user['user_email'] = person.get('email')
+        print(person.get('user_email'))
 
 
     return dict(users=users,tags=get_tags_list())
+
+
+@action('edit_user', method="POST")
+@action.uses(signed_url.verify(), auth.user, db)
+def edit_user():
+    print(request.json)
+    row = db(db.users.id == request.json.get('id')).select().first()
+    user = db(db.auth_user.id == row.get('user')).select().first()
+
+    row.update_record(bio=request.json.get('bio'),
+                      role=request.json.get('role'))
+
+    names = request.json.get('full_name').split()
+
+    user.update_record(first_name=names[0], last_name=names[1])
+    return "ok"
+
+
+
 
 
 @action('users/get_icons')

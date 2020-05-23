@@ -43,16 +43,16 @@
                      <div class="field">
                         <p class="title is-size-4">Name</p>
                         <div class="control">
-                           <input v-if="username==current_name" v-model="current_name" class="input is-hovered" type="text">
-                           <input v-if="username!==current_name" disabled v-model="current_name" class="input is-hovered" type="text">
+                           <input v-if="checkUser()" v-model="current_user.full_name" class="input is-hovered" type="text">
+                           <input v-else disabled v-model="current_user.full_name" class="input is-hovered" type="text">
                         </div>
                      </div>
 
                      <!-- Proj Field -->
                      <p class="title is-size-4">Project Tags</p>
                      <div class="field">
-                        <v-select v-if="username==current_name" taggable multiple push-tags v-model="current_tag" :options="options"> </v-select>
-                        <v-select disabled v-if="username!==current_name" multiple v-model="current_tag"> </v-select>
+                        <v-select v-if="checkUser()" taggable multiple push-tags v-model="current_user.tags_list" :options="options"> </v-select>
+                        <v-select v-else disabled multiple v-model="current_user.tags_list"> </v-select>
                      </div>
 
                      <!-- Role Field -->
@@ -70,11 +70,15 @@
                      <div class="field">
                         <p class="title is-size-4">Bio</p>
                         <div class="control">
-
-                           <textarea v-if="username==current_name" v-model="current_bio" class="textarea" rows="10"></textarea>
-                           <textarea v-if="username!==current_name" disabled v-model="current_bio" class="textarea" rows="10"></textarea>
+                           <textarea v-if="checkUser()" v-model="current_user.bio" class="textarea" rows="10"></textarea>
+                           <textarea v-else disabled v-model="current_user.bio" class="textarea" rows="10"></textarea>
                         </div>
                      </div>
+                     <div class="buttons is-right" v-if="checkUser()">
+                        <button class="button is-primary" @click="updateCurrent">Update</button>
+                        <button class="button is-warning" @click="resetCurrent">Cancel</button>
+                     </div>
+
                   </div>
                </div>
             </div>
@@ -88,6 +92,7 @@
 <script>
   let get_users_url = "[[=XML(get_users_url)]]";
   let get_icon_url = "[[=XML(get_icons_url)]]";
+  let edit_user_url = "[[=XML(edit_user_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";
   let username = "[[=XML(username)]]";
