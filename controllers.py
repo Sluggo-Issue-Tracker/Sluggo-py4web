@@ -34,7 +34,7 @@ from py4web.utils.form import Form, FormStyleBulma
 from yatl.helpers import A
 from pydal.validators import *
 from . common import db, session, T, cache, auth, signed_url
-from . models import get_user_email, get_user_title, get_user_name, get_user, get_time, get_tags_list, get_user_tags_by_name
+from . models import get_user_email, get_user_title, get_user_name, get_user, get_time, get_tags_list, get_user_tag_by_name
 
 
 
@@ -163,14 +163,14 @@ def add_user():
 
     for tag in tags:
         # get the tag if it is stored in database
-        t_id = db(db.global_tag.tag_name == tag).select().first()
+        t_id = db(db.global_tag.tag_name == tag.lower()).select().first()
 
         if(t_id == None):
             # if tag isn't stored in database, create new tags
-            t_id = db.global_tag.insert(tag_name=tag)
+            t_id = db.global_tag.insert(tag_name=tag.lower())
 
         # now we insert tags in this many to many relationship
-        db.user_tags.insert(
+        db.user_tag.insert(
             user_id=u_id,
             tag_id=t_id
         )
@@ -189,9 +189,8 @@ def get_users():
             (person.get('first_name').lower(), person.get('last_name').lower()) if person else "Unknown"
         user["full_name"] = "%s %s" % \
             (person.get('first_name'), person.get('last_name')) if person else "Unknown"
-        user['tags_list'] = get_user_tags_by_name(user)
+        user['tags_list'] = get_user_tag_by_name(user)
         user['user_email'] = person.get('email')
-        print(person.get('user_email'))
 
 
     return dict(users=users,tags=get_tags_list())
@@ -200,7 +199,6 @@ def get_users():
 @action('edit_user', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def edit_user():
-    print(request.json)
     row = db(db.users.id == request.json.get('id')).select().first()
     user = db(db.auth_user.id == row.get('user')).select().first()
 
@@ -208,6 +206,24 @@ def edit_user():
                       role=request.json.get('role'))
 
     names = request.json.get('full_name').split()
+
+
+    tags = request.json.get('tags_list')
+
+    for tag in tags:
+        # get the tag if it is stored in database
+        t_id = db(db.global_tag.tag_name == tag.lower()).select().first()
+
+        if(t_id == None):
+            # if tag isn't stored in database, create new tags
+            t_id = db.global_tag.insert(tag_name=tag.lower())
+
+
+        # now we insert tags in this many to many relationship
+        db.user_tag.update_or_insert((db.user_tag.user_id == request.json.get('id')) & (db.user_tag.tag_id == t_id),
+            user_id=request.json.get('id'),
+            tag_id=t_id
+        )
 
     user.update_record(first_name=names[0], last_name=names[1])
     return "ok"

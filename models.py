@@ -40,12 +40,12 @@ def get_tags_list():
     tags = db(db.global_tag).select().as_list()
     list = []
     for tag in tags:
-        list.append(tag.get('tag_name'))
+        list.append(tag.get('tag_name').capitalize())
     return list
 
 
-def get_user_tags_by_name(user):
-    tags = db(db.user_tags.user_id == user.get('id')).select(db.global_tag.tag_name, left=db.global_tag.on(db.global_tag.id == db.user_tags.tag_id))
+def get_user_tag_by_name(user):
+    tags = db(db.user_tag.user_id == user.get('id')).select(db.global_tag.tag_name, left=db.global_tag.on(db.global_tag.id == db.user_tag.tag_id))
     list = []
     for tag in tags:
         list.append(tag.get('tag_name').capitalize())
@@ -102,7 +102,7 @@ db.define_table(
 )
 
 db.define_table(
-    'user_tags',
+    'user_tag',
     Field('user_id', 'reference users'),
     Field('tag_id', 'reference global_tag'),
 )
@@ -113,4 +113,6 @@ db.define_table(
 # TODO requirements for forms (again, is this even relevant?)
 
 db.sub_tickets.ondelete = 'NO ACTION' # We don't want relationships to affect tickets
+db.ticket_tag.ondelete = 'NO ACTION'
+db.user_tag.ondelete = 'NO ACTION'
 db.commit()

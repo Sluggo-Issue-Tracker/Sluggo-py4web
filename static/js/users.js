@@ -14,10 +14,10 @@ let init = (app) => {
         users: [],
         page: 'list',
         current_user: {},
-        current_name: "",
-        current_tag: [],
-        current_bio: "",
         options: [],
+        is_pending: false,
+        error: false,
+        success: false,
 
         // Complete.
     };
@@ -63,14 +63,16 @@ let init = (app) => {
         let user = app.data.current_user;
 
         if(user !== false) {
-
+            app.vue.is_pending = true;
             axios.post(edit_user_url, { bio : user.bio,
                                         role : user.role,
                                         tags_list : user.tags_list,
                                         full_name : user.full_name,
-                                        id : user.id }).then((response) => {
+                                        id : user.id })
+            .then((response) => {
                 let old_user = app.data.users[user._idx];
-
+                app.vue.is_pending = false;
+                app.show_value(false);
                 old_user.bio = user.bio,
                 old_user.full_name = user.full_name,
                 old_user.url = user.url,
@@ -81,9 +83,36 @@ let init = (app) => {
                 app.reindex(app.data.users);
             }).catch((error) => {
                 console.log(error);
+                app.show_value(true);
             });
         }
     };
+
+
+    app.sleep = (ms) => {
+            return function (x) {
+                return new Promise(resolve => setTimeout(() => resolve(x), ms));
+            };
+        }
+
+    app.show_value = (flag) => {
+        // Flashes an error if an error occurred.
+
+        if(flag === true) {
+            app.vue.error = true;
+            app.vue.success = false;
+        }
+        else {
+            app.vue.error = false;
+            app.vue.success = true;
+        }
+        app.vue.is_pending = false;
+        app.sleep(1000)()
+            .then(() => {
+                app.vue.error = false;
+                app.vue.success = false;
+            });
+    }
 
     app.checkUser = () => {
         return app.vue.user_email == app.vue.current_user.user_email;

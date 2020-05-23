@@ -75,8 +75,14 @@
                         </div>
                      </div>
                      <div class="buttons is-right" v-if="checkUser()">
-                        <button class="button is-primary" @click="updateCurrent">Update</button>
-                        <button class="button is-warning" @click="resetCurrent">Cancel</button>
+                        <span v-if="success" class="has-text-primary"> <i class="fa fa-check-square-o fa-fw"></i> </span>
+                        <span v-if="error" class="has-text-danger"> <i class="fa fa fa-exclamation-triangle"></i> </span>
+                        <button class="button is-primary" :class="is_pending ? 'is-loading' : ''" @click="updateCurrent">
+                           Update
+                        </button>
+                        <button class="button is-warning" @click="resetCurrent">
+                           Cancel
+                        </button>
                      </div>
 
                   </div>
