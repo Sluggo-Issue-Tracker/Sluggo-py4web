@@ -11,12 +11,12 @@
                     <input type="text" v-model="ticket.ticket_title" class="input" placeholder="Enter new title here">
                 </div>
                 <div class="field">
-                    <span class="subtitle">Description</span>
-                    <textarea v-model="ticket.ticket_text" class="textarea is-fullwidth" placeholder="Enter new ticket here"></textarea>
+                    <span class="subtitle">Tags</span>
+                    <v-select multiple placeholder="Choose some interests" v-model="selected" :options="options"></v-select>
                 </div>
                 <div class="field">
-                    <span class="subtitle">Tags</span>
-                    <v-select multiple placeholder="Choose some interests" v-model="selected" :options="options" />
+                    <span class="subtitle">Description</span>
+                    <textarea v-model="ticket.ticket_text" class="textarea is-fullwidth" placeholder="Enter new ticket here"></textarea>
                 </div>
             </div>
         </section>

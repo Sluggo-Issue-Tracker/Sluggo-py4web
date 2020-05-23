@@ -1,4 +1,7 @@
+Vue.component('v-select', VueSelect.VueSelect);
+
 (function() {
+
     let ticket_modal = {
         props: {'ticket': Object},
         data: null,
@@ -12,6 +15,8 @@
             status_list: [],
             selected: [],
             options: ["lorem", "ipsum", "placeholder"],
+            tagList: ["poop"],
+            tagString: ["Tag"]
         };
 
         ticket_modal.methods.load.call(data);
