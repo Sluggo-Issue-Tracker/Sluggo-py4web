@@ -1,6 +1,6 @@
 (function() {
     let dropdown = {
-        props: {'list': Array, 'result': String, 'placeholder': String},
+        props: {'list': Array, 'placeholder': String},
         data: null,
         methods: {}
     };
@@ -15,7 +15,7 @@
     };
 
     dropdown.methods.select = function (selection) {
-        this.result = selection;
+        this.$emit('update', selection);
         if(selection.length === 0)
             selection = this.placeholder;
         this.selected = selection;

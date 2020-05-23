@@ -46,6 +46,7 @@ let init = (app) => {
         placeHolder: "tag",
         ticket_tags: [],
         get_tags: "",
+        selected_tags: [],
         // Complete.
     };
 
@@ -60,12 +61,11 @@ let init = (app) => {
     app.submit_add = () => {
         let error = false;
         let ticket = app.data.selected_ticket;
-        console.log(ticket);
         if(app.check_ticket_text(ticket)) {
             // do a post request
-            axios.post(add_tickets_url, ticket).then((response) => { // TODO: Sam 5 / 22 / 2020 implement tag submission
-                ticket.id = response.data.id;
-                app.data.tickets.unshift(ticket);
+            axios.post(add_tickets_url, ticket).then((response) => {
+                console.log(response.data.ticket);
+                app.data.tickets.unshift(response.data.ticket);
                 app.reindex(app.data.tickets);
                 app.data.showModal = false;
                 app.data.submitCallback = null;
@@ -150,12 +150,29 @@ let init = (app) => {
         return a;
     };
 
+    app.change_tag_search = (tag) => {
+        this.searchTag = tag;
+        app.filter_list();
+    };
+
     app.filter_list = () => {
         app.data.tickets = app.data.master.filter((ticket) => {
-            return ticket.ticket_text.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
-                   ticket.ticket_title.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
-                   ticket.ticket_status.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
-                   ticket.ticket_priority.toLowerCase().includes(app.data.searchText.trim().toLowerCase());
+            if(ticket.ticket_text.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
+               ticket.ticket_title.toLowerCase().includes(app.data.searchText.trim().toLowerCase())) {
+                return true;
+            }
+
+            if(app.data.selected_tags.filter(x => ticket.tag_list.includes(x)).length > 0)
+                return true;
+
+            for(tag of ticket.tag_list) {
+                if(tag.tag_name.toLowerCase().includes(app.data.searchText.trim().toLowerCase())) {
+                    return true;
+                }
+            }
+
+            return false;
+
         });
     };
 
@@ -170,6 +187,7 @@ let init = (app) => {
         close_modal: app.close_modal,
         submit_add: app.submit_add,
         filter_list: app.filter_list,
+        change_tag_search: app.change_tag_search
     };
 
     // This creates the Vue instance.

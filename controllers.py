@@ -57,6 +57,7 @@ def tickets():
     # TODO: implement homepage logics
     redirect(URL('tickets'))
 
+
 # --------------------------------------------------- TICKETS --------------------------------------------------- #
 @action('tickets')
 @action.uses('tickets.html', signed_url, auth.user)
@@ -81,6 +82,7 @@ def get_tags():
     tags = db(db.global_tag).select(orderby=db.global_tag.tag_name).as_list()
     return dict(tags=tags)
 
+
 @action('get_tickets')
 @action.uses(signed_url.verify(), auth.user)
 def get_tickets():
@@ -90,8 +92,10 @@ def get_tickets():
     for ticket in tickets:
         ticket["ticket_author"] = get_user_name(ticket)
 
-        ticket["tag_list"] = db(db.ticket_tag.ticket_id == ticket.get("id")).select(db.global_tag.tag_name,
-                                left=db.global_tag.on(db.global_tag.id == db.ticket_tag.tag_id)).as_list()
+        ticket["tag_list"] = db(db.ticket_tag.ticket_id == ticket.get("id")).select \
+            (db.global_tag.tag_name,
+             left=db.global_tag.on(
+                 db.global_tag.id == db.ticket_tag.tag_id)).as_list()
 
     return dict(tickets=tickets, ticket_tags=ticket_tags)
 
@@ -104,11 +108,18 @@ def add_tickets():
         ticket_text=request.json.get('ticket_text'),
     )
 
+    print(request.json.get('tag_list'))
+
     for tag in request.json.get('tag_list'):
         global_tag = db(db.global_tag.tag_name == tag.get('tag_name')).select(db.global_tag.id).first()
         db.ticket_tag.insert(ticket_id=ticket_id, tag_id=global_tag.id)
 
-    return dict(id=ticket_id)
+    ticket = db(db.tickets.id == ticket_id).select().as_list()
+
+    ticket[0]["tag_list"] = request.json.get('tag_list')
+
+    return dict(ticket=ticket[0])  # return the record
+
 
 @action('add_ticket_tag', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
@@ -122,6 +133,7 @@ def add_ticket_tag():
             db.ticket_tag.insert(tag_id=tag_id, ticket_id=ticket_id)
 
     return 'ok'
+
 
 @action('edit_ticket', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
