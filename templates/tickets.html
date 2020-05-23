@@ -34,6 +34,7 @@
   </section>
 
   <ticket-modal v-if="showModal" v-bind:ticket="selected_ticket"
+                v-bind:options="ticket_tags !== false ? ticket_tags.map(e => e.tag_name) : []"
                 @submit="submitCallback" @cancel="close_modal">
   </ticket-modal>
 
@@ -84,6 +85,7 @@
   let delete_tickets_url = "[[=XML(delete_tickets_url)]]";
   let edit_ticket_url = "[[=XML(edit_ticket_url)]]";
   let add_ticket_tag_url = "[[=XML(add_ticket_tag_url)]]";
+  let get_tags_url = "[[=XML(get_tags_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";
   let username = "[[=XML(username)]]";

@@ -57,7 +57,6 @@ def tickets():
     # TODO: implement homepage logics
     redirect(URL('tickets'))
 
-
 # --------------------------------------------------- TICKETS --------------------------------------------------- #
 @action('tickets')
 @action.uses('tickets.html', signed_url, auth.user)
@@ -68,11 +67,19 @@ def tickets():
         delete_tickets_url=URL('delete_tickets', signer=signed_url),
         edit_ticket_url=URL('edit_ticket', signer=signed_url),
         add_ticket_tag_url=URL('add_ticket_tag', signer=signed_url),
+        get_tags_url=URL('get_tags', signer=signed_url),
         user_email=get_user_email(),
         username=get_user_title(),
         user=auth.get_user()
     )
 
+
+# tag stuff
+@action('get_tags')
+@action.uses(signed_url.verify(), auth.user)
+def get_tags():
+    tags = db(db.global_tag).select(orderby=db.global_tag.tag_name).as_list()
+    return dict(tags=tags)
 
 @action('get_tickets')
 @action.uses(signed_url.verify(), auth.user)
@@ -82,9 +89,6 @@ def get_tickets():
 
     for ticket in tickets:
         ticket["ticket_author"] = get_user_name(ticket)
-
-        ticket["child_list"] = db(db.sub_tickets.parent_id == ticket.get("id")).select(db.tickets.ALL,
-                                left=db.tickets.on(db.tickets.id == db.sub_tickets.child_id)).as_list()
 
         ticket["tag_list"] = db(db.ticket_tag.ticket_id == ticket.get("id")).select(db.global_tag.tag_name,
                                 left=db.global_tag.on(db.global_tag.id == db.ticket_tag.tag_id)).as_list()
@@ -99,6 +103,11 @@ def add_tickets():
         ticket_title=request.json.get('ticket_title'),
         ticket_text=request.json.get('ticket_text'),
     )
+
+    for tag in request.json.get('tag_list'):
+        global_tag = db(db.global_tag.tag_name == tag.get('tag_name')).select(db.global_tag.id).first()
+        db.ticket_tag.insert(ticket_id=ticket_id, tag_id=global_tag.id)
+
     return dict(id=ticket_id)
 
 @action('add_ticket_tag', method="POST")

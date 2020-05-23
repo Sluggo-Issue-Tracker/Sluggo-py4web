@@ -45,6 +45,7 @@ let init = (app) => {
         tagString: "",
         placeHolder: "tag",
         ticket_tags: [],
+        get_tags: "",
         // Complete.
     };
 
@@ -52,13 +53,14 @@ let init = (app) => {
     app.add_ticket = () => {
         // this initializes the modal to handle adding
         app.data.submitCallback = app.submit_add;
-        app.data.selected_ticket = {show: false, tag_list: []};
+        app.data.selected_ticket = {show: false, tag_list: [], ticket_status: "To do", ticket_priority: "low"};
         app.data.showModal = true;
     };
 
     app.submit_add = () => {
         let error = false;
         let ticket = app.data.selected_ticket;
+        console.log(ticket);
         if(app.check_ticket_text(ticket)) {
             // do a post request
             axios.post(add_tickets_url, ticket).then((response) => { // TODO: Sam 5 / 22 / 2020 implement tag submission
