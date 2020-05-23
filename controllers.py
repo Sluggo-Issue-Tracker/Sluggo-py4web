@@ -246,3 +246,20 @@ def get_img():
         b64_image = base64.b64encode(img_bytes).decode('utf-8')
     # Returns the image bytes, base64 encoded, and with the correct prefix.
     return dict(imgbytes="data:image/jpeg;base64," + b64_image)
+
+# --------------------------------------------------- DEBUG --------------------------------------------------- #
+@action('debug/tag_testing')
+@action.uses('debug_tag_testing.html', signed_url, auth.user)
+def debug_tag_testing():
+    return dict(
+        get_tickets_url=URL('get_tickets', signer=signed_url),
+        add_tickets_url=URL('add_tickets', signer=signed_url),
+        delete_tickets_url=URL('delete_tickets', signer=signed_url),
+        edit_ticket_url=URL('edit_ticket', signer=signed_url),
+        get_users_url = URL('users/get_users', signer=signed_url),
+        get_icons_url = URL('users/get_icons', signer=signed_url),
+        edit_user_url = URL('edit_user', signer=signed_url),
+        user_email=get_user_email(),
+        username=get_user_title(),
+        user=auth.get_user()
+    )

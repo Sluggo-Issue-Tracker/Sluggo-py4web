@@ -1,0 +1,235 @@
+<!-- This is a debug file for testing the tag edit component -->
+<!-- Do not serve this file to users! -->
+
+[[extend 'layout.html']]
+
+<section class="section">
+    <div class="container">
+      <div class="title" style="text-align:center; color:red;">DEBUG TAG TESTING</div>
+    </div>
+  </section>
+
+<div id="vue-target">
+    <section class="section">
+      <div class="container">
+        <div class="title">Tickets</div>
+      </div>
+    </section>
+    
+    
+      <section class="section">
+        <div class="container">
+          <div class="columns">
+            <div class="column">
+              <div class="button">
+                <span><p>Tag &nbsp;</p></span>
+                <span><i class="fa fa-angle-down"></i></span>
+              </div>
+              <div class="dropdown is-active">
+                <div class="dropdown-trigger">
+                  <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                    <span>Dropdown button</span>
+                    <span class="icon is-small">
+                      <i class="fa fa-angle-down" aria-hidden="true"></i>
+                    </span>
+                  </button>
+                </div>
+                <div class="dropdown-menu is-hidden" id="dropdown-menu" role="menu">
+                  <div class="dropdown-content">
+                    <a href="#" class="dropdown-item">
+                      Dropdown item
+                    </a>
+                    <a class="dropdown-item">
+                      Other dropdown item
+                    </a>
+                    <a href="#" class="dropdown-item is-active">
+                      Active dropdown item
+                    </a>
+                    <a href="#" class="dropdown-item">
+                      Other dropdown item
+                    </a>
+                    <hr class="dropdown-divider">
+                    <a href="#" class="dropdown-item">
+                      With a divider
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="button">
+                <span><p>Completion Status &nbsp;</p></span>
+                <span><i class="fa fa-angle-down"></i></span>
+              </div>
+              <div class="button">
+                <span><p>Assignment Status &nbsp;</p></span>
+                <span><i class="fa fa-angle-down"></i></span>
+              </div>
+            </div>
+            <div class="column">
+                <div class="field is-pulled-right">
+                  <div class="control has-icons-left">
+                    <span class="icon is-medium">
+                      <i class="fa fa-search"></i>
+                    </span>
+                    <input class="input" type="text" @input="filter_list" v-model="searchText" placeholder="Text input">
+                  </div>
+                </div>
+            </div>
+          </div>
+          <a @click.stop="add_ticket">
+            <i class="fa fa-plus fa-fw"></i> Add a ticket ...
+          </a>
+        </div>
+      </section>
+    
+      <ticket-modal v-if="showModal" v-bind:ticket="selected_ticket"
+                    @submit="submitCallback" @cancel="close_modal">
+      </ticket-modal>
+    
+    
+    
+      <!-- TODO: Samuel Schmidt 5 / 21 / 2020 move this into a vue component -->
+      <section class="section">
+        <div class="container" v-for="t in tickets">
+            <div class="card is-fullwidth">
+              <header class="card-header">
+                <p class="card-header-title">Issue {{t.id}} | #tag | {{t.ticket_title}} | {{t.ticket_status}}</p>
+                <a class="card-header-icon card-toggle" @click="t.show = !t.show">
+                  <i class="fa fa-angle-down" v-if="!t.show"></i>
+                  <i class="fa fa-angle-up" v-if="t.show"></i>
+                </a>
+              </header>
+              <div class="card-content" :class="{'is-hidden': !t.show}">
+                <div class="content">
+                  <div class="columns">
+                    <div class="column">
+                      <b class="is-bold">Description</b>
+                      <p>{{ t.ticket_text }}</p>
+                    </div>
+                    <div class="column is-1">
+                      <div class="thumbs is-size-4">
+                        <span class="has-text-danger is-pulled-right" @click="delete_ticket(t._idx)">
+                          <i class="fa fa-trash fa-fw"></i>
+                        </span>
+                        <span class="is-pulled-right" @click.stop="edit_ticket(t._idx)">
+                          <i class="fa fa-cog fa-fw"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+        </div>
+      </section>
+    </div>
+    <div class="section" id="vue-users">
+        <div class="container">
+     
+           <p class="title">Team Members</p>
+           <div class="columns">
+              <!-- Member Selection Panel -->
+              <div class="column is-4">
+     
+                 <!-- User Selection loop -->
+                 <article @click="show_user(user._idx)" v-for="user in users"
+                    :class="(current_user === user ? 'level notification has-background-grey-light' : 'level notification has-background-grey-lighter')" >
+                    <div class="level-item level-left">
+                       <div class="level-item">
+                          <img v-bind:src="user.url" width="80">
+                       </div>
+                       <div class="level-item">
+                          <p class= "subtitle is-5">{{user.full_name}}</p>
+                       </div>
+                    </div>
+                 </article>
+              </div>
+     
+              <!-- Right Side Column -->
+              <div class="column">
+                 <div v-if="page=='user'" class="box has-background-grey-lighter">
+     
+                    <div class="tile is-ancestor">
+                       <!-- Person Image -->
+                       <div class="tile is-vertical is-parent is-4">
+                          <figure class="image is-square">
+                             <img v-bind:src="current_user.url">
+                          </figure>
+                       </div>
+                       <!-- Text Fields -->
+                       <div class="tile is-parent is-vertical">
+     
+                          <!-- Name Field -->
+                          <div class="field">
+                             <p class="title is-size-4">Name</p>
+                             <div class="control">
+                                <input v-if="checkUser()" v-model="current_user.full_name" class="input is-hovered" type="text">
+                                <input v-else disabled v-model="current_user.full_name" class="input is-hovered" type="text">
+                             </div>
+                          </div>
+     
+                          <!-- Proj Field -->
+                          <p class="title is-size-4">Project Tags</p>
+                          <div class="field">
+                             <v-select v-if="checkUser()" taggable multiple push-tags v-model="current_user.tags_list" :options="options"> </v-select>
+                             <v-select v-else disabled multiple v-model="current_user.tags_list"> </v-select>
+                          </div>
+     
+                          <!-- Role Field -->
+                          <div class="field">
+                             <p class="title is-size-4">Role</p>
+                             <div class="select">
+                                <select disabled>
+                                   <option>{{current_user.role}}</option>
+                                   <option>With options</option>
+                                </select>
+                             </div>
+                          </div>
+     
+                          <!-- Bio Field -->
+                          <div class="field">
+                             <p class="title is-size-4">Bio</p>
+                             <div class="control">
+                                <textarea v-if="checkUser()" v-model="current_user.bio" class="textarea" rows="10"></textarea>
+                                <textarea v-else disabled v-model="current_user.bio" class="textarea" rows="10"></textarea>
+                             </div>
+                          </div>
+                          <div class="buttons is-right" v-if="checkUser()">
+                             <span v-if="success" class="has-text-primary"> <i class="fa fa-check-square-o fa-fw"></i> </span>
+                             <span v-if="error" class="has-text-danger"> <i class="fa fa fa-exclamation-triangle"></i> </span>
+                             <button class="button is-primary" :class="is_pending ? 'is-loading' : ''" @click="updateCurrent">
+                                Update
+                             </button>
+                             <button class="button is-warning" @click="resetCurrent">
+                                Cancel
+                             </button>
+                          </div>
+     
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+     </div>
+    [[block page_scripts]]
+    <!-- Loads the index-specific js for Vue -->
+    <script>
+      let get_tickets_url = "[[=XML(get_tickets_url)]]";
+      let add_tickets_url = "[[=XML(add_tickets_url)]]";
+      let delete_tickets_url = "[[=XML(delete_tickets_url)]]";
+      let edit_ticket_url = "[[=XML(edit_ticket_url)]]";
+      let get_users_url = "[[=XML(get_users_url)]]";
+        let get_icon_url = "[[=XML(get_icons_url)]]";
+        let edit_user_url = "[[=XML(edit_user_url)]]";
+      // Complete with other URLs you need.
+      let user_email = "[[=XML(user_email)]]";
+      let username = "[[=XML(username)]]";
+    </script>
+    <script src="components/ticket_modal/ticket_modal.js"></script>
+    <script src="js/debug_tag_testing_ticket.js"></script>
+    <script src="js/vue-select.min.js"></script>
+    <script src="js/debug_tag_testing_users.js"></script>
+      
+    [[end]]
+    
