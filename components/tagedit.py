@@ -3,6 +3,8 @@ from yatl.helpers import XML
 from py4web.utils.url_signer import URLSigner
 from py4web.core import Fixture
 
+from ..common import db, Field, auth
+
 class TagEdit(Fixture):
 
     TAGEDIT = '<tagedit url="{url}" callback_url="{callback_url}"></tagedit>'
@@ -36,13 +38,13 @@ class TagEdit(Fixture):
             get_applied_url=URL(self.get_applied_url, id, signer=self.signer),
             callback_url=URL(self.set_url, id, signer=self.signer)))
 
-    def get_available_tags():
-        # TODO: Implementation for available tags is universal; goes here!
+    def get_available_tags(self):
+        # Query db for tags
+        return dict(tags=db(db.global_tag).select().as_list()) #untested
+
+    def get_applied_tags(self, id=None):
         return dict(tags=[])
 
-    def get_applied_tags():
-        return dict(tags=[])
-
-    def set_tags():
+    def set_tags(self, id=None):
         abort(code=500, text="Attempted to call set tags on a generic TagEdit component")
         return
