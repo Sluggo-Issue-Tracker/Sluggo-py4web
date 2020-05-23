@@ -129,7 +129,7 @@ let init = (app) => {
             return user.full_name.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
                    user.role.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
                    user.bio.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
-                   user.tags_list.map(v => v.toLowerCase()).includes(app.data.searchText.trim().toLowerCase());
+                   user.tags_list.filter(v => v.toLowerCase().includes(app.data.searchText.trim().toLowerCase())).length > 0;
         });
     };
 
