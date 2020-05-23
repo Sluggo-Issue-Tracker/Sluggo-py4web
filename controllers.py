@@ -43,6 +43,7 @@ from . models import get_user_email, get_user_title, get_user_name, get_user, ge
 def clean():
     db(db.users).delete()
     db(db.tickets).delete()
+    db(db.global_tag).delete()
     return "ok"
 
 # MARK: Index
@@ -145,7 +146,9 @@ def create_user():
     return dict(
         add_user_url = URL('add_user', signer=signed_url),
         user=auth.get_user(),
-        username = get_user_title()
+        username = get_user_title(),
+        admin=db(db.users).isempty(),
+        tags=get_tags_list()
     )
 
 
@@ -209,8 +212,24 @@ def edit_user():
 
 
     tags = request.json.get('tags_list')
+    old_tags = get_user_tag_by_name(row)
 
-    for tag in tags:
+    missing = set(old_tags).difference(tags)
+    added = set(tags).difference(old_tags)
+
+    # these tags are to be deleted from the user
+    for tag in missing:
+        # get the tag if it is stored in database
+        t_id = db(db.global_tag.tag_name == tag.lower()).select().first()
+
+        if(t_id == None):
+            # if tag isn't stored in database, create new tags
+            t_id = db.global_tag.insert(tag_name=tag.lower())
+
+        db((db.user_tag.user_id == request.json.get('id')) & (db.user_tag.tag_id == t_id)).delete()
+
+    # these tags are to be added to the user
+    for tag in added:
         # get the tag if it is stored in database
         t_id = db(db.global_tag.tag_name == tag.lower()).select().first()
 

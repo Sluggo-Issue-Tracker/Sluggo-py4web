@@ -2,16 +2,20 @@
 <div id="vue-target">
     <section class="section">
         <div class="title">
-            Hello [[=username]]
+            Hello {{username}}
         </div>
         <p class="subtitle">
             Welcome to Sluggo! As this is your first time logging in, please select which tags you are interested in (you can change this later) and fill out a Bio.
+        </p>
+        <p v-if="admin" class="subtitle has-text-danger">
+            Since you are the first user you have been given the rank of Admin, feel free to create new tags, only you will be able to make tags currently.
         </p>
         <div class="add">
           <div class="is-fullwidth">
             <div class="field">
                 <span class="subtitle">Tags</span>
-                <v-select multiple placeholder="Choose some interests" v-model="selected" :options="options" />
+                <v-select v-if="!admin" multiple placeholder="Choose some interests" v-model="selected" :options="options"> </v-select>
+                <v-select v-if="admin" taggable multiple push-tags placeholder="Choose some interests" v-model="selected" :options="options"> </v-select>
             </div>
             <div class="field">
                 <span class="subtitle">Bio</span>
@@ -30,8 +34,13 @@
 [[block page_scripts]]
 <!-- Loads the index-specific js for Vue -->
 <script src="js/vue-select.min.js"></script>
-<script src="js/creation.js"></script>
 <script>
     let add_user_url = "[[=XML(add_user_url)]]";
+    let username = "[[=XML(username)]]";
+    let admin = "[[=admin]]";
+    let tags = [[=XML(tags)]];
 </script>
+
+<script src="js/creation.js"></script>
+
 [[end]]

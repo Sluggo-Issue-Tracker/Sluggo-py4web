@@ -10,10 +10,12 @@ let init = (app) => {
 
     // This is the Vue data.
     app.data = {
+        username: username,
         selected: [],
-         bio_text: "",
-         options: ['admin', 'business', 'systems', 'openCV'],
-         bio_empty: false,
+        bio_text: "",
+        options: tags,
+        bio_empty: false,
+        admin: admin === "True" ? true : false,
 
         // Complete.
     };
