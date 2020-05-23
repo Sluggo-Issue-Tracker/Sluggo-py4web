@@ -43,41 +43,23 @@
                      <div class="field">
                         <p class="title is-size-4">Name</p>
                         <div class="control">
-                           <input v-model="current_name" class="input is-hovered" type="text">
+                           <input v-if="username==current_name" v-model="current_name" class="input is-hovered" type="text">
+                           <input v-if="username!==current_name" disabled v-model="current_name" class="input is-hovered" type="text">
                         </div>
                      </div>
 
                      <!-- Proj Field -->
                      <p class="title is-size-4">Project Tags</p>
-                     <div class="field is-grouped">
-
-                        <div class="control">
-                           <div class="tags has-addons">
-                              <a class="tag is-danger">Software</a>
-                              <a class="tag is-delete"></a>
-                           </div>
-                        </div>
-
-                        <div class="control">
-                           <div class="tags has-addons">
-                              <a class="tag is-link">Admin</a>
-                              <a class="tag is-delete"></a>
-                           </div>
-                        </div>
-
-                        <div class="control">
-                           <div class="tags has-addons">
-                              <a class="tag is-warning">Business</a>
-                              <a class="tag is-delete"></a>
-                           </div>
-                        </div>
+                     <div class="field">
+                        <v-select v-if="username==current_name" taggable multiple push-tags v-model="current_tag" :options="options"> </v-select>
+                        <v-select disabled v-if="username!==current_name" multiple v-model="current_tag"> </v-select>
                      </div>
 
                      <!-- Role Field -->
                      <div class="field">
                         <p class="title is-size-4">Role</p>
                         <div class="select">
-                           <select>
+                           <select disabled>
                               <option>{{current_user.role}}</option>
                               <option>With options</option>
                            </select>
@@ -88,7 +70,9 @@
                      <div class="field">
                         <p class="title is-size-4">Bio</p>
                         <div class="control">
-                           <textarea v-model="current_bio" class="textarea" rows="10"></textarea>
+
+                           <textarea v-if="username==current_name" v-model="current_bio" class="textarea" rows="10"></textarea>
+                           <textarea v-if="username!==current_name" disabled v-model="current_bio" class="textarea" rows="10"></textarea>
                         </div>
                      </div>
                   </div>
@@ -108,5 +92,6 @@
   let user_email = "[[=XML(user_email)]]";
   let username = "[[=XML(username)]]";
 </script>
+<script src="js/vue-select.min.js"></script>
 <script src="js/users.js"></script>
 [[end]]

@@ -35,6 +35,23 @@ def time_str():
     time = get_time()
     return time.strftime("%m/%d/%Y %H:%M:%S %Z")
 
+
+def get_tags_list():
+    tags = db(db.global_tag).select().as_list()
+    list = []
+    for tag in tags:
+        list.append(tag.get('tag_name'))
+    return list
+
+
+def get_user_tags_by_name(user):
+    tags = db(db.user_tags.user_id == user.get('id')).select(db.global_tag.tag_name, left=db.global_tag.on(db.global_tag.id == db.user_tags.tag_id))
+    list = []
+    for tag in tags:
+        list.append(tag.get('tag_name').capitalize())
+    return list
+
+
 # TODO: Do we want separate projects to be included in the db?
 
 db.define_table(
@@ -62,30 +79,32 @@ db.define_table(
     Field('user_email', default=get_user_email),
     Field('ticket_title', 'text'),
     Field('ticket_text', 'text'),
-    Field('ticket_status'),
-    Field('ticket_priority'),
-    Field('created', 'text',
-                     default=time_str),
-    Field('activated', 'datetime', default=get_time),
-    Field('deactivated', 'datetime', default=get_time)
+    Field('created', 'datetime', default=get_time),
+    Field('started', 'datetime'),
+    Field('completed', 'datetime')
 )
 
+db.define_table(  # credit tdimhcsleumas for design
+    'sub_tickets',
+    Field('parent_id', 'reference tickets'),
+    Field('child_id', 'reference tickets')
+)
 
-db.define_table( # credit tdimhcsleumas for design
-    'ticket_rels',
-    Field('parent', 'reference tickets'),
-    Field('child', 'reference tickets')
+db.define_table( #
+    'global_tag',
+    Field('tag_name', 'text')
 )
 
 db.define_table(
-    'post_tag',
-    Field('Text')
+    'ticket_tag',
+    Field('ticket_id', 'reference tickets'),
+    Field('tag_id', 'reference global_tag')
 )
 
 db.define_table(
     'user_tags',
-    Field('tag'),
-    Field('user', 'reference users')
+    Field('user_id', 'reference users'),
+    Field('tag_id', 'reference global_tag'),
 )
 
 # TODO tags, roles, other fun things that require relationships
@@ -93,5 +112,5 @@ db.define_table(
 # TODO readables vs not readables (relevant? can we even use default forms?)
 # TODO requirements for forms (again, is this even relevant?)
 
-db.ticket_rels.ondelete = 'NO ACTION' # We don't want relationships to affect tickets
+db.sub_tickets.ondelete = 'NO ACTION' # We don't want relationships to affect tickets
 db.commit()

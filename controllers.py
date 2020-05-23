@@ -34,7 +34,7 @@ from py4web.utils.form import Form, FormStyleBulma
 from yatl.helpers import A
 from pydal.validators import *
 from . common import db, session, T, cache, auth, signed_url
-from . models import get_user_email, get_user_title, get_user_name, get_user, get_time
+from . models import get_user_email, get_user_title, get_user_name, get_user, get_time, get_tags_list, get_user_tags_by_name
 
 
 
@@ -53,7 +53,7 @@ def tickets():
     if user == None:
         redirect(URL('create_profile'))
         # TODO: is this ^ a comprehensive enough redirect?
-    
+
     return(dict(
         user_email=get_user_email(),
         username=get_user_title(),
@@ -152,14 +152,28 @@ def create_user():
 @action('add_user', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def add_user():
-    id = db.users.insert(
+    u_id = db.users.insert(
         role="admin" if db(db.users).isempty() else "member",
         bio=request.json.get('bio'),
         user=get_user(),
     )
+
     tags = request.json.get('tags')
+
     for tag in tags:
-        print(tag)
+        # get the tag if it is stored in database
+        t_id = db(db.global_tag.tag_name == tag).select().first()
+
+        if(t_id == None):
+            # if tag isn't stored in database, create new tags
+            t_id = db.global_tag.insert(tag_name=tag)
+
+        # now we insert tags in this many to many relationship
+        db.user_tags.insert(
+            user_id=u_id,
+            tag_id=t_id
+        )
+    return "ok"
 
 
 @action('users/get_users')
@@ -167,13 +181,17 @@ def add_user():
 def get_users():
     users = db(db.users).select().as_list()
 
+
     for user in users:
         person = db(db.auth_user.id == user.get('user')).select().first()
         user["icon"] = "%s-%s.jpg" % \
             (person.get('first_name').lower(), person.get('last_name').lower()) if person else "Unknown"
         user["full_name"] = "%s %s" % \
             (person.get('first_name'), person.get('last_name')) if person else "Unknown"
-    return dict(users=users)
+        user['tags_list'] = get_user_tags_by_name(user)
+
+
+    return dict(users=users,tags=get_tags_list())
 
 
 @action('users/get_icons')

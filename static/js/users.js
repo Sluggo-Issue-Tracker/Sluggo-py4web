@@ -1,3 +1,4 @@
+Vue.component('v-select', VueSelect.VueSelect);
 // This will be the object that will contain the Vue attributes
 // and be used to initialize it.
 let app = {};
@@ -14,8 +15,9 @@ let init = (app) => {
         page: 'list',
         current_user: {},
         current_name: "",
-        current_tag: "",
-        current_bio: ""
+        current_tag: [],
+        current_bio: "",
+        options: [],
 
         // Complete.
     };
@@ -38,7 +40,7 @@ let init = (app) => {
         let t = app.vue.users[user_index];
         app.vue.current_user = t;
         app.vue.current_name = t['full_name'];
-        app.vue.current_tag = "#software, #admin, #business";
+        app.vue.current_tag = t['tags_list'];
         app.vue.current_bio = t['bio'];
         app.goto('user');
     };
@@ -65,6 +67,7 @@ let init = (app) => {
         axios.get(get_users_url).then((result) => {
             var user_promises = [];
             let users = result.data.users;
+            app.vue.options = result.data.tags;
             app.reindex(users);
             for (let user of users) {
                 // We create an element in the images data structure.
