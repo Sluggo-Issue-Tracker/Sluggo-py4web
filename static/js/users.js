@@ -12,9 +12,11 @@ let init = (app) => {
         user_email: user_email,
         username: username,
         users: [],
+        master: [],
         page: 'list',
         current_user: {},
         options: [],
+        searchText: "",
         is_pending: false,
         error: false,
         success: false,
@@ -33,6 +35,9 @@ let init = (app) => {
 
     app.goto = (destination) => {
         app.vue.page = destination;
+        if(destination === "list") {
+            app.data.current_user = {};
+        }
         // app.vue.add_post_text = "";
     };
 
@@ -118,6 +123,15 @@ let init = (app) => {
         return app.vue.user_email == app.vue.current_user.user_email;
     };
 
+    app.filter_list = () => {
+        app.goto('list');
+        app.data.users = app.data.master.filter((user) => {
+            return user.full_name.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
+                   user.role.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
+                   user.bio.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
+                   user.tags_list.map(v => v.toLowerCase()).includes(app.data.searchText.trim().toLowerCase());
+        });
+    };
 
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
@@ -127,6 +141,7 @@ let init = (app) => {
         updateCurrent: app.updateCurrent,
         resetCurrent: app.resetCurrent,
         checkUser: app.checkUser,
+        filter_list: app.filter_list,
     };
 
     // This creates the Vue instance.
@@ -159,6 +174,7 @@ let init = (app) => {
                 });
                 user_promises.push(p);
             }
+            app.data.master = app.vue.users;
             Promise.all(user_promises).then((r) => {
                     app.vue.done = "All done";
                     console.log(r);

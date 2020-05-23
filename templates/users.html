@@ -5,15 +5,29 @@
 [[extend 'layout.html']]
 <div class="section" id="vue-users">
    <div class="container">
-
-      <p class="title">Team Members</p>
+      <div class="columns">
+         <div class="column is-4">
+            <p class="title">Team Members</p>
+         </div>
+         <div class="column">
+            <div class="field is-pulled-right">
+              <div class="control has-icons-left">
+                <span class="icon is-medium">
+                  <i class="fa fa-search"></i>
+                </span>
+                <input class="input" type="text" placeholder="Search Users" @input="filter_list" v-model="searchText">
+              </div>
+            </div>
+        </div>
+      </div>
       <div class="columns">
          <!-- Member Selection Panel -->
+
          <div class="column is-4">
 
             <!-- User Selection loop -->
-            <article @click="show_user(user._idx)" v-for="user in users"
-               :class="(current_user === user ? 'level notification has-background-grey-light' : 'level notification has-background-grey-lighter')" >
+            <article @click="show_user(user._idx)" v-for="user in users" class="level notification"
+               :class="(current_user._idx === user._idx ? ' has-background-grey-light' : 'has-background-grey-lighter')" >
                <div class="level-item level-left">
                   <div class="level-item">
                      <img v-bind:src="user.url" width="80">
