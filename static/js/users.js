@@ -44,10 +44,7 @@ let init = (app) => {
     app.show_user = (user_index) => {
         let user = app.data.users[user_index];
         if(user !== false) {
-            axios.get(show_user_url, { id: user.id })
-            .then((response) => {
-
-            });
+            window.location.href = "../user/" + user.id;
         }
         app.goto('user');
     };

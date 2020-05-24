@@ -27,9 +27,9 @@ def users():
     )
 
 
-@action('user')
+@action('user/<id>')
 @action.uses('specific_user.html', signed_url, auth.user)
-def user():
+def user(id=None):
     return dict(
 
         get_users_url = URL('users/get_users', signer=signed_url),
@@ -37,7 +37,8 @@ def user():
         edit_user_url = URL('edit_user', signer=signed_url),
         user_email = get_user_email(),
         username = get_user_title(),
-        user=auth.get_user()
+        user=auth.get_user(),
+        id=id
     )
 
 

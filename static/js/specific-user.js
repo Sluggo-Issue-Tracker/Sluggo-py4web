@@ -20,6 +20,7 @@ let init = (app) => {
         is_pending: false,
         error: false,
         success: false,
+        id: id,
 
         // Complete.
     };
@@ -35,30 +36,11 @@ let init = (app) => {
 
     app.goto = (destination) => {
         app.data.page = destination;
-        window.location.href = "../user";
         if(destination === "list") {
             app.data.current_user = {};
         }
         // app.data.add_post_text = "";
     };
-
-    app.show_user = (user_index) => {
-        let user = app.data.users[user_index];
-        if(user !== false) {
-            app.data.current_user = {
-                _idx: user._idx,
-                id: user.id,
-                bio: user.bio,
-                full_name: user.full_name,
-                url: user.url,
-                role: user.role,
-                tags_list: user.tags_list,
-                user_email: user.user_email
-            };
-        }
-        app.goto('user');
-    };
-
 
     app.resetCurrent = () => {
         app.show_user(app.data.current_user._idx);
@@ -138,7 +120,6 @@ let init = (app) => {
     // to the Vue app in a single blow.
     app.methods = {
         goto: app.goto,
-        show_user: app.show_user,
         updateCurrent: app.updateCurrent,
         resetCurrent: app.resetCurrent,
         checkUser: app.checkUser,
@@ -147,25 +128,17 @@ let init = (app) => {
 
     // This creates the Vue instance.
     app.vue = new Vue({
-        el: "#vue-abcd",
+        el: "#vue-user",
         data: app.data,
         methods: app.methods
     });
 
   app.init = () => {
-        axios.get(get_users_url).then((result) => {
-            var user_promises = [];
-            let users = result.data.users;
+        axios.get(show_user_url, {params: {"id": id).then((result) => {
+
+            let current_user = result.data.users;
             app.data.options = result.data.tags;
-            app.reindex(users);
-            for (let user of users) {
-                // We create an element in the images data structure.
-                // Note: it is SUPER important here to have the url attribute
-                // of img_el already defined.
-                let user_el = user;
-                app.data.users.push(user_el);
-                // We create a promise for when the image loads.
-                let p = axios.get(
+            let p = axios.get(
                     get_icon_url,
                     {params: {"img": user["icon"]}}).then((result) => {
                     // Puts the image URL.
@@ -173,13 +146,7 @@ let init = (app) => {
                     Vue.set(user_el, 'url', result.data.imgbytes);
                     return "ok";
                 });
-                user_promises.push(p);
-            }
             app.data.master = app.data.users;
-            Promise.all(user_promises).then((r) => {
-                    app.data.done = "All done";
-                    console.log(r);
-            });
         });
     };
 
