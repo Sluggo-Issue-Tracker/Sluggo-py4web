@@ -27,12 +27,12 @@ def users():
     )
 
 
-@action('user/<id>')
+@action('users/<id>')
 @action.uses('specific_user.html', signed_url, auth.user)
-def user(id=None):
+def get_user(id=None):
     return dict(
 
-        get_users_url = URL('users/get_users', signer=signed_url),
+        show_user_url = URL('users/show_user', signer=signed_url),
         get_icons_url = URL('users/get_icons', signer=signed_url),
         edit_user_url = URL('edit_user', signer=signed_url),
         user_email = get_user_email(),
@@ -102,6 +102,23 @@ def get_users():
 
 
     return dict(users=users,tags=get_tags_list())
+
+
+
+@action('users/show_user')
+@action.uses(signed_url.verify(), auth.user)
+def show_user():
+    id = request.params.id
+    user = db(db.users.id == id).select().first()
+    person = db(db.auth_user.id == user.get('user')).select().first()
+
+    user["icon"] = "%s-%s.jpg" % \
+                   (person.get('first_name').lower(), person.get('last_name').lower()) if person else "Unknown"
+    user["full_name"] = "%s %s" % \
+                        (person.get('first_name'), person.get('last_name')) if person else "Unknown"
+    user['tags_list'] = get_user_tag_by_name(user)
+    user['user_email'] = person.get('email')
+    return dict(user=user,tags=get_tags_list())
 
 
 @action('edit_user', method="POST")

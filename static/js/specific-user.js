@@ -11,12 +11,9 @@ let init = (app) => {
     app.data = {
         user_email: user_email,
         username: username,
-        users: [],
-        master: [],
-        page: 'list',
+        master: {},
         current_user: {},
         options: [],
-        searchText: "",
         is_pending: false,
         error: false,
         success: false,
@@ -43,7 +40,7 @@ let init = (app) => {
     };
 
     app.resetCurrent = () => {
-        app.show_user(app.data.current_user._idx);
+        window.location.href = "../users";
     };
 
 
@@ -134,19 +131,20 @@ let init = (app) => {
     });
 
   app.init = () => {
-        axios.get(show_user_url, {params: {"id": id).then((result) => {
+        axios.get(show_user_url, {params: {"id": id}}).then((result) => {
 
-            let current_user = result.data.users;
+            app.data.current_user = result.data.user;
+            console.log(app.data.current_user);
             app.data.options = result.data.tags;
             let p = axios.get(
                     get_icon_url,
-                    {params: {"img": user["icon"]}}).then((result) => {
+                    {params: {"img": "andrew-gavgavian.jpg"}}).then((result) => {
                     // Puts the image URL.
                     // See https://vuejs.org/v2/guide/reactivity.html#For-Objects
-                    Vue.set(user_el, 'url', result.data.imgbytes);
+                    Vue.set(app.data.current_user, 'url', result.data.imgbytes);
                     return "ok";
                 });
-            app.data.master = app.data.users;
+            app.data.master = app.data.current_user;
         });
     };
 

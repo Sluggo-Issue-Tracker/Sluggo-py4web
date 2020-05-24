@@ -44,7 +44,7 @@ let init = (app) => {
     app.show_user = (user_index) => {
         let user = app.data.users[user_index];
         if(user !== false) {
-            window.location.href = "../user/" + user.id;
+            window.location.href = "../users/" + user.id;
         }
         app.goto('user');
     };

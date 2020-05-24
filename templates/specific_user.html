@@ -3,7 +3,7 @@
 # Trimble-Pederson, All Rights Reserved-->
 
 [[extend 'layout.html']]
-<div class="section" id="vue-abcd">
+<div class="section" id="vue-user">
  <div class="container">
 
   <div class="tile is-ancestor">
@@ -71,8 +71,8 @@
 [[block page_scripts]]
 <!-- Loads the index-specific js for Vue -->
 <script>
-  let get_users_url = "[[=XML(get_users_url)]]";
   let get_icon_url = "[[=XML(get_icons_url)]]";
+  let show_user_url = "[[=XML(show_user_url)]]";
   let edit_user_url = "[[=XML(edit_user_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";
