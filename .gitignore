@@ -14,3 +14,4 @@ settings_private.py
 
 # ignore pycharm
 .idea
+/.project

@@ -1,3 +1,4 @@
+Vue.component('v-select', VueSelect.VueSelect);
 // This will be the object that will contain the Vue attributes
 // and be used to initialize it.
 let app = {};
@@ -11,11 +12,14 @@ let init = (app) => {
         user_email: user_email,
         username: username,
         users: [],
+        master: [],
         page: 'list',
         current_user: {},
-        current_name: "",
-        current_tag: "",
-        current_bio: ""
+        options: [],
+        searchText: "",
+        is_pending: false,
+        error: false,
+        success: false,
 
         // Complete.
     };
@@ -31,27 +35,113 @@ let init = (app) => {
 
     app.goto = (destination) => {
         app.vue.page = destination;
+        if(destination === "list") {
+            app.data.current_user = {};
+        }
         // app.vue.add_post_text = "";
     };
 
     app.show_user = (user_index) => {
-        let t = app.vue.users[user_index];
-        app.vue.current_user = t;
-        app.vue.current_name = t['full_name'];
-        app.vue.current_tag = "#software, #admin, #business";
-        app.vue.current_bio = t['bio'];
+        let user = app.vue.users[user_index];
+        if(user !== false) {
+            app.data.current_user = {
+                _idx: user._idx,
+                id: user.id,
+                bio: user.bio,
+                full_name: user.full_name,
+                url: user.url,
+                role: user.role,
+                tags_list: user.tags_list,
+                user_email: user.user_email
+            };
+        }
         app.goto('user');
     };
 
 
+    app.resetCurrent = () => {
+        app.show_user(app.vue.current_user._idx);
+    };
 
+
+    app.updateCurrent = () => {
+        let user = app.data.current_user;
+
+        if(user !== false) {
+            app.vue.is_pending = true;
+            axios.post(edit_user_url, { bio : user.bio,
+                                        role : user.role,
+                                        tags_list : user.tags_list,
+                                        full_name : user.full_name,
+                                        id : user.id })
+            .then((response) => {
+                let old_user = app.data.users[user._idx];
+                app.vue.is_pending = false;
+                app.show_value(false);
+                old_user.bio = user.bio,
+                old_user.full_name = user.full_name,
+                old_user.url = user.url,
+                old_user.role = user.role,
+                old_user.tags_list = user.tags_list,
+                old_user.user_email = user.user_email
+
+                app.reindex(app.data.users);
+            }).catch((error) => {
+                console.log(error);
+                app.show_value(true);
+            });
+        }
+    };
+
+
+    app.sleep = (ms) => {
+            return function (x) {
+                return new Promise(resolve => setTimeout(() => resolve(x), ms));
+            };
+        }
+
+    app.show_value = (flag) => {
+        // Flashes an error if an error occurred.
+
+        if(flag === true) {
+            app.vue.error = true;
+            app.vue.success = false;
+        }
+        else {
+            app.vue.error = false;
+            app.vue.success = true;
+        }
+        app.vue.is_pending = false;
+        app.sleep(1000)()
+            .then(() => {
+                app.vue.error = false;
+                app.vue.success = false;
+            });
+    }
+
+    app.checkUser = () => {
+        return app.vue.user_email == app.vue.current_user.user_email;
+    };
+
+    app.filter_list = () => {
+        app.goto('list');
+        app.data.users = app.data.master.filter((user) => {
+            return user.full_name.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
+                   user.role.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
+                   user.bio.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
+                   user.tags_list.filter(v => v.toLowerCase().includes(app.data.searchText.trim().toLowerCase())).length > 0;
+        });
+    };
 
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
         goto: app.goto,
         show_user: app.show_user,
-
+        updateCurrent: app.updateCurrent,
+        resetCurrent: app.resetCurrent,
+        checkUser: app.checkUser,
+        filter_list: app.filter_list,
     };
 
     // This creates the Vue instance.
@@ -65,6 +155,7 @@ let init = (app) => {
         axios.get(get_users_url).then((result) => {
             var user_promises = [];
             let users = result.data.users;
+            app.vue.options = result.data.tags;
             app.reindex(users);
             for (let user of users) {
                 // We create an element in the images data structure.
@@ -83,6 +174,7 @@ let init = (app) => {
                 });
                 user_promises.push(p);
             }
+            app.data.master = app.vue.users;
             Promise.all(user_promises).then((r) => {
                     app.vue.done = "All done";
                     console.log(r);

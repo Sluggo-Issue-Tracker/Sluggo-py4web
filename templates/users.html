@@ -5,15 +5,29 @@
 [[extend 'layout.html']]
 <div class="section" id="vue-users">
    <div class="container">
-
-      <p class="title">Team Members</p>
+      <div class="columns">
+         <div class="column is-4">
+            <p class="title">Team Members</p>
+         </div>
+         <div class="column">
+            <div class="field is-pulled-right">
+              <div class="control has-icons-left">
+                <span class="icon is-medium">
+                  <i class="fa fa-search"></i>
+                </span>
+                <input class="input" type="text" placeholder="Search Users" @input="filter_list" v-model="searchText">
+              </div>
+            </div>
+        </div>
+      </div>
       <div class="columns">
          <!-- Member Selection Panel -->
+
          <div class="column is-4">
 
             <!-- User Selection loop -->
-            <article @click="show_user(user._idx)" v-for="user in users"
-               :class="(current_user === user ? 'level notification has-background-grey-light' : 'level notification has-background-grey-lighter')" >
+            <article @click="show_user(user._idx)" v-for="user in users" class="level notification"
+               :class="(current_user._idx === user._idx ? ' has-background-grey-light' : 'has-background-grey-lighter')" >
                <div class="level-item level-left">
                   <div class="level-item">
                      <img v-bind:src="user.url" width="80">
@@ -43,41 +57,23 @@
                      <div class="field">
                         <p class="title is-size-4">Name</p>
                         <div class="control">
-                           <input v-model="current_name" class="input is-hovered" type="text">
+                           <input v-if="checkUser()" v-model="current_user.full_name" class="input is-hovered" type="text">
+                           <input v-else disabled v-model="current_user.full_name" class="input is-hovered" type="text">
                         </div>
                      </div>
 
                      <!-- Proj Field -->
                      <p class="title is-size-4">Project Tags</p>
-                     <div class="field is-grouped">
-
-                        <div class="control">
-                           <div class="tags has-addons">
-                              <a class="tag is-danger">Software</a>
-                              <a class="tag is-delete"></a>
-                           </div>
-                        </div>
-
-                        <div class="control">
-                           <div class="tags has-addons">
-                              <a class="tag is-link">Admin</a>
-                              <a class="tag is-delete"></a>
-                           </div>
-                        </div>
-
-                        <div class="control">
-                           <div class="tags has-addons">
-                              <a class="tag is-warning">Business</a>
-                              <a class="tag is-delete"></a>
-                           </div>
-                        </div>
+                     <div class="field">
+                        <v-select v-if="checkUser()" taggable multiple push-tags v-model="current_user.tags_list" :options="options"> </v-select>
+                        <v-select v-else disabled multiple v-model="current_user.tags_list"> </v-select>
                      </div>
 
                      <!-- Role Field -->
                      <div class="field">
                         <p class="title is-size-4">Role</p>
                         <div class="select">
-                           <select>
+                           <select disabled>
                               <option>{{current_user.role}}</option>
                               <option>With options</option>
                            </select>
@@ -88,9 +84,21 @@
                      <div class="field">
                         <p class="title is-size-4">Bio</p>
                         <div class="control">
-                           <textarea v-model="current_bio" class="textarea" rows="10"></textarea>
+                           <textarea v-if="checkUser()" v-model="current_user.bio" class="textarea" rows="10"></textarea>
+                           <textarea v-else disabled v-model="current_user.bio" class="textarea" rows="10"></textarea>
                         </div>
                      </div>
+                     <div class="buttons is-right" v-if="checkUser()">
+                        <span v-if="success" class="has-text-primary"> <i class="fa fa-check-square-o fa-fw"></i> </span>
+                        <span v-if="error" class="has-text-danger"> <i class="fa fa fa-exclamation-triangle"></i> </span>
+                        <button class="button is-primary" :class="is_pending ? 'is-loading' : ''" @click="updateCurrent">
+                           Update
+                        </button>
+                        <button class="button is-warning" @click="resetCurrent">
+                           Cancel
+                        </button>
+                     </div>
+
                   </div>
                </div>
             </div>
@@ -104,9 +112,11 @@
 <script>
   let get_users_url = "[[=XML(get_users_url)]]";
   let get_icon_url = "[[=XML(get_icons_url)]]";
+  let edit_user_url = "[[=XML(edit_user_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";
   let username = "[[=XML(username)]]";
 </script>
+<script src="js/vue-select.min.js"></script>
 <script src="js/users.js"></script>
 [[end]]
