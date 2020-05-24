@@ -46,6 +46,10 @@ def ticket_details(ticket_id=None):
         tickets_details_url=URL('ticket_details'),
         delete_tickets_url=URL('delete_ticket', signer=signed_url),
         get_all_tags=URL('get_tags', signer=signed_url),
+        delete_tag_url=URL('delete_tag', signer=signed_url),
+        user_email=get_user_email(),
+        username=get_user_title(),
+        user=auth.get_user()
     )
 
 
@@ -73,7 +77,6 @@ def get_tickets():
 @action('get_ticket_by_id/<ticket_id>')
 @action.uses(signed_url.verify(), auth.user)
 def get_ticket_by_id(ticket_id=None):
-
     ticket = db(db.tickets.id == ticket_id).select().as_list()[0]
 
     ticket["ticket_author"] = get_user_name(ticket)
@@ -164,3 +167,12 @@ def delete_tickets():
     if id is not None:
         db(db.tickets.id == id).delete()
         return "ok"
+
+
+@action('delete_tag', method="POST")
+@action.uses(signed_url.verify(), auth.user, db)
+def delete_tag():
+    tag_id = request.json.get("tag_id")
+    ticket_id = request.json.get("ticket_id")
+    handle = db((db.ticket_tag.tag_id == tag_id) & (db.ticket_tag.ticket_id == ticket_id)).delete()
+    return dict(handle=handle)

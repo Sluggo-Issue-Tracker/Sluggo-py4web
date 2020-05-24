@@ -1,10 +1,7 @@
 <div class="modal is-active">
     <div class="modal-background"></div>
-    <div class="modal-card" v-click-outside="close">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Ticket</p>
-        </header>
-        <section class="modal-card-body">
+    <div class="modal-content" v-click-outside="close">
+        <section class="image is-4by3">
             <div class="content">
                 <div class="field">
                     <span class="subtitle">Title</span>
@@ -18,11 +15,9 @@
                     <span class="subtitle">Description</span>
                     <textarea v-model="ticket.ticket_text" class="textarea is-fullwidth" placeholder="Enter new ticket here"></textarea>
                 </div>
+                <button class="button is-success" @click="submit">Save changes</button>
+                <button class="button" @click="close">Cancel</button>
             </div>
         </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" @click="submit">Save changes</button>
-            <button class="button" @click="close">Cancel</button>
-        </footer>
     </div>
 </div>

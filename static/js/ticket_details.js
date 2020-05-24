@@ -40,8 +40,9 @@ let init = (app) => {
         },
         new_ticket: {},
         show_modal: false,
-        options: ["hello"],
-        selected: [],
+        tag_options: ["hello"],
+        selected_tags: [],
+
         assigned: "No one has been assigned", // going to be the string for the assigned user
         edit: false,
     };
@@ -64,7 +65,7 @@ let init = (app) => {
 
     app.add_ticket = () => {
         axios.post(add_sub_ticket_url, app.data.new_ticket).then((response) => {
-           app.data.ticket.sub_tickets.unshift(response.data.ticket)
+           app.data.ticket.sub_tickets.unshift(response.data.ticket);
         }).catch((error) => {
             console.log(error);
         });
@@ -98,6 +99,30 @@ let init = (app) => {
         app.data.edit = false;
     };
 
+    app.remove_tag = (idx) => {
+        tag = app.data.selected_tags[idx];
+
+        if(tag !== false){
+            axios.post(delete_tag_url,{
+                tag_id: tag.id,
+                ticket_id: app.data.ticket.id
+            }).then((result) => {
+                console.log(result.data.handle);
+                app.data.selected_tags.splice(idx, 1);
+            }).catch((error) => {
+                console.log(error);
+            })
+        }
+    };
+
+    app.reindex = (list) => {
+        let i = 0;
+        for(let l of list) {
+            l._idx = i++;
+        }
+        return list;
+    };
+
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
@@ -108,6 +133,7 @@ let init = (app) => {
         redirect: app.redirect,
         do_edit: app.do_edit,
         submit_edit: app.submit_edit,
+        remove_tag: app.remove_tag
     };
 
     // This creates the Vue instance.
@@ -121,6 +147,12 @@ let init = (app) => {
     app.init = () => {
         axios.get(get_ticket_by_id_url).then((result) => {
             app.data.ticket = result.data.ticket;
+            app.data.selected_tags = app.data.ticket.tag_list;
+            app.reindex(app.data.selected_tags);
+            return axios.get(get_all_tags)
+        }).then((result) => {
+            app.data.tag_options = result.data.tags.map(e => e.tag_name);
+            app.reindex(app.data.tag_options)
         })
     };
 

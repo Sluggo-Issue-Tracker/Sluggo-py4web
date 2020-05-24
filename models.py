@@ -64,7 +64,7 @@ def get_ticket_tags_by_id(ticket_id):
         return None
 
     return db(db.ticket_tag.ticket_id == ticket_id).select \
-        (db.global_tag.tag_name,
+        (db.global_tag.ALL,
          left=db.global_tag.on(db.global_tag.id == db.ticket_tag.tag_id)).as_list()
 
 

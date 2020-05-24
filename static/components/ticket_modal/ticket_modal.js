@@ -42,5 +42,4 @@ Vue.component('v-select', VueSelect.VueSelect);
             ticket_modal.template = template.data;
             return ticket_modal;
         });
-
 })();

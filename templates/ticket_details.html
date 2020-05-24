@@ -2,13 +2,21 @@
 <div id="vue-target">
 
     <ticket-modal v-if="show_modal" v-bind:ticket="new_ticket"
-                  v-bind:options="options"
+                  v-bind:options="tag_options"
                   @submit="add_ticket" @cancel="close_modal">
     </ticket-modal>
     <section class="section">
         <div class="container">
             <div class="box">
-            <div class="title">{{ticket.ticket_title}} #{{ticket.id}}</div>
+            <div class="level">
+               <div class="level-left">
+                   <div class="level-item">
+                       <span class="title">
+                           {{ticket.ticket_title}} #{{ticket.id}}
+                       </span>
+                   </div>
+               </div>
+            </div>
             <div class="subtitle">
                 <span class="tag is-link">
                     Not yet started
@@ -38,6 +46,26 @@
                     </div>
                 </div>
                 <div class="column has-background-grey-lighter">
+                     <div style="border-bottom: darkgray 1px solid">
+                        <div class="level" >
+                            <div class="level-left">
+                                <div class="level-item"><span>Tags</span></div>
+                            </div>
+                            <div class="level-right">
+                                <div class="level-item">
+                                <a><i class="fa fa-plus"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                         <span v-for="t in selected_tags" style="padding-right: 2px">
+                            <span class="tag" style="padding-right: 5px">
+                                {{t.tag_name}}
+                                 <i class="fa fa-close" @click="remove_tag(t._idx)"></i>
+                            </span>
+                         </span>
+                        <br>
+                        <br>
+                    </div>
                     <div style="border-bottom: darkgray 1px solid">
                         <div class="level" >
                             <div class="level-left">
@@ -89,6 +117,7 @@
    let delete_tickets_url="[[=XML(delete_tickets_url)]]";
    let add_sub_ticket_url="[[=XML(add_sub_ticket_url)]]";
    let tickets_details_url="[[=XML(tickets_details_url)]]";
+   let delete_tag_url="[[=XML(delete_tag_url)]]";
    let get_all_tags="[[=XML(get_all_tags)]]";
 </script>
 
