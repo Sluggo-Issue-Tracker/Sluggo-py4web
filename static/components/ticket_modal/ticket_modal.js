@@ -1,5 +1,4 @@
 Vue.component('v-select', VueSelect.VueSelect);
-Vue.component('date-pick', VueDatePick.DatePick);
 
 (function() {
 

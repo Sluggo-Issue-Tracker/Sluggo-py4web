@@ -7,7 +7,6 @@
     </ticket-modal>
     <section class="section">
         <div class="container">
-            <div class="box">
             <div class="level">
                <div class="level-left">
                    <div class="level-item">
@@ -18,44 +17,66 @@
                </div>
             </div>
             <div class="subtitle">
-                <span class="tag is-link">
+                <span class="tag is-link" v-if="ticket.status == 1">
                     Not yet started
                 </span>
-                <span class="tag is-warning">
+                <span class="tag is-warning" v-if="ticket.status == 2">
                     In progress
                 </span>
-                <span class="tag is-success">
+                <span class="tag is-success" v-if="ticket.status == 3">
                     Completed
                 </span>
                 {{ticket.ticket_author}} created this ticket {{ticket.created}}
             </div>
+            <div v-if="!edit" @click.stop="do_edit" style="padding-bottom: 10px">
+                {{ticket.ticket_text}}
             </div>
+            <textarea v-click-outside="submit_edit" v-if="edit" v-model="ticket.ticket_text" class="textarea"></textarea>
+            <section style="border-bottom: darkgray 1px solid;"></section>
         </div>
     </section>
     <section class="section">
         <div class="container">
-            <div class="columns">
-                <div class="column is-three-quarters has-background-white-ter">
-                    <div class="box">
-                        <p class="subtitle">Description</p>
-                        <div v-if="!edit" @click.stop="do_edit">
-                            {{ticket.ticket_text}}
-                            <br>
+            <div class="columns has-background-light">
+                <div class="column is-three-quarters">
+
+                        <div class="box">
+                            <div class="columns">
+                                <div class="column is-one-fifth">
+                                    <img src="https://laughingsquid.com/wp-content/uploads/2014/11/Screenshot-2014-11-19-17.41.33.png">
+                                </div>
+                                <div class="column">
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                </div>
+                            </div>
                         </div>
-                        <textarea v-click-outside="submit_edit" v-if="edit" v-model="ticket.ticket_text" class="textarea"></textarea>
-                    </div>
+                        <div class="section">
+                        <a><i class="fa fa-plus"></i> Add a comment</a>
+                        </div>
                 </div>
-                <div class="column has-background-grey-lighter">
+                <div class="column">
                      <div style="border-bottom: darkgray 1px solid">
                         <div class="level" >
                             <div class="level-left">
                                 <div class="level-item"><span>Tags</span></div>
                             </div>
                         </div>
-                         <v-select multiple placeholder="Tags" v-model="selected_tags" :options="tag_options"></v-select>
-                        <br>
+                        <v-select multiple placeholder="Tags" v-model="selected_tags" :options="tag_options"></v-select>
                         <br>
                     </div>
+                    <br>
+                    <div style="border-bottom: darkgray 1px solid">
+                        <div class="level" >
+                            <div class="level-left">
+                                <div class="level-item"><span>Progress</span></div>
+                            </div>
+                        </div>
+                        <p class="is-size-6 has-text-centered">
+                            Start task!
+                        </p>
+                        <br>
+                    </div>
+                    <br>
                     <div style="border-bottom: darkgray 1px solid">
                         <div class="level" >
                             <div class="level-left">
@@ -73,6 +94,7 @@
                         <br>
                     </div>
                     <br>
+
                     <div style="border-bottom: darkgray 1px solid">
                         <div class="level" >
                             <div class="level-left">

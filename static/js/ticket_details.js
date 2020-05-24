@@ -37,6 +37,7 @@ let init = (app) => {
             completed: "",
             tag_list: [],
             sub_tickets: [],
+            status: 0,
         },
         new_ticket: {},
         show_modal: false,
@@ -58,7 +59,8 @@ let init = (app) => {
             completed: "",
             tag_list: [],
             sub_tickets: [],
-            parent_id: app.data.ticket.id
+            parent_id: app.data.ticket.id,
+            status: 0,
         };
         app.data.show_modal = true;
     };
@@ -148,6 +150,16 @@ let init = (app) => {
         axios.get(get_ticket_by_id_url).then((result) => {
             app.data.ticket = result.data.ticket;
             app.data.selected_tags = app.data.ticket.tag_list.map(e => e.tag_name);
+
+            if(app.data.ticket.started !== null) {
+                if(app.data.ticket.completed !== null)
+                    app.data.ticket.status = 3;
+                else
+                    app.data.ticket.status = 2;
+            } else {
+                app.data.ticket.status = 1;
+            }
+
             return axios.get(get_all_tags)
         }).then((result) => {
             app.data.tag_options = result.data.tags.map(e => e.tag_name);
