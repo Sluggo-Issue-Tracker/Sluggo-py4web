@@ -28,7 +28,14 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-three-quarters">
-                    <p>{{ticket.ticket_text}}</p>
+                    <div class="box">
+                        <p class="subtitle">Description</p>
+                        <div v-if="!edit" @click.stop="do_edit">
+                            {{ticket.ticket_text}}
+                            <br>
+                        </div>
+                        <textarea v-click-outside="submit_edit" v-if="edit" v-model="ticket.ticket_text" class="textarea"></textarea>
+                    </div>
                 </div>
                 <div class="column has-background-light">
                     <div style="border-bottom: darkgray 1px solid">

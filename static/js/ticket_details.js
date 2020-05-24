@@ -43,6 +43,7 @@ let init = (app) => {
         options: ["hello"],
         selected: [],
         assigned: "No one has been assigned", // going to be the string for the assigned user
+        edit: false,
     };
 
     app.pre_add = () => {
@@ -83,6 +84,20 @@ let init = (app) => {
         window.location.href = tickets_details_url + '/' + id;
     };
 
+    app.do_edit = () => {
+        app.data.edit = true;
+    };
+
+    app.submit_edit = () => {
+        axios.post(edit_ticket_url, app.data.ticket).then((response) => {
+            console.log(response)
+        }).catch((error) => {
+            console.log(error);
+        });
+
+        app.data.edit = false;
+    };
+
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
@@ -90,7 +105,9 @@ let init = (app) => {
         add_ticket: app.add_ticket,
         close_modal: app.close_modal,
         assign: app.assign,
-        redirect: app.redirect
+        redirect: app.redirect,
+        do_edit: app.do_edit,
+        submit_edit: app.submit_edit,
     };
 
     // This creates the Vue instance.
