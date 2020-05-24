@@ -27,7 +27,7 @@
     <section class="section">
         <div class="container">
             <div class="columns">
-                <div class="column is-three-quarters">
+                <div class="column is-three-quarters has-background-white-ter">
                     <div class="box">
                         <p class="subtitle">Description</p>
                         <div v-if="!edit" @click.stop="do_edit">
@@ -37,7 +37,7 @@
                         <textarea v-click-outside="submit_edit" v-if="edit" v-model="ticket.ticket_text" class="textarea"></textarea>
                     </div>
                 </div>
-                <div class="column has-background-light">
+                <div class="column has-background-grey-lighter">
                     <div style="border-bottom: darkgray 1px solid">
                         <div class="level" >
                             <div class="level-left">
