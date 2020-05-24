@@ -1,0 +1,92 @@
+[[extend 'layout.html']]
+<div id="vue-target">
+
+    <ticket-modal v-if="show_modal" v-bind:ticket="new_ticket"
+                  v-bind:options="options"
+                  @submit="add_ticket" @cancel="close_modal">
+    </ticket-modal>
+    <section class="section">
+        <div class="container">
+            <div class="box">
+            <div class="title">{{ticket.ticket_title}} #{{ticket.id}}</div>
+            <div class="subtitle">
+                <span class="tag is-link">
+                    Not yet started
+                </span>
+                <span class="tag is-warning">
+                    In progress
+                </span>
+                <span class="tag is-success">
+                    Completed
+                </span>
+                {{ticket.ticket_author}} created this ticket {{ticket.created}}
+            </div>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-three-quarters">
+                    <p>{{ticket.ticket_text}}</p>
+                </div>
+                <div class="column has-background-light">
+                    <div style="border-bottom: darkgray 1px solid">
+                        <div class="level" >
+                            <div class="level-left">
+                                <div class="level-item"><span>Assignee</span></div>
+                            </div>
+                            <div class="level-right">
+                                <div class="level-item">
+                                <a><i class="fa fa-plus"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="is-size-6 has-text-centered">
+                            {{assigned}}
+                        </p>
+                        <br>
+                    </div>
+                    <br>
+                    <div style="border-bottom: darkgray 1px solid">
+                        <div class="level" >
+                            <div class="level-left">
+                                <div class="level-item"><span>Subtickets</span></div>
+                            </div>
+                            <div class="level-right">
+                                <div class="level-item">
+                                <a @click.stop="pre_add"><i class="fa fa-plus"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-for="t in ticket.sub_tickets">
+                            <span class="button has-background-white is-size-6 is-fullwidth has-text-left" @click="redirect(t.id)">
+                                {{t.id}} | {{t.ticket_title}} | {{t.ticket_status}}
+                            </span>
+                        </div>
+                        <br>
+                    </div>
+                    <!-- probably want a card here -->
+                </div>
+            </div>
+        </div>
+      </div>
+    </section>
+</div>
+
+[[block page_scripts]]
+<script>
+   let get_ticket_by_id_url="[[=XML(get_ticket_by_id_url)]]";
+   let add_tickets_url="[[=XML(add_tickets_url)]]";
+   let edit_ticket_url="[[=XML(edit_ticket_url)]]";
+   let delete_tickets_url="[[=XML(delete_tickets_url)]]";
+   let add_sub_ticket_url="[[=XML(add_sub_ticket_url)]]";
+   let tickets_details_url="[[=XML(tickets_details_url)]]";
+   let get_all_tags="[[=XML(get_all_tags)]]";
+</script>
+
+<script src="js/vue-select.min.js"></script>
+<script src="js/ticket_details.js"></script>
+
+<script src="components/ticket_modal/ticket_modal.js"></script>
+[[end]]

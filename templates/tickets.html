@@ -40,10 +40,10 @@
   <section class="section">
     <div class="container">
       <div class="box has-background-light"  v-for="t in tickets">
-          <p class="card-header-title">
+          <a class="card-header-title" @click="redirect(t.id)">
             <i class="fa fa-square fa-fw"></i>
             Issue {{t.id}} | {{ t.tag_list.map(e => e.tag_name).join(', ') }} | {{t.ticket_title}} | {{t.ticket_status}}
-          </p>
+          </a>
       </div>
     </div>
   </section>
@@ -58,6 +58,7 @@
   let edit_ticket_url = "[[=XML(edit_ticket_url)]]";
   let add_ticket_tag_url = "[[=XML(add_ticket_tag_url)]]";
   let get_tags_url = "[[=XML(get_tags_url)]]";
+  let ticket_details_url = "[[=XML(ticket_details_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";
   let username = "[[=XML(username)]]";

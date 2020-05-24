@@ -176,6 +176,10 @@ let init = (app) => {
         });
     };
 
+    app.redirect = (id) => {
+        window.location.href = ticket_details_url + '/' + id;
+    };
+
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
@@ -187,7 +191,8 @@ let init = (app) => {
         close_modal: app.close_modal,
         submit_add: app.submit_add,
         filter_list: app.filter_list,
-        change_tag_search: app.change_tag_search
+        change_tag_search: app.change_tag_search,
+        redirect: app.redirect
     };
 
     // This creates the Vue instance.

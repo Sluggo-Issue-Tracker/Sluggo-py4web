@@ -26,7 +26,7 @@ Vue.component('v-select', VueSelect.VueSelect);
 
     ticket_modal.methods.submit = function () {
         let i = 0;
-        for(a of this.selected) {
+        for(let a of this.selected) {
             this.ticket.tag_list.unshift({tag_name: a});
         }
         console.log(this.ticket.tag_list);
