@@ -107,11 +107,13 @@ db.define_table(
 db.define_table(
     'tickets',
     Field('user_email', default=get_user_email),
+    Field('assigned_user'),
     Field('ticket_title', 'text'),
     Field('ticket_text', 'text'),
     Field('created', 'datetime', default=get_time),
     Field('started', 'datetime'),
-    Field('completed', 'datetime')
+    Field('completed', 'datetime'),
+    Field('due', 'datetime'),
 )
 
 db.define_table(  # credit tdimhcsleumas for design

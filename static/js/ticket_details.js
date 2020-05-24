@@ -147,12 +147,10 @@ let init = (app) => {
     app.init = () => {
         axios.get(get_ticket_by_id_url).then((result) => {
             app.data.ticket = result.data.ticket;
-            app.data.selected_tags = app.data.ticket.tag_list;
-            app.reindex(app.data.selected_tags);
+            app.data.selected_tags = app.data.ticket.tag_list.map(e => e.tag_name);
             return axios.get(get_all_tags)
         }).then((result) => {
             app.data.tag_options = result.data.tags.map(e => e.tag_name);
-            app.reindex(app.data.tag_options)
         })
     };
 

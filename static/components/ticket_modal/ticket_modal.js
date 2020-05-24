@@ -1,4 +1,5 @@
 Vue.component('v-select', VueSelect.VueSelect);
+Vue.component('date-pick', VueDatePick.DatePick);
 
 (function() {
 
@@ -14,6 +15,7 @@ Vue.component('v-select', VueSelect.VueSelect);
             priority_list: [],
             status_list: [],
             selected: [],
+            date: "",
         };
 
         ticket_modal.methods.load.call(data);
