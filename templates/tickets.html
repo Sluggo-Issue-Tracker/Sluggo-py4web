@@ -11,48 +11,6 @@
     <div class="container">
       <div class="columns">
         <div class="column">
-          <div class="button">
-            <span><p>Tag &nbsp;</p></span>
-            <span><i class="fa fa-angle-down"></i></span>
-          </div>
-          <div class="dropdown is-active">
-            <div class="dropdown-trigger">
-              <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-                <span>Dropdown button</span>
-                <span class="icon is-small">
-                  <i class="fa fa-angle-down" aria-hidden="true"></i>
-                </span>
-              </button>
-            </div>
-            <div class="dropdown-menu is-hidden" id="dropdown-menu" role="menu">
-              <div class="dropdown-content">
-                <a href="#" class="dropdown-item">
-                  Dropdown item
-                </a>
-                <a class="dropdown-item">
-                  Other dropdown item
-                </a>
-                <a href="#" class="dropdown-item is-active">
-                  Active dropdown item
-                </a>
-                <a href="#" class="dropdown-item">
-                  Other dropdown item
-                </a>
-                <hr class="dropdown-divider">
-                <a href="#" class="dropdown-item">
-                  With a divider
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="button">
-            <span><p>Completion Status &nbsp;</p></span>
-            <span><i class="fa fa-angle-down"></i></span>
-          </div>
-          <div class="button">
-            <span><p>Assignment Status &nbsp;</p></span>
-            <span><i class="fa fa-angle-down"></i></span>
-          </div>
         </div>
         <div class="column">
             <div class="field is-pulled-right">
@@ -72,6 +30,7 @@
   </section>
 
   <ticket-modal v-if="showModal" v-bind:ticket="selected_ticket"
+                v-bind:options="ticket_tags !== false ? ticket_tags.map(e => e.tag_name) : []"
                 @submit="submitCallback" @cancel="close_modal">
   </ticket-modal>
 
@@ -79,37 +38,13 @@
 
   <!-- TODO: Samuel Schmidt 5 / 21 / 2020 move this into a vue component -->
   <section class="section">
-    <div class="container" v-for="t in tickets">
-        <div class="card is-fullwidth">
-          <header class="card-header">
-            <p class="card-header-title">Issue {{t.id}} | #tag | {{t.ticket_title}} | {{t.ticket_status}}</p>
-            <a class="card-header-icon card-toggle" @click="t.show = !t.show">
-              <i class="fa fa-angle-down" v-if="!t.show"></i>
-              <i class="fa fa-angle-up" v-if="t.show"></i>
-            </a>
-          </header>
-          <div class="card-content" :class="{'is-hidden': !t.show}">
-            <div class="content">
-              <div class="columns">
-                <div class="column">
-                  <b class="is-bold">Description</b>
-                  <p>{{ t.ticket_text }}</p>
-                </div>
-                <div class="column is-1">
-                  <div class="thumbs is-size-4">
-                    <span class="has-text-danger is-pulled-right" @click="delete_ticket(t._idx)">
-                      <i class="fa fa-trash fa-fw"></i>
-                    </span>
-                    <span class="is-pulled-right" @click.stop="edit_ticket(t._idx)">
-                      <i class="fa fa-cog fa-fw"></i>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <br>
+    <div class="container">
+      <div class="box has-background-light"  v-for="t in tickets">
+          <p class="card-header-title">
+            <i class="fa fa-square fa-fw"></i>
+            Issue {{t.id}} | {{ t.tag_list.map(e => e.tag_name).join(', ') }} | {{t.ticket_title}} | {{t.ticket_status}}
+          </p>
+      </div>
     </div>
   </section>
 </div>
@@ -121,10 +56,14 @@
   let add_tickets_url = "[[=XML(add_tickets_url)]]";
   let delete_tickets_url = "[[=XML(delete_tickets_url)]]";
   let edit_ticket_url = "[[=XML(edit_ticket_url)]]";
+  let add_ticket_tag_url = "[[=XML(add_ticket_tag_url)]]";
+  let get_tags_url = "[[=XML(get_tags_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";
   let username = "[[=XML(username)]]";
 </script>
+<script src="js/vue-select.min.js"></script>
 <script src="components/ticket_modal/ticket_modal.js"></script>
+<script src="components/dropdown/dropdown.js"></script>
 <script src="js/ticket.js"></script>
 [[end]]

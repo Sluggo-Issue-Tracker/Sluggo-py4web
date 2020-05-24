@@ -1,0 +1,15 @@
+<div class="dropdown is-active">
+  <div class="dropdown-trigger">
+    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu" @click.stop="show = !show">
+      <span>{{selected}}</span>
+      <span class="icon is-small">
+        <i class="fa fa-angle-down" aria-hidden="true"></i>
+      </span>
+    </button>
+  </div>
+  <div class="dropdown-menu is" :class="{'is-hidden' : !show}" id="dropdown-menu" role="menu" v-click-outside="close">
+    <div class="dropdown-content">
+      <a  class="dropdown-item" v-for="l in list" @click="select(l)">{{l}}</a>
+    </div>
+  </div>
+</div>
