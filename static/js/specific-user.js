@@ -35,6 +35,7 @@ let init = (app) => {
 
     app.goto = (destination) => {
         app.data.page = destination;
+        window.location.href = "../user";
         if(destination === "list") {
             app.data.current_user = {};
         }
@@ -44,13 +45,80 @@ let init = (app) => {
     app.show_user = (user_index) => {
         let user = app.data.users[user_index];
         if(user !== false) {
-            axios.get(show_user_url, { id: user.id })
-            .then((response) => {
-
-            });
+            app.data.current_user = {
+                _idx: user._idx,
+                id: user.id,
+                bio: user.bio,
+                full_name: user.full_name,
+                url: user.url,
+                role: user.role,
+                tags_list: user.tags_list,
+                user_email: user.user_email
+            };
         }
         app.goto('user');
     };
+
+
+    app.resetCurrent = () => {
+        app.show_user(app.data.current_user._idx);
+    };
+
+
+    app.updateCurrent = () => {
+        let user = app.data.current_user;
+
+        if(user !== false) {
+            app.data.is_pending = true;
+            axios.post(edit_user_url, { bio : user.bio,
+                                        role : user.role,
+                                        tags_list : user.tags_list,
+                                        full_name : user.full_name,
+                                        id : user.id })
+            .then((response) => {
+                let old_user = app.data.users[user._idx];
+                app.data.is_pending = false;
+                app.show_value(false);
+                old_user.bio = user.bio,
+                old_user.full_name = user.full_name,
+                old_user.url = user.url,
+                old_user.role = user.role,
+                old_user.tags_list = user.tags_list,
+                old_user.user_email = user.user_email
+
+                app.reindex(app.data.users);
+            }).catch((error) => {
+                console.log(error);
+                app.show_value(true);
+            });
+        }
+    };
+
+
+    app.sleep = (ms) => {
+            return function (x) {
+                return new Promise(resolve => setTimeout(() => resolve(x), ms));
+            };
+        }
+
+    app.show_value = (flag) => {
+        // Flashes an error if an error occurred.
+
+        if(flag === true) {
+            app.data.error = true;
+            app.data.success = false;
+        }
+        else {
+            app.data.error = false;
+            app.data.success = true;
+        }
+        app.data.is_pending = false;
+        app.sleep(1000)()
+            .then(() => {
+                app.data.error = false;
+                app.data.success = false;
+            });
+    }
 
     app.checkUser = () => {
         return app.data.user_email == app.data.current_user.user_email;
@@ -71,13 +139,15 @@ let init = (app) => {
     app.methods = {
         goto: app.goto,
         show_user: app.show_user,
+        updateCurrent: app.updateCurrent,
+        resetCurrent: app.resetCurrent,
         checkUser: app.checkUser,
         filter_list: app.filter_list,
     };
 
     // This creates the Vue instance.
     app.vue = new Vue({
-        el: "#vue-users",
+        el: "#vue-abcd",
         data: app.data,
         methods: app.methods
     });

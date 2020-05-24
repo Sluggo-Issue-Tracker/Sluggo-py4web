@@ -27,6 +27,20 @@ def users():
     )
 
 
+@action('user')
+@action.uses('specific_user.html', signed_url, auth.user)
+def user():
+    return dict(
+
+        get_users_url = URL('users/get_users', signer=signed_url),
+        get_icons_url = URL('users/get_icons', signer=signed_url),
+        edit_user_url = URL('edit_user', signer=signed_url),
+        user_email = get_user_email(),
+        username = get_user_title(),
+        user=auth.get_user()
+    )
+
+
 @action('create_profile', method=['GET'])
 @action.uses('create_profile.html', db, session, auth.user, signed_url)
 def create_user():
