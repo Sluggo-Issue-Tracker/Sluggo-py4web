@@ -144,9 +144,9 @@ def get_img():
     """Returns a single image, URL encoded."""
     # Reads the image.
     img_name = request.params.img
-    img_file = pathlib.Path(__file__).resolve().parent / 'static' / 'images' / img_name
+    img_file = pathlib.Path(__file__).resolve().parent.parent / 'static' / 'images' / img_name
     if not img_file.exists():
-        img_file = pathlib.Path(__file__).resolve().parent / 'static' / 'images' / "default.jpg"
+        img_file = pathlib.Path(__file__).resolve().parent.parent / 'static' / 'images' / "default.jpg"
     with img_file.open(mode='rb') as f:
         img_bytes = f.read()
         b64_image = base64.b64encode(img_bytes).decode('utf-8')
