@@ -31,16 +31,12 @@ let init = (app) => {
         return a;
     };
 
-    app.goto = (destination) => {
-        app.data.page = destination;
-        if(destination === "list") {
-            app.data.current_user = {};
-        }
-        // app.data.add_post_text = "";
+    app.goback = (destination) => {
+        window.location.href = "../users";
     };
 
     app.resetCurrent = () => {
-        window.location.href = "../users";
+        app.data.current_user = {...app.data.master};
     };
 
 
@@ -55,17 +51,9 @@ let init = (app) => {
                                         full_name : user.full_name,
                                         id : user.id })
             .then((response) => {
-                let old_user = app.data.users[user._idx];
+                app.data.master = {...app.data.current_user};
                 app.data.is_pending = false;
                 app.show_value(false);
-                old_user.bio = user.bio,
-                old_user.full_name = user.full_name,
-                old_user.url = user.url,
-                old_user.role = user.role,
-                old_user.tags_list = user.tags_list,
-                old_user.user_email = user.user_email
-
-                app.reindex(app.data.users);
             }).catch((error) => {
                 console.log(error);
                 app.show_value(true);
@@ -103,24 +91,14 @@ let init = (app) => {
         return app.data.user_email == app.data.current_user.user_email;
     };
 
-    app.filter_list = () => {
-        app.goto('list');
-        app.data.users = app.data.master.filter((user) => {
-            return user.full_name.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
-                   user.role.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
-                   user.bio.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
-                   user.tags_list.filter(v => v.toLowerCase().includes(app.data.searchText.trim().toLowerCase())).length > 0;
-        });
-    };
 
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
-        goto: app.goto,
+        goback: app.goback,
         updateCurrent: app.updateCurrent,
         resetCurrent: app.resetCurrent,
         checkUser: app.checkUser,
-        filter_list: app.filter_list,
     };
 
     // This creates the Vue instance.
@@ -132,19 +110,19 @@ let init = (app) => {
 
   app.init = () => {
         axios.get(show_user_url, {params: {"id": id}}).then((result) => {
-
             app.data.current_user = result.data.user;
-            console.log(app.data.current_user);
             app.data.options = result.data.tags;
-            let p = axios.get(
+            axios.get(
                     get_icon_url,
-                    {params: {"img": "andrew-gavgavian.jpg"}}).then((result) => {
+                    {params: {"img": app.data.current_user["icon"]}}).then((result) => {
                     // Puts the image URL.
                     // See https://vuejs.org/v2/guide/reactivity.html#For-Objects
                     Vue.set(app.data.current_user, 'url', result.data.imgbytes);
-                    return "ok";
+                }).then((response) => {
+                    app.data.master = {...app.data.current_user};
                 });
-            app.data.master = app.data.current_user;
+
+
         });
     };
 

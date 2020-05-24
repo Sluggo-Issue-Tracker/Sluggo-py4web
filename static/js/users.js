@@ -13,13 +13,7 @@ let init = (app) => {
         username: username,
         users: [],
         master: [],
-        page: 'list',
-        current_user: {},
-        options: [],
         searchText: "",
-        is_pending: false,
-        error: false,
-        success: false,
 
         // Complete.
     };
@@ -33,28 +27,15 @@ let init = (app) => {
         return a;
     };
 
-    app.goto = (destination) => {
-        app.data.page = destination;
-        if(destination === "list") {
-            app.data.current_user = {};
-        }
-        // app.data.add_post_text = "";
-    };
-
     app.show_user = (user_index) => {
         let user = app.data.users[user_index];
         if(user !== false) {
             window.location.href = "../users/" + user.id;
         }
-        app.goto('user');
     };
 
-    app.checkUser = () => {
-        return app.data.user_email == app.data.current_user.user_email;
-    };
 
     app.filter_list = () => {
-        app.goto('list');
         app.data.users = app.data.master.filter((user) => {
             return user.full_name.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
                    user.role.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
@@ -66,9 +47,7 @@ let init = (app) => {
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
-        goto: app.goto,
         show_user: app.show_user,
-        checkUser: app.checkUser,
         filter_list: app.filter_list,
     };
 
@@ -86,9 +65,6 @@ let init = (app) => {
             app.data.options = result.data.tags;
             app.reindex(users);
             for (let user of users) {
-                // We create an element in the images data structure.
-                // Note: it is SUPER important here to have the url attribute
-                // of img_el already defined.
                 let user_el = user;
                 app.data.users.push(user_el);
                 // We create a promise for when the image loads.
@@ -110,10 +86,6 @@ let init = (app) => {
         });
     };
 
-
-
-
-    // Call to the initializer.
     app.init();
 };
 

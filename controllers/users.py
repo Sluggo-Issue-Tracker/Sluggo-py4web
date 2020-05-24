@@ -29,7 +29,7 @@ def users():
 
 @action('users/<id>')
 @action.uses('specific_user.html', signed_url, auth.user)
-def get_user(id=None):
+def specific_user(id=None):
     return dict(
 
         show_user_url = URL('users/show_user', signer=signed_url),
@@ -109,7 +109,7 @@ def get_users():
 @action.uses(signed_url.verify(), auth.user)
 def show_user():
     id = request.params.id
-    user = db(db.users.id == id).select().first()
+    user = db(db.users.id == id).select().as_list()[0]
     person = db(db.auth_user.id == user.get('user')).select().first()
 
     user["icon"] = "%s-%s.jpg" % \
