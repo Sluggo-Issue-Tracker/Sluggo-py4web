@@ -15,6 +15,9 @@ Vue.component('v-select', VueSelect.VueSelect);
             status_list: [],
             selected: [],
             date: "",
+            due_date: "",
+            assigned_user: "",
+            users: ["Sharon", "Your mother"],
         };
 
         ticket_modal.methods.load.call(data);
@@ -30,6 +33,7 @@ Vue.component('v-select', VueSelect.VueSelect);
         for(let a of this.selected) {
             this.ticket.tag_list.unshift({tag_name: a});
         }
+        console.log(this.due_date);
         console.log(this.ticket.tag_list);
         this.$emit('submit');
     };
