@@ -47,6 +47,7 @@ def ticket_details(ticket_id=None):
         delete_tickets_url=URL('delete_ticket', signer=signed_url),
         get_all_tags=URL('get_tags', signer=signed_url),
         delete_tag_url=URL('delete_tag', signer=signed_url),
+        update_progress_url=URL('update_ticket_progress', signer=signed_url),
         user_email=get_user_email(),
         username=get_user_title(),
         user=auth.get_user()
@@ -158,6 +159,32 @@ def edit_ticket():
                       ticket_status=request.json.get('ticket_status'),
                       ticket_priority=request.json.get('ticket_priority'))
     return "ok"
+
+
+@action('update_ticket_progress', method="POST")
+@action.uses(signed_url.verify(), auth.user, db)
+def update_ticket_progress():
+    action = request.json.get('action')
+    ticket_id = request.json.get('ticket_id')
+
+
+    ticket = db.tickets[ticket_id]
+    if ticket is not None:
+        print("it isn't none")
+        if action == 1:
+            # handle in progress
+            db(db.tickets.id == ticket_id).update(started=None, completed=None)
+        elif action == 2:
+            # handle started
+            db(db.tickets.id == ticket_id).update(started=get_time(), completed=None)
+
+        elif action == 3:
+            # handle completed
+            db(db.tickets.id == ticket_id).update(completed=get_time())
+
+    return dict(action=action)
+
+
 
 
 @action('delete_tickets', method="POST")

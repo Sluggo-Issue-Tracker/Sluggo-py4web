@@ -9,8 +9,8 @@
         <div class="container">
             <div class="level">
                <div class="level-left">
-                   <div class="level-item">
-                       <span class="title">
+                   <div class="level-item" style="word-wrap: break-word">
+                       <span class="title" style="max-width: 500px; word-wrap: break-word">
                            {{ticket.ticket_title}} #{{ticket.id}}
                        </span>
                    </div>
@@ -35,7 +35,7 @@
                 </div>
             </div>
 
-            <div v-if="!edit" @click.stop="do_edit" style="padding-bottom: 10px">
+            <div v-if="!edit" @click.stop="do_edit" style="padding-bottom: 10px; word-wrap: break-word;">
                 {{ticket.ticket_text}}
             </div>
             <textarea v-click-outside="submit_edit" v-if="edit" v-model="ticket.ticket_text" class="textarea"></textarea>
@@ -46,7 +46,6 @@
         <div class="container">
             <div class="columns has-background-light">
                 <div class="column is-three-quarters">
-
                         <div class="box">
                             <div class="columns">
                                 <div class="column is-one-fifth">
@@ -68,7 +67,7 @@
                                 <div class="level-item"><span>Tags</span></div>
                             </div>
                         </div>
-                        <v-select multiple placeholder="Tags" v-model="selected_tags" :options="tag_options"></v-select>
+                        <v-select multiple placeholder="Tags" v-model="selected_tags" :options="tag_options" v-on:input="change"></v-select>
                         <br>
                     </div>
                     <br>
@@ -79,7 +78,7 @@
                             </div>
                         </div>
                         <p class="is-size-6 has-text-centered">
-                            Start task!
+                            <v-select :clearable="false" v-model="current_status" :options="status_strings" v-on:input="change_status"></v-select>
                         </p>
                         <br>
                     </div>
@@ -137,6 +136,7 @@
    let add_sub_ticket_url="[[=XML(add_sub_ticket_url)]]";
    let tickets_details_url="[[=XML(tickets_details_url)]]";
    let delete_tag_url="[[=XML(delete_tag_url)]]";
+   let update_progress_url="[[=XML(update_progress_url)]]";
    let get_all_tags="[[=XML(get_all_tags)]]";
 </script>
 

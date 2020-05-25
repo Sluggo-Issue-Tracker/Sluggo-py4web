@@ -43,7 +43,13 @@ let init = (app) => {
         show_modal: false,
         tag_options: ["hello"],
         selected_tags: [],
-
+        status_strings: ['Not started', 'In progress', 'Completed'],
+        status_map: {
+            'Completed': 3,
+            'In progress': 2,
+            'Not started': 1
+        },
+        current_status: "",
         assigned: "No one has been assigned", // going to be the string for the assigned user
         edit: false,
     };
@@ -117,6 +123,22 @@ let init = (app) => {
         }
     };
 
+    app.change = () => {
+    };
+
+    app.change_status = () => {
+        let status = app.data.status_map[app.data.current_status];
+        app.data.ticket.status = status;
+        axios.post(update_progress_url, {
+            ticket_id: app.data.ticket.id,
+            action: status
+        }).then((response) => {
+            console.log(response.data)
+        }).catch((error) => {
+            console.log(error);
+        });
+    };
+
     app.reindex = (list) => {
         let i = 0;
         for(let l of list) {
@@ -135,7 +157,9 @@ let init = (app) => {
         redirect: app.redirect,
         do_edit: app.do_edit,
         submit_edit: app.submit_edit,
-        remove_tag: app.remove_tag
+        remove_tag: app.remove_tag,
+        change: app.change,
+        change_status: app.change_status
     };
 
     // This creates the Vue instance.
@@ -159,6 +183,8 @@ let init = (app) => {
             } else {
                 app.data.ticket.status = 1;
             }
+
+            app.data.current_status = app.data.status_strings[app.data.ticket.status - 1];
 
             return axios.get(get_all_tags)
         }).then((result) => {

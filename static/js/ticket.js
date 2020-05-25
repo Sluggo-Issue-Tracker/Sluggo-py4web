@@ -47,6 +47,16 @@ let init = (app) => {
         ticket_tags: [],
         get_tags: "",
         selected_tags: [],
+        shit: true,
+        selected_progress: [],
+        selected_user: [],
+        status_strings: ['Complete', 'In Progress', 'Not Started'],
+        status_map: {
+            'Complete': 3,
+            'In Progress': 2,
+            'Not Started': 1
+        },
+        current_status: "",
         // Complete.
     };
 
@@ -146,24 +156,36 @@ let init = (app) => {
         for (p of a) {
             p._idx = idx++;
             p.show = false;
+            if(p.started !== null) {
+                if(p.completed !== null)
+                    p.status = 3;
+                else
+                    p.status = 2;
+            } else {
+                p.status = 1;
+            }
         }
         return a;
     };
 
-    app.change_tag_search = (tag) => {
-        this.searchTag = tag;
-        app.filter_list();
-    };
-
     app.filter_list = () => {
         app.data.tickets = app.data.master.filter((ticket) => {
+
+            // check if the tag lists match the currently selected tags
+            if(!app.data.selected_tags.filter(x => ticket.tag_list.map(e => e.tag_name).includes(x)).length > 0 &&
+                app.data.selected_tags.length > 0) return false;
+
+            // check if the ticket is completed
+            let status = app.data.selected_progress.map(x => app.data.status_map[x]);
+            if(!status.includes(ticket.status) &&
+                app.data.selected_progress.length > 0) return false;
+
+            // check if the assigned user is correct
+
             if(ticket.ticket_text.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
                ticket.ticket_title.toLowerCase().includes(app.data.searchText.trim().toLowerCase())) {
                 return true;
             }
-
-            if(app.data.selected_tags.filter(x => ticket.tag_list.includes(x)).length > 0)
-                return true;
 
             for(tag of ticket.tag_list) {
                 if(tag.tag_name.toLowerCase().includes(app.data.searchText.trim().toLowerCase())) {
@@ -180,6 +202,10 @@ let init = (app) => {
         window.location.href = ticket_details_url + '/' + id;
     };
 
+    app.register = (shit) => {
+        console.log(shit);
+    };
+
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
@@ -192,7 +218,8 @@ let init = (app) => {
         submit_add: app.submit_add,
         filter_list: app.filter_list,
         change_tag_search: app.change_tag_search,
-        redirect: app.redirect
+        redirect: app.redirect,
+        register: app.register,
     };
 
     // This creates the Vue instance.
