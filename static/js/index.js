@@ -14,14 +14,9 @@ app.placeholder = () => {
     sluggo.placeholder();
 }
 
-app.getPinnedTickets = () => {
-    axios.get(get_pinned_tickets_url);
-}
-
 app.methods = {
     setFormattedDate: app.setFormattedDate,
-    placeholder: app.placeholder,
-    getPinnedTickets: app.getPinnedTickets
+    placeholder: app.placeholder
 }
 
 app.vm = new Vue({
@@ -32,7 +27,6 @@ app.vm = new Vue({
 
 app.init = () => {
     app.setFormattedDate();
-    app.getPinnedTickets();
 }
 
 app.init();

@@ -37,6 +37,5 @@ def tickets():
         user_email=get_user_email(),
         username=get_user_title(),
         user=auth.get_user(),
-        date=str(get_time().isoformat()),
-        get_pinned_tickets_url = URL('get_pinned_tickets', signer=signed_url)
+        date=str(get_time().isoformat())
     ))
