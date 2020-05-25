@@ -11,12 +11,12 @@
                <div class="level-left">
                    <div class="level-item" style="word-wrap: break-word">
                        <span class="title" style="max-width: 500px; word-wrap: break-word">
-                           {{ticket.ticket_title}} #{{ticket.id}}
+                           {{title}} #{{ticket_id}}
                        </span>
                    </div>
                    <div class="level-item">
                        <span class="tag is-link" v-if="ticket.status == 1">
-                       Not yet starte
+                       Not yet started
                        </span>
                        <span class="tag is-warning" v-if="ticket.status == 2">
                        In progress
@@ -39,10 +39,10 @@
                 </div>
             </div>
 
-            <div v-if="!edit" @click.stop="do_edit" style="padding-bottom: 10px; word-wrap: break-word;">
-                {{ticket.ticket_text}}
+            <div v-if="!edit" style="padding-bottom: 10px; word-wrap: break-word;">
+                {{description}}
             </div>
-            <textarea  v-if="edit" v-model="ticket.ticket_text" class="textarea"></textarea>
+            <textarea  v-if="edit" v-model="description" class="textarea"></textarea>
             <section style="border-bottom: darkgray 1px solid;"></section>
         </div>
     </section>
@@ -74,8 +74,7 @@
                         <v-select v-if="!edit" multiple placeholder="Tags"
                                   disabled
                                   v-model="selected_tags"
-                                  :options="tag_options"
-                                  @input="change"></v-select>
+                                  :options="tag_options"></v-select>
                          <v-select v-if="edit" multiple placeholder="Tags"
                                   v-model="selected_tags"
                                   :options="tag_options"></v-select>
@@ -89,7 +88,7 @@
                             </div>
                         </div>
                         <p class="is-size-6 has-text-centered">
-                            <v-select :clearable="edit" v-model="current_status" :options="status_strings" v-on:input="change_status"></v-select>
+                            <v-select v-model="current_status" :options="status_strings" v-on:input="change_status"></v-select>
                         </p>
                         <br>
                     </div>

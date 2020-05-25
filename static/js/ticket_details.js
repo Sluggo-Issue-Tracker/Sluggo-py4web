@@ -5,13 +5,19 @@ Vue.component('v-select', VueSelect.VueSelect);
 // and be used to initialize it.
 let app = {};
 
+/** Sam's thoughts
+ * title, description, and tags are the only places where we want to confirm our changes
+ * progress, assignment, and subtickets can be registered instantly
+ */
+
+
 // Given an empty app object, initializes it filling its attributes,
 // creates a Vue instance, and then initializes the Vue instance.
 let init = (app) => {
 
     // This is the Vue data.
     app.data = {
-        ticket : { // this is the main object
+        ticket : { // this is the main ticket object
             id: "",
             ticket_title: "",
             ticket_description: "",
@@ -23,22 +29,21 @@ let init = (app) => {
             sub_tickets: [],
             status: 0,
         },
+        // fields to visually represent the current ticket --------------------------------------
+        ticket_id: "",
         title: "",
         description: "",
         author: "",
         status: 0,
         new_ticket: {},
         show_modal: false,
-        tag_options: ["hello"],
         selected_tags: [],
-        status_strings: ['Not started', 'In progress', 'Completed'],
-        status_map: {
-            'Completed': 3,
-            'In progress': 2,
-            'Not started': 1
-        },
         current_status: "",
         assigned: "No one has been assigned", // going to be the string for the assigned user
+        // represents values allowed by the backend
+        tag_options: [],
+        status_strings: [],
+        // control ------------------------------------------------------------------------------
         edit: false,
     };
 
@@ -59,6 +64,9 @@ let init = (app) => {
         app.data.show_modal = true;
     };
 
+    /**
+     * uses the value newly generated from the submitted modal
+     */
     app.add_ticket = () => {
         axios.post(add_sub_ticket_url, app.data.new_ticket).then((response) => {
            app.data.ticket.sub_tickets.unshift(response.data.ticket);
@@ -68,27 +76,41 @@ let init = (app) => {
         app.close_modal();
     };
 
+    /**
+     * close modal and assign new_ticket to empty object
+     */
     app.close_modal = () => {
         app.data.show_modal = false;
         app.data.new_ticket = {};
     };
 
+    /**
+     * this should do a post request to register the assignment of a ticket
+     * @param user
+     */
     app.assign = (user) => {
         // TODO: implement this
     };
 
-    app.redirect = (id) => {
+    /**
+     * redirect t
+     * @param id
+     */
+    app.redirect_ticket = (id) => {
         window.location.href = tickets_details_url + '/' + id;
     };
 
-    app.do_edit = () => {
-        app.data.edit = true;
-    };
-
+    /**
+     * resets the fields to their previous value kept track in ticket object
+     */
     app.cancel_edit = () => {
         app.data.edit = false;
     };
 
+    /**
+     * submits the modified values to the backend
+     * on success, updates the displayed values
+     */
     app.submit_edit = () => {
         axios.post(edit_ticket_url, app.data.ticket).then((response) => {
             console.log(response)
@@ -99,30 +121,9 @@ let init = (app) => {
         app.data.edit = false;
     };
 
-    app.remove_tag = (idx) => {
-        tag = app.data.selected_tags[idx];
-
-        if(tag !== false){
-            axios.post(delete_tag_url,{
-                tag_id: tag.id,
-                ticket_id: app.data.ticket.id
-            }).then((result) => {
-                console.log(result.data.handle);
-                app.data.selected_tags.splice(idx, 1);
-            }).catch((error) => {
-                console.log(error);
-            })
-        }
-    };
-
-    app.change = () => {
-        console.log("this was modified");
-    };
-
-    app.change_tag = function () {
-        console.log("changed");
-    };
-
+    /**
+     * called by v-select on selection of the status
+     */
     app.change_status = () => {
         let status = app.data.status_map[app.data.current_status];
         app.data.ticket.status = status;
@@ -136,6 +137,11 @@ let init = (app) => {
         });
     };
 
+    /**
+     *
+     * @param list
+     * @returns {*}
+     */
     app.reindex = (list) => {
         let i = 0;
         for(let l of list) {
@@ -151,7 +157,7 @@ let init = (app) => {
         add_ticket: app.add_ticket,
         close_modal: app.close_modal,
         assign: app.assign,
-        redirect: app.redirect,
+        redirect_ticket: app.redirect_ticket,
         do_edit: app.do_edit,
         submit_edit: app.submit_edit,
         remove_tag: app.remove_tag,
@@ -173,15 +179,6 @@ let init = (app) => {
         axios.get(get_ticket_by_id_url).then((result) => {
             app.data.ticket = result.data.ticket;
             app.data.selected_tags = app.data.ticket.tag_list.map(e => e.tag_name);
-
-            if(app.data.ticket.started !== null) {
-                if(app.data.ticket.completed !== null)
-                    app.data.ticket.status = 3;
-                else
-                    app.data.ticket.status = 2;
-            } else {
-                app.data.ticket.status = 1;
-            }
 
             app.data.current_status = app.data.status_strings[app.data.ticket.status - 1];
 
