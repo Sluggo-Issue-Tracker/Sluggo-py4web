@@ -1,0 +1,146 @@
+[[extend 'layout.html']]
+<div id="vue-target">
+
+    <ticket-modal v-if="show_modal" v-bind:ticket="new_ticket"
+                  v-bind:options="tag_options"
+                  @submit="add_ticket" @cancel="close_modal">
+    </ticket-modal>
+    <section class="section">
+        <div class="container">
+            <div class="level">
+               <div class="level-left">
+                   <div class="level-item" style="word-wrap: break-word">
+                       <span class="title" style="max-width: 500px; word-wrap: break-word">
+                           {{ticket.ticket_title}} #{{ticket.id}}
+                       </span>
+                   </div>
+                   <div class="level-item">
+                       <span class="tag is-link" v-if="ticket.status == 1">
+                       Not yet started
+                       </span>
+                       <span class="tag is-warning" v-if="ticket.status == 2">
+                       In progress
+                       </span>
+                       <span class="tag is-success" v-if="ticket.status == 3">
+                       Completed
+                       </span>
+                   </div>
+               </div>
+                <div class="level-right">
+                   <div class="level-item">
+                       <span class="subtitle">
+                            {{ticket.ticket_author}} created this ticket {{ticket.created}}
+                        </span>
+                   </div>
+                </div>
+            </div>
+
+            <div v-if="!edit" @click.stop="do_edit" style="padding-bottom: 10px; word-wrap: break-word;">
+                {{ticket.ticket_text}}
+            </div>
+            <textarea v-click-outside="submit_edit" v-if="edit" v-model="ticket.ticket_text" class="textarea"></textarea>
+            <section style="border-bottom: darkgray 1px solid;"></section>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="columns has-background-light">
+                <div class="column is-three-quarters">
+                        <div class="box">
+                            <div class="columns">
+                                <div class="column is-one-fifth">
+                                    <img src="https://laughingsquid.com/wp-content/uploads/2014/11/Screenshot-2014-11-19-17.41.33.png">
+                                </div>
+                                <div class="column">
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section">
+                        <a><i class="fa fa-plus"></i> Add a comment</a>
+                        </div>
+                </div>
+                <div class="column">
+                     <div style="border-bottom: darkgray 1px solid">
+                        <div class="level" >
+                            <div class="level-left">
+                                <div class="level-item"><span>Tags</span></div>
+                            </div>
+                        </div>
+                        <v-select multiple placeholder="Tags" v-model="selected_tags" :options="tag_options" v-on:input="change"></v-select>
+                        <br>
+                    </div>
+                    <br>
+                    <div style="border-bottom: darkgray 1px solid">
+                        <div class="level" >
+                            <div class="level-left">
+                                <div class="level-item"><span>Progress</span></div>
+                            </div>
+                        </div>
+                        <p class="is-size-6 has-text-centered">
+                            <v-select :clearable="false" v-model="current_status" :options="status_strings" v-on:input="change_status"></v-select>
+                        </p>
+                        <br>
+                    </div>
+                    <br>
+                    <div style="border-bottom: darkgray 1px solid">
+                        <div class="level" >
+                            <div class="level-left">
+                                <div class="level-item"><span>Assignee</span></div>
+                            </div>
+                            <div class="level-right">
+                                <div class="level-item">
+                                <a><i class="fa fa-plus"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="is-size-6 has-text-centered">
+                            {{assigned}}
+                        </p>
+                        <br>
+                    </div>
+                    <br>
+
+                    <div style="border-bottom: darkgray 1px solid">
+                        <div class="level" >
+                            <div class="level-left">
+                                <div class="level-item"><span>Subtickets</span></div>
+                            </div>
+                            <div class="level-right">
+                                <div class="level-item">
+                                <a @click.stop="pre_add"><i class="fa fa-plus"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-for="t in ticket.sub_tickets">
+                            <span class="button has-background-white is-size-6 is-fullwidth has-text-left" @click="redirect(t.id)">
+                                {{t.id}} | {{t.ticket_title}} | {{t.ticket_status}}
+                            </span>
+                        </div>
+                        <br>
+                    </div>
+                    <!-- probably want a card here -->
+                </div>
+            </div>
+        </div>
+      </div>
+    </section>
+</div>
+
+[[block page_scripts]]
+<script>
+   let get_ticket_by_id_url="[[=XML(get_ticket_by_id_url)]]";
+   let add_tickets_url="[[=XML(add_tickets_url)]]";
+   let edit_ticket_url="[[=XML(edit_ticket_url)]]";
+   let delete_tickets_url="[[=XML(delete_tickets_url)]]";
+   let add_sub_ticket_url="[[=XML(add_sub_ticket_url)]]";
+   let tickets_details_url="[[=XML(tickets_details_url)]]";
+   let delete_tag_url="[[=XML(delete_tag_url)]]";
+   let update_progress_url="[[=XML(update_progress_url)]]";
+   let get_all_tags="[[=XML(get_all_tags)]]";
+</script>
+
+<script src="js/vue-select.min.js"></script>
+<script src="js/ticket_details.js"></script>
+<script src="components/ticket_modal/ticket_modal.js"></script>
+[[end]]

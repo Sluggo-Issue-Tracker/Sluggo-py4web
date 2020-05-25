@@ -1,28 +1,21 @@
 <div class="modal is-active">
     <div class="modal-background"></div>
-    <div class="modal-card" v-click-outside="close">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Ticket</p>
-        </header>
-        <section class="modal-card-body">
-            <div class="content">
-                <div class="field">
-                    <span class="subtitle">Title</span>
-                    <input type="text" v-model="ticket.ticket_title" class="input" placeholder="Enter new title here">
-                </div>
-                <div class="field">
-                    <span class="subtitle">Tags</span>
-                    <v-select multiple placeholder="Choose some interests" v-model="selected" :options="options"></v-select>
-                </div>
-                <div class="field">
-                    <span class="subtitle">Description</span>
-                    <textarea v-model="ticket.ticket_text" class="textarea is-fullwidth" placeholder="Enter new ticket here"></textarea>
-                </div>
-            </div>
-        </section>
-        <footer class="modal-card-foot">
+    <div class="modal-content">
+        <section class="box is-16by9">
+            <div class="field">
+                                  <span class="subtitle">Title</span>
+                                  <input type="text" v-model="ticket.ticket_title" class="input" placeholder="Enter new title here">
+                                  </div>
+            <div class="field">
+                                  <span class="subtitle">Tags</span>
+                                  <v-select multiple placeholder="Choose some interests" v-model="selected" :options="options"></v-select>
+                                  </div>
+            <div class="field">
+                                  <span class="subtitle">Description</span>
+                                  <textarea v-model="ticket.ticket_text" class="textarea is-fullwidth" placeholder="Enter new ticket here"></textarea>
+                                  </div>
             <button class="button is-success" @click="submit">Save changes</button>
             <button class="button" @click="close">Cancel</button>
-        </footer>
+        </section>
     </div>
 </div>

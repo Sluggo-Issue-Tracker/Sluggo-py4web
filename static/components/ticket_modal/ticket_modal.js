@@ -14,6 +14,7 @@ Vue.component('v-select', VueSelect.VueSelect);
             priority_list: [],
             status_list: [],
             selected: [],
+            date: "",
         };
 
         ticket_modal.methods.load.call(data);
@@ -26,7 +27,7 @@ Vue.component('v-select', VueSelect.VueSelect);
 
     ticket_modal.methods.submit = function () {
         let i = 0;
-        for(a of this.selected) {
+        for(let a of this.selected) {
             this.ticket.tag_list.unshift({tag_name: a});
         }
         console.log(this.ticket.tag_list);
@@ -42,5 +43,4 @@ Vue.component('v-select', VueSelect.VueSelect);
             ticket_modal.template = template.data;
             return ticket_modal;
         });
-
 })();
