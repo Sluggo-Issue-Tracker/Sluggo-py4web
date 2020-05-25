@@ -9,7 +9,9 @@
   </div>
   <div class="dropdown-menu is" :class="{'is-hidden' : !show}" id="dropdown-menu" role="menu" v-click-outside="close">
     <div class="dropdown-content">
-      <a  class="dropdown-item" v-for="l in list" @click="select(l)">{{l}}</a>
+      <div  class="dropdown-item" v-for="l in list">
+        <input type="checkbox" id="l.id" value="l.name" v-model="l."
+      </div>
     </div>
   </div>
 </div>

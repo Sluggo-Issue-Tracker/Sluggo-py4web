@@ -1,0 +1,84 @@
+{
+  "name": "vue-date-pick",
+  "version": "1.4.1",
+  "description": "Date time picker based on Vue",
+  "homepage": "https://dbrekalo.github.io/vue-date-pick/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dbrekalo/vue-date-pick"
+  },
+  "main": "../../components/vue_date_pick/vueDatePick.js",
+  "license": "MIT",
+  "files": [
+    "/dist",
+    "/src"
+  ],
+  "keywords": [
+    "datepicker",
+    "datetimepicker",
+    "date",
+    "time",
+    "picker",
+    "pick",
+    "vue"
+  ],
+  "scripts": {
+    "dev": "npm run dev:docs",
+    "dev:docs": "vuepress dev documentation",
+    "build": "npm run build:lib && npm run build:docs",
+    "build:lib": "NODE_ENV=production webpack --progress",
+    "build:docs": "vuepress build documentation",
+    "lint": "eslint ../../components/vue_date_pick/vueDatePick.vue -c .eslintrc.js --color",
+    "test": "BABEL_ENV=test karma start --single-run --browsers ChromeHeadless",
+    "watch:test": "BABEL_ENV=test karma start --browsers ChromeHeadless"
+  },
+  "dependencies": {
+    "vue": "^2.6.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@vue/test-utils": "^1.0.0-beta.33",
+    "autoprefixer": "^9.1.0",
+    "babel-eslint": "^10.0.1",
+    "babel-loader": "^8.0.0",
+    "babel-plugin-istanbul": "^5.2.0",
+    "chai": "^4.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-vue": "^6.2.2",
+    "fecha": "^4.2.0",
+    "karma": "^5.0.4",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-coverage": "^2.0.2",
+    "karma-mocha": "^2.0.1",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-spec-reporter": "0.0.32",
+    "karma-webpack": "^4.0.2",
+    "mini-css-extract-plugin": "^0.9.0",
+    "mocha": "^7.1.2",
+    "node-sass": "^4.10.0",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^8.0.2",
+    "uglifyjs-webpack-plugin": "^2.0.1",
+    "vue-loader": "^15.4.2",
+    "vuepress": "^0.14.4",
+    "webpack": "^4.25.1",
+    "webpack-cli": "^3.1.2"
+  },
+  "engines": {
+    "node": ">= 6.0.0",
+    "npm": ">= 3.0.0"
+  },
+  "browserslist": [
+    "last 4 versions",
+    "Chrome >= 30",
+    "Firefox >= 30",
+    "Explorer >= 9"
+  ]
+}

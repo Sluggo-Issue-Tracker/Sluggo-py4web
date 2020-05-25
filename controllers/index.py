@@ -14,7 +14,6 @@ from .. common import db, session, T, cache, auth, signed_url
 from .. models import get_user_email, get_user_title, get_user_name, get_user, get_time, get_tags_list, get_user_tag_by_name
 
 
-
 @action('clean')
 @action.uses(auth.user, db)
 def clean():
@@ -37,5 +36,7 @@ def tickets():
         user_email=get_user_email(),
         username=get_user_title(),
         user=auth.get_user(),
-        date=str(get_time().isoformat())
+        date=str(get_time().isoformat()),
+        get_pinned_tickets_url = URL('get_pinned_tickets', signer=signed_url)
     ))
+

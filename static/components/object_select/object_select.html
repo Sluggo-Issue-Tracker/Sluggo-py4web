@@ -1,0 +1,6 @@
+<span v-for="t in selected_tags" style="padding-right: 2px">
+    <span class="tag" style="padding-right: 5px">
+        {{t.tag_name}}
+        <i class="fa fa-close" @click="remove_tag(t._idx)"></i>
+    </span>
+</span>
