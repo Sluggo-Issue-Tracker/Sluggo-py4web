@@ -40,10 +40,22 @@
   <section class="section">
     <div class="container">
       <div class="box has-background-light"  v-for="t in tickets">
-          <p class="card-header-title">
-            <i class="fa fa-square fa-fw"></i>
-            Issue {{t.id}} | {{ t.tag_list.map(e => e.tag_name).join(', ') }} | {{t.ticket_title}} | {{t.ticket_status}}
-          </p>
+          <div class="columns">
+            <div class="column is-four-fifths">
+              <p class="card-header-title">
+                <i class="fa fa-square fa-fw"></i>
+                Issue {{t.id}} | {{ t.tag_list.map(e => e.tag_name).join(', ') }} | {{t.ticket_title}} | {{t.ticket_status}}
+              </p>
+            </div>
+            <div class="column"></div> <!-- Spacer -->
+            <div class="column">
+              <div class="buttons">
+                <div @click="togglePinStatus(t)" class="button" v-bind:class="{'is-success': t.pinned, 'is-danger': !t.pinned}">
+                  <i class="fa fa-thumb-tack"></i>
+                </div>
+              </div>
+            </div>
+          </div>
       </div>
     </div>
   </section>
@@ -58,6 +70,8 @@
   let edit_ticket_url = "[[=XML(edit_ticket_url)]]";
   let add_ticket_tag_url = "[[=XML(add_ticket_tag_url)]]";
   let get_tags_url = "[[=XML(get_tags_url)]]";
+  let get_pinned_tickets_url = "[[=XML(get_pinned_tickets_url)]]";
+  let pin_ticket_url = "[[=XML(pin_ticket_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";
   let username = "[[=XML(username)]]";

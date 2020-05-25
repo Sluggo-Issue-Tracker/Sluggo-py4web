@@ -21,6 +21,8 @@ def tickets():
         edit_ticket_url=URL('edit_ticket', signer=signed_url),
         add_ticket_tag_url=URL('add_ticket_tag', signer=signed_url),
         get_tags_url=URL('get_tags', signer=signed_url),
+        get_pinned_tickets_url = URL('get_pinned_tickets', signer=signed_url),
+        pin_ticket_url = URL('pin_ticket', signer=signed_url),
         user_email=get_user_email(),
         username=get_user_title(),
         user=auth.get_user()
@@ -107,3 +109,43 @@ def delete_tickets():
     if id is not None:
         db(db.tickets.id == id).delete()
         return "ok"
+
+# MARK: Ticket Pinning
+@action('get_pinned_tickets', method="GET")
+@action.uses(signed_url.verify(), auth.user, db)
+def get_pinned_tickets(): # grabs pinned tickets for logged in user
+    # Grab the current user's ID
+    userID = get_user()
+    if userID == None:
+        abort(500, "No User ID obtained (is this possible?")
+    
+    # Query for pinned tickets given user ID
+    pinnedTicketsQuery = db(db.user_pins.auth_user_id == userID).select().as_list()
+    pinnedTickets = list(map(lambda x: x['ticket_id'], pinnedTicketsQuery))
+    return(
+        dict(
+            pinned_tickets = pinnedTickets
+        )
+    )
+
+@action('pin_ticket', method="POST")
+@action.uses(signed_url.verify(), auth.user, db)
+def pin_ticket():
+    ticketID = request.json.get("ticket_id")
+    if ticketID is None:
+        abort(400, "Ticket ID to pin not provided")
+    userID = get_user()
+    if userID is None:
+        abort(500, "No User ID obtained (is this possible?)")
+    
+    potentialPinQuery = db((db.user_pins.auth_user_id == userID) & \
+        (db.user_pins.ticket_id == ticketID)) # the query
+    pin = potentialPinQuery.select() # fetch query from db
+    if not pin:
+        # Create a pin record
+        db.user_pins.insert(auth_user_id=userID, ticket_id=ticketID)
+    else:
+        # Delete it
+        potentialPinQuery.delete()
+    return "ok"
+    
