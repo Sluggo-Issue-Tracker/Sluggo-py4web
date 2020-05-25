@@ -187,6 +187,17 @@ let init = (app) => {
         }
     }
 
+    app.togglePinStatus = (ticket) => {
+        let ticketID = ticket.id;
+        
+        // make a server call
+        axios.post(pin_ticket_url, {
+            ticket_id: ticketID
+        }).then((result) => {
+            Vue.set(ticket, "pinned", !ticket.pinned);
+        })
+    }
+
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
@@ -198,7 +209,9 @@ let init = (app) => {
         close_modal: app.close_modal,
         submit_add: app.submit_add,
         filter_list: app.filter_list,
-        change_tag_search: app.change_tag_search
+        change_tag_search: app.change_tag_search,
+        togglePinStatus: app.togglePinStatus,
+        refreshPinGraphics: app.refreshPinGraphics
     };
 
     // This creates the Vue instance.

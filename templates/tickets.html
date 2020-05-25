@@ -50,7 +50,7 @@
             <div class="column"></div> <!-- Spacer -->
             <div class="column">
               <div class="buttons">
-                <div class="button" v-bind:class="{'is-success': t.pinned, 'is-danger': !t.pinned}">
+                <div @click="togglePinStatus(t)" class="button" v-bind:class="{'is-success': t.pinned, 'is-danger': !t.pinned}">
                   <i class="fa fa-thumb-tack"></i>
                 </div>
               </div>
@@ -71,6 +71,7 @@
   let add_ticket_tag_url = "[[=XML(add_ticket_tag_url)]]";
   let get_tags_url = "[[=XML(get_tags_url)]]";
   let get_pinned_tickets_url = "[[=XML(get_pinned_tickets_url)]]";
+  let pin_ticket_url = "[[=XML(pin_ticket_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";
   let username = "[[=XML(username)]]";
