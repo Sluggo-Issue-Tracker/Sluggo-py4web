@@ -139,6 +139,13 @@ db.define_table(
     Field('tag_id', 'reference global_tag'),
 )
 
+# MARK: Homepage / pinning tickets
+db.define_table(
+    'user_pins',
+    Field('auth_user_id', 'reference auth_user'), # reference the auth not our custom work
+    Field('ticket_id', 'reference tickets')
+)
+
 # TODO tags, roles, other fun things that require relationships
 
 # TODO readables vs not readables (relevant? can we even use default forms?)
@@ -147,4 +154,5 @@ db.define_table(
 db.sub_tickets.ondelete = 'NO ACTION'  # We don't want relationships to affect tickets
 db.ticket_tag.ondelete = 'NO ACTION'
 db.user_tag.ondelete = 'NO ACTION'
+db.user_pins.ondelete = 'NO ACTION'
 db.commit()
