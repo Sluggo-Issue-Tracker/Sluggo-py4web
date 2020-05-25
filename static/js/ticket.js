@@ -47,6 +47,7 @@ let init = (app) => {
         ticket_tags: [],
         get_tags: "",
         selected_tags: [],
+        pinned_tickets: []
         // Complete.
     };
 
@@ -176,6 +177,16 @@ let init = (app) => {
         });
     };
 
+    app.refreshPinGraphics = () => {
+        for(ticket of app.data.tickets) {
+            if(app.data.pinned_tickets.includes(ticket.id)) {
+                Vue.set(ticket, "pinned", true);
+            } else {
+                Vue.set(ticket, "pinned", false);
+            }
+        }
+    }
+
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
@@ -205,6 +216,11 @@ let init = (app) => {
             app.vue.master = tickets;
             app.vue.tickets = app.vue.master;
             app.vue.ticket_tags = result.data.ticket_tags
+        }).then(() => {
+            axios.get(get_pinned_tickets_url).then((result) => {
+               app.data.pinned_tickets = result.data.pinned_tickets;
+               app.refreshPinGraphics();
+            })
         })
     };
 
