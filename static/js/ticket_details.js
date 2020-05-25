@@ -1,22 +1,6 @@
-
 Vue.component('v-select', VueSelect.VueSelect);
 
-Vue.directive('click-outside', {
-    bind(el, binding, vnode) {
-        var vm = vnode.context;
-        var callback = binding.value;
 
-        el.clickOutsideEvent = function (event){
-            if (!(el === event.target || el.contains(event.target))) {
-                return callback.call(vm, event);
-            }
-        };
-        document.body.addEventListener('click', el.clickOutsideEvent);
-    },
-    unbind(el) {
-        document.body.removeEventListener('click', el.clickOutsideEvent);
-    }
-});
 // This will be the object that will contain the Vue attributes
 // and be used to initialize it.
 let app = {};
@@ -39,6 +23,10 @@ let init = (app) => {
             sub_tickets: [],
             status: 0,
         },
+        title: "",
+        description: "",
+        author: "",
+        status: 0,
         new_ticket: {},
         show_modal: false,
         tag_options: ["hello"],
@@ -97,6 +85,10 @@ let init = (app) => {
         app.data.edit = true;
     };
 
+    app.cancel_edit = () => {
+        app.data.edit = false;
+    };
+
     app.submit_edit = () => {
         axios.post(edit_ticket_url, app.data.ticket).then((response) => {
             console.log(response)
@@ -124,6 +116,11 @@ let init = (app) => {
     };
 
     app.change = () => {
+        console.log("this was modified");
+    };
+
+    app.change_tag = function () {
+        console.log("changed");
     };
 
     app.change_status = () => {
@@ -159,7 +156,9 @@ let init = (app) => {
         submit_edit: app.submit_edit,
         remove_tag: app.remove_tag,
         change: app.change,
-        change_status: app.change_status
+        change_status: app.change_status,
+        change_tag: app.change_tag,
+        cancel_edit: app.cancel_edit
     };
 
     // This creates the Vue instance.
@@ -199,3 +198,4 @@ let init = (app) => {
 // This takes the (empty) app object, and initializes it,
 // putting all the code i
 init(app);
+
