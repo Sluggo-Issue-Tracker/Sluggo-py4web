@@ -7,23 +7,21 @@ import pathlib
 import uuid
 
 from py4web import action, request, abort, redirect, URL, Field
-from ..common import db, session, T, cache, auth, signed_url
-from ..models import get_user_email, get_user_title, get_user_name, get_user, \
-    get_time, get_tags_list, get_user_tag_by_name, get_ticket_tags_by_id, get_sub_tickets_by_parent_id, \
-    get_comment_thread_by_ticket_id
+from .. common import db, session, T, cache, auth, signed_url
+from .. models import Helper
 
 allowed_statuses = ["Not Started", "In Progress", "Completed"]
 
 
 # helper methods
 def generate_ticket_status(ticket):
-    action = None
+    action = -1
     if ticket is not None:
         if ticket.get('started') is not None:
             action = 2 if ticket.get('completed') is not None else 1
         else:
             action = 0
-    return allowed_statuses[action] if action is not None else action
+    return allowed_statuses[action] if action != -1 else action
 
 
 # Read -----------------------------------------------------------------------
@@ -40,8 +38,8 @@ def tickets():
         get_pinned_tickets_url=URL('get_pinned_tickets', signer=signed_url),
         pin_ticket_url=URL('pin_ticket', signer=signed_url),
         ticket_details_url=URL('ticket_details'),
-        user_email=get_user_email(),
-        username=get_user_title(),
+        user_email=Helper.get_user_email(),
+        username=Helper.get_user_title(),
         user=auth.get_user()
     )
 
@@ -60,8 +58,8 @@ def ticket_details(ticket_id=None):
         get_all_tags=URL('get_tags', signer=signed_url),
         delete_tag_url=URL('delete_tag', signer=signed_url),
         update_progress_url=URL('update_ticket_progress', signer=signed_url),
-        user_email=get_user_email(),
-        username=get_user_title(),
+        user_email=Helper.get_user_email(),
+        username=Helper.get_user_title(),
         user=auth.get_user()
     )
 
@@ -80,8 +78,8 @@ def get_tickets():
     ticket_tags = db(db.global_tag).select().as_list()
 
     for ticket in tickets:
-        ticket["ticket_author"] = get_user_name(ticket)
-        ticket["tag_list"] = get_ticket_tags_by_id(ticket.get('id'))
+        ticket["ticket_author"] = Helper.get_user_name(ticket)
+        ticket["tag_list"] = Helper.get_ticket_tags_by_id(ticket.get('id'))
         ticket["status"] = generate_ticket_status(ticket)
 
     return dict(tickets=tickets, ticket_tags=ticket_tags)
@@ -92,9 +90,10 @@ def get_tickets():
 def get_ticket_by_id(ticket_id=None):
     ticket = db(db.tickets.id == ticket_id).select().as_list()[0]
 
-    ticket["ticket_author"] = get_user_name(ticket)
-    ticket["tag_list"] = get_ticket_tags_by_id(ticket.get('id'))
-    ticket["sub_tickets"] = get_sub_tickets_by_parent_id(ticket.get('id'))
+    ticket["ticket_author"] = Helper.get_user_name(ticket)
+    ticket["tag_list"] = Helper.get_ticket_tags_by_id(ticket.get('id'))
+    ticket["status"] = generate_ticket_status(ticket)
+    ticket["sub_tickets"] = Helper.get_sub_tickets_by_parent_id(ticket.get('id'))
 
     return dict(ticket=ticket)
 
@@ -104,8 +103,8 @@ def get_ticket_by_id(ticket_id=None):
 @action.uses(signed_url.verify(), auth.user, db)
 def get_pinned_tickets():  # grabs pinned tickets for logged in user
     # Grab the current user's ID
-    userID = get_user()
-    if userID == None:
+    userID = Helper.get_user()
+    if userID is None:
         abort(500, "No User ID obtained (is this possible?")
 
     # Query for pinned tickets given user ID
@@ -181,7 +180,7 @@ def pin_ticket():
     ticketID = request.json.get("ticket_id")
     if ticketID is None:
         abort(400, "Ticket ID to pin not provided")
-    userID = get_user()
+    userID = Helper.get_user()
     if userID is None:
         abort(500, "No User ID obtained (is this possible?)")
 
@@ -225,13 +224,27 @@ def update_ticket_progress():
             db(db.tickets.id == ticket_id).update(started=None, completed=None)
         elif action == 2:
             # handle started
-            db(db.tickets.id == ticket_id).update(started=get_time(), completed=None)
+            db(db.tickets.id == ticket_id).update(started=Helper.get_time(), completed=None)
 
         elif action == 3:
             # handle completed
-            db(db.tickets.id == ticket_id).update(completed=get_time())
+            db(db.tickets.id == ticket_id).update(completed=Helper.get_time())
 
     return dict(action=action)
+
+
+@action('assign_user', method="POST")
+@action.uses(signed_url.verify(), auth.user, db)
+def assign_user():
+    ticket_id = request.json.get('ticket_id')
+    user_id = request.json.get('user_id')
+
+    if user_id is None or ticket_id is None:
+        return dict(message="ids are undefined")
+
+    ticket = db.tickets[ticket_id]
+    ticket.update_record(assigned_user=user_id)
+    return dict(message="success")
 
 
 # delete ---------------------------------------------------------------------------------

@@ -11,7 +11,7 @@ from py4web.utils.form import Form, FormStyleBulma
 from yatl.helpers import A
 from pydal.validators import *
 from .. common import db, session, T, cache, auth, signed_url
-from .. models import get_user_email, get_user_title, get_user_name, get_user, get_time, get_tags_list, get_user_tag_by_name
+from .. models import Helper
 
 @action('users')
 @action.uses('users.html', signed_url, auth.user)
@@ -21,8 +21,8 @@ def users():
         get_users_url = URL('users/get_users', signer=signed_url),
         get_icons_url = URL('users/get_icons', signer=signed_url),
         edit_user_url = URL('edit_user', signer=signed_url),
-        user_email = get_user_email(),
-        username = get_user_title(),
+        user_email = Helper.get_user_email(),
+        username = Helper.get_user_title(),
         user=auth.get_user()
     )
 
@@ -30,16 +30,16 @@ def users():
 @action('create_profile', method=['GET'])
 @action.uses('create_profile.html', db, session, auth.user, signed_url)
 def create_user():
-    user = db(db.users.user == get_user()).select().first()
+    user = db(db.users.user == Helper.get_user()).select().first()
     if user != None:
         redirect(URL('index'))
 
     return dict(
         add_user_url=URL('add_user', signer=signed_url),
         user=auth.get_user(),
-        username = get_user_title(),
+        username = Helper.get_user_title(),
         admin=db(db.users).isempty(),
-        tags=get_tags_list()
+        tags=Helper.get_tags_list()
     )
 
 
@@ -49,7 +49,7 @@ def add_user():
     u_id = db.users.insert(
         role="admin" if db(db.users).isempty() else "member",
         bio=request.json.get('bio'),
-        user=get_user(),
+        user=Helper.get_user(),
     )
 
     tags = request.json.get('tags')
@@ -82,11 +82,11 @@ def get_users():
                        (person.get('first_name').lower(), person.get('last_name').lower()) if person else "Unknown"
         user["full_name"] = "%s %s" % \
                             (person.get('first_name'), person.get('last_name')) if person else "Unknown"
-        user['tags_list'] = get_user_tag_by_name(user)
+        user['tags_list'] = Helper.get_user_tag_by_name(user)
         user['user_email'] = person.get('email')
 
 
-    return dict(users=users,tags=get_tags_list())
+    return dict(users=users,tags=Helper.get_tags_list())
 
 
 @action('edit_user', method="POST")
@@ -102,7 +102,7 @@ def edit_user():
 
 
     tags = request.json.get('tags_list')
-    old_tags = get_user_tag_by_name(row)
+    old_tags = Helper.get_user_tag_by_name(row)
 
     missing = set(old_tags).difference(tags)
     added = set(tags).difference(old_tags)

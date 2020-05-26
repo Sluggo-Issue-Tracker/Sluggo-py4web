@@ -17,18 +17,7 @@ let init = (app) => {
 
     // This is the Vue data.
     app.data = {
-        ticket : { // this is the main ticket object
-            id: "",
-            ticket_title: "",
-            ticket_description: "",
-            ticket_author: "",
-            created: "",
-            started: "",
-            completed: "",
-            tag_list: [],
-            sub_tickets: [],
-            status: 0,
-        },
+        ticket : {}, // this is the main data object
         // fields to visually represent the current ticket --------------------------------------
         ticket_id: "",
         title: "",
@@ -88,7 +77,7 @@ let init = (app) => {
      * this should do a post request to register the assignment of a ticket
      * @param user
      */
-    app.assign = (user) => {
+    app.assign_user= (user) => {
         // TODO: implement this
     };
 
@@ -137,6 +126,14 @@ let init = (app) => {
         });
     };
 
+    app.set_fields = (ticket_object) => {
+        app.data.ticket_id = ticket_object.id;
+        app.data.title = ticket_object.ticket_title;
+        app.data.description = ticket_object.ticket_title;
+        app.data.author = ticket_object.ticket_author;
+        app.data.
+    };
+
     /**
      *
      * @param list
@@ -156,14 +153,10 @@ let init = (app) => {
         pre_add: app.pre_add,
         add_ticket: app.add_ticket,
         close_modal: app.close_modal,
-        assign: app.assign,
+        assign_user: app.assign_user,
         redirect_ticket: app.redirect_ticket,
-        do_edit: app.do_edit,
         submit_edit: app.submit_edit,
-        remove_tag: app.remove_tag,
-        change: app.change,
         change_status: app.change_status,
-        change_tag: app.change_tag,
         cancel_edit: app.cancel_edit
     };
 
@@ -178,13 +171,20 @@ let init = (app) => {
     app.init = () => {
         axios.get(get_ticket_by_id_url).then((result) => {
             app.data.ticket = result.data.ticket;
-            app.data.selected_tags = app.data.ticket.tag_list.map(e => e.tag_name);
 
-            app.data.current_status = app.data.status_strings[app.data.ticket.status - 1];
+            app.set_fields(result.data.ticket);
+
+            app.data.selected_tags = app.data.ticket.tag_list.map((e) => {
+                e.label = e.tag_name;
+                return e;
+            });
 
             return axios.get(get_all_tags)
         }).then((result) => {
-            app.data.tag_options = result.data.tags.map(e => e.tag_name);
+            app.data.tag_options = result.data.tags.map((e) => {
+                e.label = e.tag_name;
+                return e;
+            });
         })
     };
 
