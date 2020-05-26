@@ -108,12 +108,23 @@ def get_users_by_tag_list():
     if type(tag_list) is not list:
         return dict(users=list())
 
-    # way more simple
+    """ annoying ass select statement"""
     tag_users = db(db.user_tag.tag_id in tag_list).select(
-            db.users.ALL, left=db.users.on(db.users.id == db.user_tag.user_id), groupby=db.users.id
-        ).as_list()
+        db.users.id, db.users.user, db.users.role, db.users.bio,
+        db.auth_user.first_name, db.auth_user.last_name, db.auth_user.email,
+        left=(db.users.on(db.users.id == db.user_tag.user_id),
+              db.auth_user.on(db.auth_user.id == db.users.user)),
+        groupby=db.users.id).as_list()
 
-    attach_user_information(tag_users)
+    tag_users = list(map(lambda x: {**x["users"], **x["auth_user"]}, tag_users))
+    print(tag_users)
+
+    for user in tag_users:
+        user["icon"] = "%s-%s.jpg" % \
+                       (user.get('first_name').lower(), user.get('last_name').lower()) if user else "Unknown"
+        user["full_name"] = "%s %s" % \
+                            (user.get('first_name'), user.get('last_name')) if user else "Unknown"
+        user['user_email'] = user.get('email')
 
     return dict(users=tag_users)
 
