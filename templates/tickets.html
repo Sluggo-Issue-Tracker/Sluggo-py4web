@@ -13,13 +13,13 @@
         <div class="column is-half">
           <div class="columns">
             <div class="column">
-              <v-select multiple placeholder="Tag" v-model="selected_tags" :options="ticket_tags.map(e => e.tag_name)" v-on:input="filter_list"></v-select>
+              <v-select multiple placeholder="Tag" v-model="selected_tags" :options="ticket_tags" v-on:input="filter_list"></v-select>
             </div>
             <div class="column">
               <v-select multiple placeholder="Progress" v-model="selected_progress" :options="status_strings" v-on:input="filter_list"></v-select>
             </div>
             <div class="column">
-              <v-select multiple placeholder="Assignee" v-model="selected_users" :options="['ur mom lol']" v-on:input="filter_list"></v-select>
+              <v-select multiple placeholder="Assignee" v-model="selected_users" :options="project_users" v-on:input="filter_list"></v-select>
             </div>
           </div>
         </div>
@@ -38,7 +38,7 @@
   </section>
 
   <ticket-modal v-if="showModal" v-bind:ticket="selected_ticket"
-                v-bind:options="ticket_tags !== false ? ticket_tags.map(e => e.tag_name) : []"
+                v-bind:options="ticket_tags"
                 @submit="submitCallback" @cancel="close_modal">
   </ticket-modal>
 
@@ -103,6 +103,7 @@
   let get_tags_url = "[[=XML(get_tags_url)]]";
   let ticket_details_url = "[[=XML(ticket_details_url)]]";
   let get_pinned_tickets_url = "[[=XML(get_pinned_tickets_url)]]";
+  let get_users_url = "[[=XML(get_users_url)]]";
   let pin_ticket_url = "[[=XML(pin_ticket_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";

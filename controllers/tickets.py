@@ -42,6 +42,7 @@ def tickets():
         add_ticket_tag_url=URL('add_ticket_tag', signer=signed_url),
         get_tags_url=URL('get_tags', signer=signed_url),
         get_pinned_tickets_url=URL('get_pinned_tickets', signer=signed_url),
+        get_users_url=URL('users/get_users', signer=signed_url),
         get_all_progress=URL('get_all_progress', signer=signed_url),
         pin_ticket_url=URL('pin_ticket', signer=signed_url),
         ticket_details_url=URL('ticket_details'),
@@ -136,7 +137,7 @@ def get_pinned_tickets():  # grabs pinned tickets for logged in user
 # helper for adding tags
 def register_tag(tag_list, ticket_id):
     for tag in tag_list:
-        global_tag = db(db.global_tag.tag_name == tag.get('tag_name')).select(db.global_tag.id).first()
+        global_tag = db(db.global_tag.id== tag.get('tag_id')).select(db.global_tag.id).first()
         tag_id = db.global_tag.insert(tag_name=tag.get('tag_name')) if global_tag is None else global_tag.id
         db.ticket_tag.insert(ticket_id=ticket_id, tag_id=tag_id)
 
@@ -146,9 +147,16 @@ def register_tag(tag_list, ticket_id):
 @action('add_tickets', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def add_tickets():
+    ticket_title = request.json.get('ticket_title')
+    ticket_text = request.json.get('ticket_text')
+    ticket_due_date = request.json.get('due_date')
+    assigned_user = request.json.get('user_id')
+
     ticket_id = db.tickets.insert(
-        ticket_title=request.json.get('ticket_title'),
-        ticket_text=request.json.get('ticket_text'),
+        ticket_title=ticket_title,
+        ticket_text=ticket_text,
+        ticket_due_date=ticket_due_date,
+        assigned_user=assigned_user
     )
 
     register_tag(request.json.get('tag_list'), ticket_id)

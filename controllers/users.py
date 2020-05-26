@@ -80,9 +80,6 @@ def attach_user_information(users):
     for user in users:
         person = db(db.auth_user.id == user.get('user')).select().first()
 
-        if person is None:
-            break
-
         user["icon"] = "%s-%s.jpg" % \
                        (person.get('first_name').lower(), person.get('last_name').lower()) if person else "Unknown"
         user["full_name"] = "%s %s" % \

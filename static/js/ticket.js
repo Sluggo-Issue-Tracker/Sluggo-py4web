@@ -49,13 +49,14 @@ let init = (app) => {
         selected_tags: [],
         shit: true,
         selected_progress: [],
-        selected_user: [],
+        selected_users: [],
         status_strings: ['Complete', 'In Progress', 'Not Started'],
         status_map: {
             'Complete': 3,
             'In Progress': 2,
             'Not Started': 1
         },
+        project_users: [],
         current_status: "",
         pinned_tickets: []
         // Complete.
@@ -238,7 +239,6 @@ let init = (app) => {
         close_modal: app.close_modal,
         submit_add: app.submit_add,
         filter_list: app.filter_list,
-        change_tag_search: app.change_tag_search,
         redirect: app.redirect,
         register: app.register,
         togglePinStatus: app.togglePinStatus,
@@ -259,13 +259,22 @@ let init = (app) => {
             app.reindex(tickets);
             app.vue.master = tickets;
             app.vue.tickets = app.vue.master;
-            app.vue.ticket_tags = result.data.ticket_tags
-        }).then(() => {
-            axios.get(get_pinned_tickets_url).then((result) => {
-               app.data.pinned_tickets = result.data.pinned_tickets;
-               app.refreshPinGraphics();
-            })
-        })
+            app.vue.ticket_tags = result.data.ticket_tags.map((tag) => {
+               tag.label = tag.tag_name;
+               return tag;
+            });
+            return axios.get(get_pinned_tickets_url)
+        }).then((result) => {
+           app.data.pinned_tickets = result.data.pinned_tickets;
+           app.refreshPinGraphics();
+        });
+        axios.get(get_users_url).then((result) => {
+            app.data.project_users = result.data.users.map((user) => {
+                user.label = user.full_name;
+                return user;
+            });
+        });
+
     };
 
     // Call to the initializer.
