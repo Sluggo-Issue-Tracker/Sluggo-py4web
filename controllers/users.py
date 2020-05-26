@@ -10,19 +10,20 @@ from py4web import action, request, abort, redirect, URL, Field
 from py4web.utils.form import Form, FormStyleBulma
 from yatl.helpers import A
 from pydal.validators import *
-from .. common import db, session, T, cache, auth, signed_url
-from .. models import Helper
+from ..common import db, session, T, cache, auth, signed_url
+from ..models import Helper
+
 
 @action('users')
 @action.uses('users.html', signed_url, auth.user)
 def users():
     return dict(
 
-        get_users_url = URL('users/get_users', signer=signed_url),
-        get_icons_url = URL('users/get_icons', signer=signed_url),
-        edit_user_url = URL('edit_user', signer=signed_url),
-        user_email = Helper.get_user_email(),
-        username = Helper.get_user_title(),
+        get_users_url=URL('users/get_users', signer=signed_url),
+        get_icons_url=URL('users/get_icons', signer=signed_url),
+        edit_user_url=URL('edit_user', signer=signed_url),
+        user_email=Helper.get_user_email(),
+        username=Helper.get_user_title(),
         user=auth.get_user()
     )
 
@@ -37,7 +38,7 @@ def create_user():
     return dict(
         add_user_url=URL('add_user', signer=signed_url),
         user=auth.get_user(),
-        username = Helper.get_user_title(),
+        username=Helper.get_user_title(),
         admin=db(db.users).isempty(),
         tags=Helper.get_tags_list()
     )
@@ -58,7 +59,7 @@ def add_user():
         # get the tag if it is stored in database
         t_id = db(db.global_tag.tag_name == tag.lower()).select().first()
 
-        if(t_id == None):
+        if (t_id == None):
             # if tag isn't stored in database, create new tags
             t_id = db.global_tag.insert(tag_name=tag.lower())
 
@@ -75,7 +76,6 @@ def add_user():
 def get_users():
     users = db(db.users).select().as_list()
 
-
     for user in users:
         person = db(db.auth_user.id == user.get('user')).select().first()
         user["icon"] = "%s-%s.jpg" % \
@@ -85,8 +85,7 @@ def get_users():
         user['tags_list'] = Helper.get_user_tag_by_name(user)
         user['user_email'] = person.get('email')
 
-
-    return dict(users=users,tags=Helper.get_tags_list())
+    return dict(users=users, tags=Helper.get_tags_list())
 
 
 @action('edit_user', method="POST")
@@ -100,7 +99,6 @@ def edit_user():
 
     names = request.json.get('full_name').split()
 
-
     tags = request.json.get('tags_list')
     old_tags = Helper.get_user_tag_by_name(row)
 
@@ -112,7 +110,7 @@ def edit_user():
         # get the tag if it is stored in database
         t_id = db(db.global_tag.tag_name == tag.lower()).select().first()
 
-        if(t_id == None):
+        if (t_id == None):
             # if tag isn't stored in database, create new tags
             t_id = db.global_tag.insert(tag_name=tag.lower())
 
@@ -123,10 +121,9 @@ def edit_user():
         # get the tag if it is stored in database
         t_id = db(db.global_tag.tag_name == tag.lower()).select().first()
 
-        if(t_id == None):
+        if (t_id == None):
             # if tag isn't stored in database, create new tags
             t_id = db.global_tag.insert(tag_name=tag.lower())
-
 
         # now we insert tags in this many to many relationship
         db.user_tag.update_or_insert((db.user_tag.user_id == request.json.get('id')) & (db.user_tag.tag_id == t_id),

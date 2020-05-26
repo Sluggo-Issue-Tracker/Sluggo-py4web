@@ -7,11 +7,7 @@ import pathlib
 import uuid
 
 from py4web import action, request, abort, redirect, URL, Field
-from py4web.utils.form import Form, FormStyleBulma
-from yatl.helpers import A
-from pydal.validators import *
 from .. common import db, session, T, cache, auth, signed_url
-from .. models import Helper
 
 
 @action('clean')

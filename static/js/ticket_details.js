@@ -23,9 +23,9 @@ let init = (app) => {
         title: "",
         description: "",
         author: "",
-        status: 0,
+        status: "",
+        // data used by input
         new_ticket: {},
-        show_modal: false,
         selected_tags: [],
         current_status: "",
         assigned: "No one has been assigned", // going to be the string for the assigned user
@@ -34,6 +34,12 @@ let init = (app) => {
         status_strings: [],
         // control ------------------------------------------------------------------------------
         edit: false,
+        show_modal: false,
+        color_class: {
+            0: "is-link",
+            1: "is-warning",
+            2: "is-success"
+        }
     };
 
     app.pre_add = () => {
@@ -101,7 +107,14 @@ let init = (app) => {
      * on success, updates the displayed values
      */
     app.submit_edit = () => {
-        axios.post(edit_ticket_url, app.data.ticket).then((response) => {
+        if(app.data.ticket === null)
+            return;
+        axios.post(edit_ticket_url, {
+            id: app.data.ticket_id,
+            title: app.data.title,
+            text: app.data.description,
+            tag_list: app.data.selected_tags,
+        }).then((response) => {
             console.log(response)
         }).catch((error) => {
             console.log(error);
@@ -114,13 +127,15 @@ let init = (app) => {
      * called by v-select on selection of the status
      */
     app.change_status = () => {
-        let status = app.data.status_map[app.data.current_status];
-        app.data.ticket.status = status;
+        if(app.data.status === null)
+            return;
+
         axios.post(update_progress_url, {
             ticket_id: app.data.ticket.id,
-            action: status
+            status: app.data.current_status
         }).then((response) => {
-            console.log(response.data)
+            app.data.status = response.data.status;
+            app.data.current_status = response.data.status;
         }).catch((error) => {
             console.log(error);
         });
@@ -131,7 +146,8 @@ let init = (app) => {
         app.data.title = ticket_object.ticket_title;
         app.data.description = ticket_object.ticket_title;
         app.data.author = ticket_object.ticket_author;
-        app.data.
+        app.data.status = ticket_object.status;
+        app.data.current_status = app.data.status;
     };
 
     /**
@@ -179,13 +195,16 @@ let init = (app) => {
                 return e;
             });
 
-            return axios.get(get_all_tags)
-        }).then((result) => {
+        });
+        axios.get(get_all_tags).then((result) => {
             app.data.tag_options = result.data.tags.map((e) => {
                 e.label = e.tag_name;
                 return e;
             });
-        })
+        });
+        axios.get(get_all_progress).then((result) => {
+           app.data.status_strings = result.data.valid_statuses;
+        });
     };
 
     // Call to the initializer.

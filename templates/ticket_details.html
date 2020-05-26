@@ -15,14 +15,8 @@
                        </span>
                    </div>
                    <div class="level-item">
-                       <span class="tag is-link" v-if="ticket.status == 1">
-                       Not yet started
-                       </span>
-                       <span class="tag is-warning" v-if="ticket.status == 2">
-                       In progress
-                       </span>
-                       <span class="tag is-success" v-if="ticket.status == 3">
-                       Completed
+                       <span class="tag" :class="color_class[status_strings.indexOf(status)]">
+                           {{status}}
                        </span>
                    </div>
                </div>
@@ -88,7 +82,7 @@
                             </div>
                         </div>
                         <p class="is-size-6 has-text-centered">
-                            <v-select v-model="current_status" :options="status_strings" v-on:input="change_status"></v-select>
+                            <v-select :clearable="false" v-model="current_status" :options="status_strings" v-on:input="change_status"></v-select>
                         </p>
                         <br>
                     </div>
@@ -148,6 +142,7 @@
    let delete_tag_url="[[=XML(delete_tag_url)]]";
    let update_progress_url="[[=XML(update_progress_url)]]";
    let get_all_tags="[[=XML(get_all_tags)]]";
+   let get_all_progress="[[=XML(get_all_progress)]]";
 </script>
 
 <script src="js/vue-select.min.js"></script>

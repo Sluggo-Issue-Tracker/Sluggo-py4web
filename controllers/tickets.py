@@ -7,10 +7,16 @@ import pathlib
 import uuid
 
 from py4web import action, request, abort, redirect, URL, Field
-from .. common import db, session, T, cache, auth, signed_url
-from .. models import Helper
+from ..common import db, session, T, cache, auth, signed_url
+from ..models import Helper
 
-allowed_statuses = ["Not Started", "In Progress", "Completed"]
+# if only i could mark something const in python : (
+# idx 0 should always be not started
+# idx 1 should always be in progress
+# idx 2 should always be completed
+# this is better than doing string comparisons since i'm really good at
+# misspelling stuff
+valid_statuses = ["Not Started", "In Progress", "Completed"]
 
 
 # helper methods
@@ -21,7 +27,7 @@ def generate_ticket_status(ticket):
             action = 2 if ticket.get('completed') is not None else 1
         else:
             action = 0
-    return allowed_statuses[action] if action != -1 else action
+    return valid_statuses[action] if action != -1 else action
 
 
 # Read -----------------------------------------------------------------------
@@ -36,6 +42,7 @@ def tickets():
         add_ticket_tag_url=URL('add_ticket_tag', signer=signed_url),
         get_tags_url=URL('get_tags', signer=signed_url),
         get_pinned_tickets_url=URL('get_pinned_tickets', signer=signed_url),
+        get_all_progress=URL('get_all_progress', signer=signed_url),
         pin_ticket_url=URL('pin_ticket', signer=signed_url),
         ticket_details_url=URL('ticket_details'),
         user_email=Helper.get_user_email(),
@@ -56,6 +63,7 @@ def ticket_details(ticket_id=None):
         tickets_details_url=URL('ticket_details'),
         delete_tickets_url=URL('delete_ticket', signer=signed_url),
         get_all_tags=URL('get_tags', signer=signed_url),
+        get_all_progress=URL('get_all_progress', signer=signed_url),
         delete_tag_url=URL('delete_tag', signer=signed_url),
         update_progress_url=URL('update_ticket_progress', signer=signed_url),
         user_email=Helper.get_user_email(),
@@ -69,6 +77,12 @@ def ticket_details(ticket_id=None):
 def get_tags():
     tags = db(db.global_tag).select(orderby=db.global_tag.tag_name).as_list()
     return dict(tags=tags)
+
+
+@action('get_all_progress')
+@action.uses(signed_url.verify(), auth.user)
+def get_all_progress():
+    return dict(valid_statuses=valid_statuses)
 
 
 @action('get_tickets')
@@ -117,6 +131,7 @@ def get_pinned_tickets():  # grabs pinned tickets for logged in user
     )
 
 
+# helper for adding tags
 def register_tag(tag_list, ticket_id):
     for tag in tag_list:
         global_tag = db(db.global_tag.tag_name == tag.get('tag_name')).select(db.global_tag.id).first()
@@ -200,37 +215,61 @@ def pin_ticket():
 @action('edit_ticket', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def edit_ticket():
+    ticket_id = request.json.get('id')
+    title = request.json.get('title')
+    text = request.json.get('text')
+    tag_list = request.json.get('tag_list')
+    due_date = request.json.get('due_date') # TODO: implement due dates here
+
     print(request.json)
-    row = db(db.tickets.id == request.json.get('id')).select().first()
-    print(row)
-    row.update_record(ticket_title=request.json.get('ticket_title'),
-                      ticket_text=request.json.get('ticket_text'),
-                      ticket_status=request.json.get('ticket_status'),
-                      ticket_priority=request.json.get('ticket_priority'))
+
+    ticket = db.tickets[ticket_id]
+    if ticket is None:
+        abort(400, "could not find specified ticket")
+
+    if type(tag_list) is not list:
+        print("whats going on here?")
+
+    ticket.update_record(ticket_title=title.strip(),
+                         ticket_text=text.strip())
+
+    current_tickets = Helper.get_ticket_tags_by_id(ticket_id)
+
+    # yay inefficient tag update, set difference does not work on sets full of dicts
+    for tag in [i for i in current_tickets if i not in tag_list]:
+        db((db.ticket_tag.ticket_id == ticket_id) & (db.ticket_tag.tag_id == tag.get('id'))).delete()
+
+    for tag in [i for i in tag_list if i not in current_tickets]:
+        db.ticket_tag.insert(ticket_id=ticket_id, tag_id=tag.get('id'))
+
     return "ok"
 
 
 @action('update_ticket_progress', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def update_ticket_progress():
-    action = request.json.get('action')
+    action = request.json.get('status')
     ticket_id = request.json.get('ticket_id')
 
     ticket = db.tickets[ticket_id]
-    if ticket is not None:
-        print("it isn't none")
-        if action == 1:
-            # handle in progress
-            db(db.tickets.id == ticket_id).update(started=None, completed=None)
-        elif action == 2:
-            # handle started
-            db(db.tickets.id == ticket_id).update(started=Helper.get_time(), completed=None)
+    if ticket is None:
+        abort(400, "no such ticket exists")
 
-        elif action == 3:
-            # handle completed
-            db(db.tickets.id == ticket_id).update(completed=Helper.get_time())
+    idx = valid_statuses.index(action)
+    print(idx)
+    if idx == 0:  # not started
+        ticket.update_record(started=None, completed=None)
 
-    return dict(action=action)
+    elif idx == 1:  # in progress
+        ticket.update_record(started=Helper.get_time(), completed=None)
+
+    elif idx == 2:  # completed
+        ticket.update_record(
+            started=Helper.get_time() if ticket.started is None else ticket.started,
+            completed=Helper.get_time()
+        )
+
+    return dict(ticket_id=ticket_id, status=action)
 
 
 @action('assign_user', method="POST")
