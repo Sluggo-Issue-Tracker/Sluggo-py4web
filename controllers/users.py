@@ -71,13 +71,18 @@ def add_user():
     return "ok"
 
 
-@action('users/get_users')
-@action.uses(signed_url.verify(), auth.user)
-def get_users():
-    users = db(db.users).select().as_list()
+def attach_user_information(users):
+    if type(users) is not list:
+        return
+
+    print(users)
 
     for user in users:
         person = db(db.auth_user.id == user.get('user')).select().first()
+
+        if person is None:
+            break
+
         user["icon"] = "%s-%s.jpg" % \
                        (person.get('first_name').lower(), person.get('last_name').lower()) if person else "Unknown"
         user["full_name"] = "%s %s" % \
@@ -85,7 +90,36 @@ def get_users():
         user['tags_list'] = Helper.get_user_tag_by_name(user)
         user['user_email'] = person.get('email')
 
+
+@action('users/get_users')
+@action.uses(signed_url.verify(), auth.user)
+def get_users():
+    users = db(db.users).select().as_list()
+
+    attach_user_information(users)
     return dict(users=users, tags=Helper.get_tags_list())
+
+
+@action('get_users_by_tag_list', method="POST")
+@action.uses(signed_url.verify(), auth.user)
+def get_users_by_tag_list():
+    tag_list = request.json.get('tag_list')
+    user_dict = dict()
+
+    if type(tag_list) is not list:
+        return dict(users=list())
+
+    # all tags here should be defined in our list
+    for tag in tag_list:
+        tag_users = Helper.get_users_by_tag_id(tag.get('id'))
+        attach_user_information(tag_users)
+
+        # keyed in from id keeps these unique
+        for user in tag_users:
+            if user_dict.get(user["id"]) is None:
+                user_dict[user["id"]] = user
+
+    return dict(users=user_dict.values())
 
 
 @action('edit_user', method="POST")

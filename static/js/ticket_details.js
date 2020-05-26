@@ -32,6 +32,7 @@ let init = (app) => {
         // represents values allowed by the backend
         tag_options: [],
         status_strings: [],
+        possible_users: [],
         // control ------------------------------------------------------------------------------
         edit: false,
         show_modal: false,
@@ -115,7 +116,9 @@ let init = (app) => {
             text: app.data.description,
             tag_list: app.data.selected_tags,
         }).then((response) => {
-            console.log(response)
+            return axios.post(get_users_by_tag_list_url, {tag_list: app.data.selected_tags})
+        }).then((result) => {
+            app.data.possible_users = app.reindex(result.data.users);
         }).catch((error) => {
             console.log(error);
         });
@@ -144,7 +147,7 @@ let init = (app) => {
     app.set_fields = (ticket_object) => {
         app.data.ticket_id = ticket_object.id;
         app.data.title = ticket_object.ticket_title;
-        app.data.description = ticket_object.ticket_title;
+        app.data.description = ticket_object.ticket_text;
         app.data.author = ticket_object.ticket_author;
         app.data.status = ticket_object.status;
         app.data.current_status = app.data.status;
@@ -159,6 +162,7 @@ let init = (app) => {
         let i = 0;
         for(let l of list) {
             l._idx = i++;
+            l.label = l.full_name;
         }
         return list;
     };
@@ -201,6 +205,9 @@ let init = (app) => {
                 e.label = e.tag_name;
                 return e;
             });
+            return axios.post(get_users_by_tag_list_url, {tag_list: app.data.selected_tags})
+        }).then((result) => {
+            app.data.possible_users = app.reindex(result.data.users);
         });
         axios.get(get_all_progress).then((result) => {
            app.data.status_strings = result.data.valid_statuses;

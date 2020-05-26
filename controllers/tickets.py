@@ -45,6 +45,7 @@ def tickets():
         get_all_progress=URL('get_all_progress', signer=signed_url),
         pin_ticket_url=URL('pin_ticket', signer=signed_url),
         ticket_details_url=URL('ticket_details'),
+        get_users_by_tag_list_url=URL('get_users_by_tag_list', signer=signed_url),
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
         user=auth.get_user()
@@ -66,6 +67,7 @@ def ticket_details(ticket_id=None):
         get_all_progress=URL('get_all_progress', signer=signed_url),
         delete_tag_url=URL('delete_tag', signer=signed_url),
         update_progress_url=URL('update_ticket_progress', signer=signed_url),
+        get_users_by_tag_list_url=URL('get_users_by_tag_list', signer=signed_url),
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
         user=auth.get_user()
@@ -241,7 +243,13 @@ def edit_ticket():
     current_tickets = Helper.get_ticket_tags_by_id(ticket_id)
 
     # tag ids should be unique so this should not cause an error
-    tag_set = {tag.get('id') for tag in tag_list} if tag_list is not None else set()
+    tag_set = set()
+    for tag in tag_list:
+        tag_id = tag.get('id')
+        if tag_id is None:
+            tag_id = db(db.global_tag).insert(tag_name=tag.get('tag_name'))
+        tag_set.add(tag_id)
+
     current_set = {tag.get('id') for tag in current_tickets} if current_tickets is not None else set()
 
     # yay inefficient tag update, set difference does not work on sets full of dicts
@@ -249,7 +257,7 @@ def edit_ticket():
         db((db.ticket_tag.ticket_id == ticket_id) & (db.ticket_tag.tag_id == tag_id)).delete()
 
     for tag_id in tag_set.difference(current_set):
-        db.ticket_tag.insert(ticket_id=ticket_id, tag_id=tag_id.get('id'))
+        db.ticket_tag.insert(ticket_id=ticket_id, tag_id=tag_id)
 
     return "ok"
 

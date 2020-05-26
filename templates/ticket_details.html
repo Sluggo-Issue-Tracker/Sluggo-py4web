@@ -65,11 +65,11 @@
                                 <div class="level-item"><span>Tags</span></div>
                             </div>
                         </div>
-                        <v-select v-if="!edit" multiple placeholder="Tags"
+                        <v-select class="has-background-white" v-if="!edit" multiple placeholder="Tags"
                                   disabled
                                   v-model="selected_tags"
                                   :options="tag_options"></v-select>
-                         <v-select v-if="edit" multiple placeholder="Tags"
+                         <v-select class="has-background-white" v-if="edit" multiple placeholder="Tags"
                                   v-model="selected_tags"
                                   :options="tag_options"></v-select>
                         <br>
@@ -82,7 +82,7 @@
                             </div>
                         </div>
                         <p class="is-size-6 has-text-centered">
-                            <v-select :clearable="false" v-model="current_status" :options="status_strings" v-on:input="change_status"></v-select>
+                            <v-select class="has-background-white" :clearable="false" v-model="current_status" :options="status_strings" v-on:input="change_status"></v-select>
                         </p>
                         <br>
                     </div>
@@ -90,7 +90,9 @@
                     <div style="border-bottom: darkgray 1px solid">
                         <div class="level" >
                             <div class="level-left">
-                                <div class="level-item"><span>Assignee</span></div>
+                                <div class="level-item">
+                                    Assignee
+                                </div>
                             </div>
                             <div class="level-right">
                                 <div class="level-item">
@@ -98,9 +100,7 @@
                                 </div>
                             </div>
                         </div>
-                        <p class="is-size-6 has-text-centered">
-                            {{assigned}}
-                        </p>
+                        <v-select class="has-background-white" v-model="assigned" :options="possible_users"></v-select>
                         <br>
                     </div>
                     <br>
@@ -143,6 +143,7 @@
    let update_progress_url="[[=XML(update_progress_url)]]";
    let get_all_tags="[[=XML(get_all_tags)]]";
    let get_all_progress="[[=XML(get_all_progress)]]";
+   let get_users_by_tag_list_url="[[=XML(get_users_by_tag_list_url)]]";
 </script>
 
 <script src="js/vue-select.min.js"></script>

@@ -33,6 +33,16 @@ class Helper:
         return auth.current_user.get('id') if auth.current_user else None
 
     @staticmethod
+    def get_users_by_tag_id(tag_id):
+        if tag_id is None:
+            return list()
+
+        return db(db.user_tag.tag_id == tag_id).select(
+            db.users.ALL, left=db.users.on(db.users.id == db.user_tag.user_id)
+        ).as_list()
+
+
+    @staticmethod
     def get_time():
         return datetime.now(timezone.utc)
 
@@ -61,7 +71,7 @@ class Helper:
     @staticmethod
     def get_ticket_tags_by_id(ticket_id):
         if ticket_id is None:
-            return None
+            return list()
 
         return db(db.ticket_tag.ticket_id == ticket_id).select \
             (db.global_tag.ALL,
