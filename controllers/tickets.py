@@ -227,20 +227,29 @@ def edit_ticket():
     if ticket is None:
         abort(400, "could not find specified ticket")
 
-    if type(tag_list) is not list:
-        print("whats going on here?")
+    if type(tag_list) is not list and tag_list is not None:
+        print("wrong type for tag_list")
+        abort(500, "wrong type for tag_list")
+
+    if type(title) is not str or type(text) is not str:
+        print("wrong values for title or text")
+        abort(500, "wrong values for title and text")
 
     ticket.update_record(ticket_title=title.strip(),
                          ticket_text=text.strip())
 
     current_tickets = Helper.get_ticket_tags_by_id(ticket_id)
 
-    # yay inefficient tag update, set difference does not work on sets full of dicts
-    for tag in [i for i in current_tickets if i not in tag_list]:
-        db((db.ticket_tag.ticket_id == ticket_id) & (db.ticket_tag.tag_id == tag.get('id'))).delete()
+    # tag ids should be unique so this should not cause an error
+    tag_set = {tag.get('id') for tag in tag_list} if tag_list is not None else set()
+    current_set = {tag.get('id') for tag in current_tickets} if current_tickets is not None else set()
 
-    for tag in [i for i in tag_list if i not in current_tickets]:
-        db.ticket_tag.insert(ticket_id=ticket_id, tag_id=tag.get('id'))
+    # yay inefficient tag update, set difference does not work on sets full of dicts
+    for tag_id in current_set.difference(tag_set):
+        db((db.ticket_tag.ticket_id == ticket_id) & (db.ticket_tag.tag_id == tag_id)).delete()
+
+    for tag_id in tag_set.difference(current_set):
+        db.ticket_tag.insert(ticket_id=ticket_id, tag_id=tag_id.get('id'))
 
     return "ok"
 
