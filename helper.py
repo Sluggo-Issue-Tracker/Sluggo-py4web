@@ -33,12 +33,12 @@ class Helper:
         return auth.current_user.get('id') if auth.current_user else None
 
     @staticmethod
-    def get_users_by_tag_id(tag_id):
-        if tag_id is None:
+    def get_users_by_tag_id(tag_list):
+        if tag_list is None:
             return list()
 
-        return db(db.user_tag.tag_id == tag_id).select(
-            db.users.ALL, left=db.users.on(db.users.id == db.user_tag.user_id)
+        return db(db.user_tag.tag_id in tag_list).select(
+            db.users.ALL, left=db.users.on(db.users.id == db.user_tag.user_id), groupby=db.users.id
         ).as_list()
 
 

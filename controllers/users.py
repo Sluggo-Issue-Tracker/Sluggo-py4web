@@ -104,22 +104,18 @@ def get_users():
 @action.uses(signed_url.verify(), auth.user)
 def get_users_by_tag_list():
     tag_list = request.json.get('tag_list')
-    user_dict = dict()
 
     if type(tag_list) is not list:
         return dict(users=list())
 
-    # all tags here should be defined in our list
-    for tag in tag_list:
-        tag_users = Helper.get_users_by_tag_id(tag.get('id'))
-        attach_user_information(tag_users)
+    # way more simple
+    tag_users = db(db.user_tag.tag_id in tag_list).select(
+            db.users.ALL, left=db.users.on(db.users.id == db.user_tag.user_id), groupby=db.users.id
+        ).as_list()
 
-        # keyed in from id keeps these unique
-        for user in tag_users:
-            if user_dict.get(user["id"]) is None:
-                user_dict[user["id"]] = user
+    attach_user_information(tag_users)
 
-    return dict(users=user_dict.values())
+    return dict(users=tag_users)
 
 
 @action('edit_user', method="POST")
