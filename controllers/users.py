@@ -14,6 +14,15 @@ from ..common import db, session, T, cache, auth, signed_url
 from ..models import Helper
 
 
+
+
+def get_role():
+
+    user = db(db.users.user == get_user()).select().first()
+    return user.role.capitalize() if user is not None else "Unapproved"
+
+
+
 @action('users')
 @action.uses('users.html', signed_url, auth.user)
 def users():
@@ -25,6 +34,22 @@ def users():
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
         user=auth.get_user()
+    )
+
+
+@action('users/<id>')
+@action.uses('specific_user.html', signed_url, auth.user)
+def specific_user(id=None):
+    return dict(
+
+        show_user_url = URL('users/show_user', signer=signed_url),
+        get_icons_url = URL('users/get_icons', signer=signed_url),
+        edit_user_url = URL('edit_user', signer=signed_url),
+        user_email = get_user_email(),
+        username = get_user_title(),
+        user=auth.get_user(),
+        id=id,
+        admin=get_role(),
     )
 
 
@@ -48,7 +73,7 @@ def create_user():
 @action.uses(signed_url.verify(), auth.user, db)
 def add_user():
     u_id = db.users.insert(
-        role="admin" if db(db.users).isempty() else "member",
+        role="admin" if db(db.users).isempty() else "unapproved",
         bio=request.json.get('bio'),
         user=Helper.get_user(),
     )
@@ -124,6 +149,25 @@ def get_users_by_tag_list():
         user['user_email'] = user.get('email')
 
     return dict(users=tag_users)
+
+
+
+
+@action('users/show_user')
+@action.uses(signed_url.verify(), auth.user)
+def show_user():
+    id = request.params.id
+    user = db(db.users.id == id).select().as_list()[0]
+    person = db(db.auth_user.id == user.get('user')).select().first()
+
+    user["icon"] = "%s-%s.jpg" % \
+                   (person.get('first_name').lower(), person.get('last_name').lower()) if person else "Unknown"
+    user["full_name"] = "%s %s" % \
+                        (person.get('first_name'), person.get('last_name')) if person else "Unknown"
+    user['tags_list'] = get_user_tag_by_name(user)
+    user['user_email'] = person.get('email')
+    user['role'] = user['role'].capitalize()
+    return dict(user=user,tags=get_tags_list(), )
 
 
 @action('edit_user', method="POST")

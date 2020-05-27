@@ -13,13 +13,7 @@ let init = (app) => {
         username: username,
         users: [],
         master: [],
-        page: 'list',
-        current_user: {},
-        options: [],
         searchText: "",
-        is_pending: false,
-        error: false,
-        success: false,
 
         // Complete.
     };
@@ -33,98 +27,15 @@ let init = (app) => {
         return a;
     };
 
-    app.goto = (destination) => {
-        app.vue.page = destination;
-        if(destination === "list") {
-            app.data.current_user = {};
-        }
-        // app.vue.add_post_text = "";
-    };
-
     app.show_user = (user_index) => {
-        let user = app.vue.users[user_index];
+        let user = app.data.users[user_index];
         if(user !== false) {
-            app.data.current_user = {
-                _idx: user._idx,
-                id: user.id,
-                bio: user.bio,
-                full_name: user.full_name,
-                url: user.url,
-                role: user.role,
-                tags_list: user.tags_list,
-                user_email: user.user_email
-            };
-        }
-        app.goto('user');
-    };
-
-
-    app.resetCurrent = () => {
-        app.show_user(app.vue.current_user._idx);
-    };
-
-
-    app.updateCurrent = () => {
-        let user = app.data.current_user;
-
-        if(user !== false) {
-            app.vue.is_pending = true;
-            axios.post(edit_user_url, { bio : user.bio,
-                                        role : user.role,
-                                        tags_list : user.tags_list,
-                                        full_name : user.full_name,
-                                        id : user.id })
-            .then((response) => {
-                let old_user = app.data.users[user._idx];
-                app.vue.is_pending = false;
-                app.show_value(false);
-                old_user.bio = user.bio,
-                old_user.full_name = user.full_name,
-                old_user.url = user.url,
-                old_user.role = user.role,
-                old_user.tags_list = user.tags_list,
-                old_user.user_email = user.user_email
-
-                app.reindex(app.data.users);
-            }).catch((error) => {
-                console.log(error);
-                app.show_value(true);
-            });
+            window.location.href = "../users/" + user.id;
         }
     };
 
-
-    app.sleep = (ms) => {
-            return function (x) {
-                return new Promise(resolve => setTimeout(() => resolve(x), ms));
-            };
-        }
-
-    app.show_value = (flag) => {
-        // Flashes an error if an error occurred.
-
-        if(flag === true) {
-            app.vue.error = true;
-            app.vue.success = false;
-        }
-        else {
-            app.vue.error = false;
-            app.vue.success = true;
-        }
-        app.vue.is_pending = false;
-        app.sleep(1000)()
-            .then(() => {
-                app.vue.error = false;
-                app.vue.success = false;
-            });
-    }
-
-    app.checkUser = () => {
-        return app.vue.user_email == app.vue.current_user.user_email;
-    };
 
     app.filter_list = () => {
-        app.goto('list');
         app.data.users = app.data.master.filter((user) => {
             return user.full_name.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
                    user.role.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
@@ -136,11 +47,7 @@ let init = (app) => {
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
-        goto: app.goto,
         show_user: app.show_user,
-        updateCurrent: app.updateCurrent,
-        resetCurrent: app.resetCurrent,
-        checkUser: app.checkUser,
         filter_list: app.filter_list,
     };
 
@@ -155,14 +62,11 @@ let init = (app) => {
         axios.get(get_users_url).then((result) => {
             var user_promises = [];
             let users = result.data.users;
-            app.vue.options = result.data.tags;
+            app.data.options = result.data.tags;
             app.reindex(users);
             for (let user of users) {
-                // We create an element in the images data structure.
-                // Note: it is SUPER important here to have the url attribute
-                // of img_el already defined.
                 let user_el = user;
-                app.vue.users.push(user_el);
+                app.data.users.push(user_el);
                 // We create a promise for when the image loads.
                 let p = axios.get(
                     get_icon_url,
@@ -174,18 +78,14 @@ let init = (app) => {
                 });
                 user_promises.push(p);
             }
-            app.data.master = app.vue.users;
+            app.data.master = app.data.users;
             Promise.all(user_promises).then((r) => {
-                    app.vue.done = "All done";
+                    app.data.done = "All done";
                     console.log(r);
             });
         });
     };
 
-
-
-
-    // Call to the initializer.
     app.init();
 };
 

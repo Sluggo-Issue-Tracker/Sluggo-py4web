@@ -137,11 +137,11 @@ let init = (app) => {
     };
 
     app.delete_ticket = (ticket_idx) => {
-        let t = app.vue.tickets[ticket_idx];
+        let t = app.data.tickets[ticket_idx];
 
         axios.post(delete_tickets_url, {id:t.id}).then(() => {
-            app.vue.tickets.splice(ticket_idx, 1);
-            app.reindex(app.vue.tickets);
+            app.data.tickets.splice(ticket_idx, 1);
+            app.reindex(app.data.tickets);
         })
     };
 
@@ -219,7 +219,7 @@ let init = (app) => {
 
     app.togglePinStatus = (ticket) => {
         let ticketID = ticket.id;
-        
+
         // make a server call
         axios.post(pin_ticket_url, {
             ticket_id: ticketID
