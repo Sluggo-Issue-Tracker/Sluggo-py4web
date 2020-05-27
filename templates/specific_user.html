@@ -1,0 +1,101 @@
+<!-- users.html - mockup page for viewing users
+# Copyright (c) 2020 Andrew Gavgavian, Samuel Schmidt, and Isaac
+# Trimble-Pederson, All Rights Reserved-->
+
+[[extend 'layout.html']]
+<div class="section" id="vue-user">
+  <div class="container">
+    <div class="tile is-ancestor">
+      <!-- Person Image -->
+      <div class="tile is-vertical is-parent is-4">
+        <figure class="image is-square">
+          <img v-bind:src="current_user.url">
+        </figure>
+      </div>
+      <!-- Text Fields -->
+      <div class="tile is-parent is-vertical">
+
+        <!-- Name Field -->
+        <div class="field">
+          <p class="title is-size-4">Name</p>
+          <div class="control">
+            <input v-if="checkUser()" v-model="current_user.full_name" class="input is-hovered" type="text">
+            <input v-else disabled v-model="current_user.full_name" class="input is-hovered" type="text">
+          </div>
+        </div>
+
+        <!-- Proj Field -->
+        <p class="title is-size-4">Project Tags</p>
+        <div class="field">
+          <v-select v-if="checkUser()" taggable multiple push-tags v-model="current_user.tags_list" :options="options"> </v-select>
+          <v-select v-else disabled multiple v-model="current_user.tags_list"> </v-select>
+        </div>
+
+        <!-- Role Field -->
+        <div class="field">
+          <p class="title is-size-4">Role</p>
+          <div v-if="checkAdmin()" class="select">
+            <select v-model="selected">
+              <template v-for="role in roles">
+                <option v-if="current_user.role === role" selected>{{current_user.role}}</option>
+                <option v-else>{{role}}</option>
+              </template>
+            </select>
+          </div>
+          <div v-else class="select">
+            <select disabled v-model="selected">
+              <template v-for="role in roles">
+                <option v-if="current_user.role === role" selected>{{current_user.role}}</option>
+                <option v-else>{{role}}</option>
+              </template>
+            </select>
+          </div>
+        </div>
+
+        <!-- Bio Field -->
+        <div class="field">
+          <p class="title is-size-4">Bio</p>
+          <div class="control">
+            <textarea v-if="checkUser()" v-model="current_user.bio" class="textarea" rows="10"></textarea>
+            <textarea v-else disabled v-model="current_user.bio" class="textarea" rows="10"></textarea>
+          </div>
+        </div>
+
+        <div>
+          <div class="buttons is-pulled-left">
+            <button class="button is-link" @click="goback">
+              <i class="fa fa-chevron-left" aria-hidden="true"> </i>Back
+            </button>
+          </div>
+          <!-- Update and Cancel button -->
+          <div class="buttons is-right" v-if="checkAdmin() || checkUser()">
+            <span v-if="success" class="has-text-primary"> <i class="fa fa-check-square-o fa-fw"></i> </span>
+            <span v-if="error" class="has-text-danger"> <i class="fa fa fa-exclamation-triangle"></i> </span>
+            <button class="button is-primary" :class="is_pending ? 'is-loading' : ''" @click="updateCurrent">
+              Update
+            </button>
+            <button class="button is-warning" @click="resetCurrent">
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script>
+  let get_icon_url = "[[=XML(get_icons_url)]]";
+  let show_user_url = "[[=XML(show_user_url)]]";
+  let edit_user_url = "[[=XML(edit_user_url)]]";
+  // Complete with other URLs you need.
+  let user_email = "[[=XML(user_email)]]";
+  let username = "[[=XML(username)]]";
+  let id = "[[=XML(id)]]";
+  let admin = "[[=XML(admin)]]";
+</script>
+<script src="js/vue-select.min.js"></script>
+<script src="js/specific-user.js"></script>
+[[end]]

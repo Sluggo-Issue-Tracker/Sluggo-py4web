@@ -136,11 +136,11 @@ let init = (app) => {
     };
 
     app.delete_ticket = (ticket_idx) => {
-        let t = app.vue.tickets[ticket_idx];
+        let t = app.data.tickets[ticket_idx];
 
         axios.post(delete_tickets_url, {id:t.id}).then(() => {
-            app.vue.tickets.splice(ticket_idx, 1);
-            app.reindex(app.vue.tickets);
+            app.data.tickets.splice(ticket_idx, 1);
+            app.reindex(app.data.tickets);
         })
     };
 
@@ -218,7 +218,7 @@ let init = (app) => {
 
     app.togglePinStatus = (ticket) => {
         let ticketID = ticket.id;
-        
+
         // make a server call
         axios.post(pin_ticket_url, {
             ticket_id: ticketID
@@ -257,15 +257,15 @@ let init = (app) => {
         axios.get(get_tickets_url).then((result) => {
             let tickets = result.data.tickets;
             app.reindex(tickets);
-            app.vue.master = tickets;
-            app.vue.tickets = app.vue.master;
-            app.vue.ticket_tags = result.data.ticket_tags
+            app.data.master = tickets;
+            app.data.tickets = app.data.master;
+            app.data.ticket_tags = result.data.ticket_tags
         }).then(() => {
             axios.get(get_pinned_tickets_url).then((result) => {
                app.data.pinned_tickets = result.data.pinned_tickets;
                app.refreshPinGraphics();
-            })
-        })
+            });
+        });
     };
 
     // Call to the initializer.
