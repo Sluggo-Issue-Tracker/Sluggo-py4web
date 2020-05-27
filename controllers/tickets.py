@@ -66,6 +66,7 @@ def ticket_details(ticket_id=None):
         delete_tickets_url=URL('delete_ticket', signer=signed_url),
         get_all_tags=URL('get_tags', signer=signed_url),
         get_all_progress=URL('get_all_progress', signer=signed_url),
+        get_users_url=URL('users/get_users', signer=signed_url),
         delete_tag_url=URL('delete_tag', signer=signed_url),
         update_progress_url=URL('update_ticket_progress', signer=signed_url),
         get_users_by_tag_list_url=URL('get_users_by_tag_list', signer=signed_url),
@@ -150,13 +151,16 @@ def add_tickets():
     ticket_title = request.json.get('ticket_title')
     ticket_text = request.json.get('ticket_text')
     ticket_due_date = request.json.get('due_date')
-    assigned_user = request.json.get('user_id')
+    assigned_user = request.json.get('assigned_user')
+    due_date = request.json.get('due_date')
+
+    print(due_date)
 
     ticket_id = db.tickets.insert(
         ticket_title=ticket_title,
         ticket_text=ticket_text,
         ticket_due_date=ticket_due_date,
-        assigned_user=assigned_user
+        assigned_user=assigned_user.get('id') if type(assigned_user) is dict else None
     )
 
     register_tag(request.json.get('tag_list'), ticket_id)

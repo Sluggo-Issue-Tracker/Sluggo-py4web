@@ -38,7 +38,7 @@
   </section>
 
   <ticket-modal v-if="showModal" v-bind:ticket="selected_ticket"
-                v-bind:options="ticket_tags"
+                v-bind:options="ticket_tags" v-bind:users="project_users"
                 @submit="submitCallback" @cancel="close_modal">
   </ticket-modal>
 

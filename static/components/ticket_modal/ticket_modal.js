@@ -35,7 +35,7 @@ Vue.component('v-select', VueSelect.VueSelect);
         console.log(this.due_date);
         console.log(this.ticket.tag_list);
         this.ticket.due_date = this.due_date;
-        this.ticket.
+        this.ticket.assigned_user = this.assigned_user;
         this.$emit('submit');
     };
 
