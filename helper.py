@@ -33,6 +33,11 @@ class Helper:
         return auth.current_user.get('id') if auth.current_user else None
 
     @staticmethod
+    def get_role():
+        user = db(db.users.user == Helper.get_user()).select().first()
+        return user.role.capitalize() if user is not None else "Unapproved"
+
+    @staticmethod
     def get_users_by_tag_id(tag_list):
         if tag_list is None:
             return list()
