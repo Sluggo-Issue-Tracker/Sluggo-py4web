@@ -10,8 +10,9 @@ from py4web import action, request, abort, redirect, URL, Field
 from py4web.utils.form import Form, FormStyleBulma
 from yatl.helpers import A
 from pydal.validators import *
-from .. common import db, session, T, cache, auth, signed_url
-from .. models import get_user_email, get_user_title, get_user_name, get_user, get_time, get_tags_list, get_user_tag_by_name
+from ..common import db, session, T, cache, auth, signed_url
+from ..models import Helper
+
 
 
 
@@ -27,11 +28,11 @@ def get_role():
 def users():
     return dict(
 
-        get_users_url = URL('users/get_users', signer=signed_url),
-        get_icons_url = URL('users/get_icons', signer=signed_url),
-        edit_user_url = URL('edit_user', signer=signed_url),
-        user_email = get_user_email(),
-        username = get_user_title(),
+        get_users_url=URL('users/get_users', signer=signed_url),
+        get_icons_url=URL('users/get_icons', signer=signed_url),
+        edit_user_url=URL('edit_user', signer=signed_url),
+        user_email=Helper.get_user_email(),
+        username=Helper.get_user_title(),
         user=auth.get_user()
     )
 
@@ -55,16 +56,16 @@ def specific_user(id=None):
 @action('create_profile', method=['GET'])
 @action.uses('create_profile.html', db, session, auth.user, signed_url)
 def create_user():
-    user = db(db.users.user == get_user()).select().first()
+    user = db(db.users.user == Helper.get_user()).select().first()
     if user != None:
         redirect(URL('index'))
 
     return dict(
         add_user_url=URL('add_user', signer=signed_url),
         user=auth.get_user(),
-        username = get_user_title(),
+        username=Helper.get_user_title(),
         admin=db(db.users).isempty(),
-        tags=get_tags_list()
+        tags=Helper.get_tags_list()
     )
 
 
@@ -74,7 +75,7 @@ def add_user():
     u_id = db.users.insert(
         role="admin" if db(db.users).isempty() else "unapproved",
         bio=request.json.get('bio'),
-        user=get_user(),
+        user=Helper.get_user(),
     )
 
     tags = request.json.get('tags')
@@ -83,7 +84,7 @@ def add_user():
         # get the tag if it is stored in database
         t_id = db(db.global_tag.tag_name == tag.lower()).select().first()
 
-        if(t_id == None):
+        if (t_id == None):
             # if tag isn't stored in database, create new tags
             t_id = db.global_tag.insert(tag_name=tag.lower())
 
@@ -95,24 +96,60 @@ def add_user():
     return "ok"
 
 
+def attach_user_information(users):
+    if type(users) is not list:
+        return
+
+    print(users)
+
+    for user in users:
+        person = db(db.auth_user.id == user.get('user')).select().first()
+
+        user["icon"] = "%s-%s.jpg" % \
+                       (person.get('first_name').lower(), person.get('last_name').lower()) if person else "Unknown"
+        user["full_name"] = "%s %s" % \
+                            (person.get('first_name'), person.get('last_name')) if person else "Unknown"
+        user['tags_list'] = Helper.get_user_tag_by_name(user)
+        user['user_email'] = person.get('email')
+
+
 @action('users/get_users')
 @action.uses(signed_url.verify(), auth.user)
 def get_users():
     users = db(db.users).select().as_list()
 
+    attach_user_information(users)
+    return dict(users=users, tags=Helper.get_tags_list())
 
-    for user in users:
-        person = db(db.auth_user.id == user.get('user')).select().first()
+
+@action('get_users_by_tag_list', method="POST")
+@action.uses(signed_url.verify(), auth.user)
+def get_users_by_tag_list():
+    tag_list = request.json.get('tag_list')
+
+    if type(tag_list) is not list:
+        return dict(users=list())
+
+    """ annoying ass select statement"""
+    tag_users = db(db.user_tag.tag_id in tag_list).select(
+        db.users.id, db.users.user, db.users.role, db.users.bio,
+        db.auth_user.first_name, db.auth_user.last_name, db.auth_user.email,
+        left=(db.users.on(db.users.id == db.user_tag.user_id),
+              db.auth_user.on(db.auth_user.id == db.users.user)),
+        groupby=db.users.id).as_list()
+
+    tag_users = list(map(lambda x: {**x["users"], **x["auth_user"]}, tag_users))
+    print(tag_users)
+
+    for user in tag_users:
         user["icon"] = "%s-%s.jpg" % \
-                       (person.get('first_name').lower(), person.get('last_name').lower()) if person else "Unknown"
+                       (user.get('first_name').lower(), user.get('last_name').lower()) if user else "Unknown"
         user["full_name"] = "%s %s" % \
-                            (person.get('first_name'), person.get('last_name')) if person else "Unknown"
-        user['tags_list'] = get_user_tag_by_name(user)
-        user['user_email'] = person.get('email')
+                            (user.get('first_name'), user.get('last_name')) if user else "Unknown"
+        user['user_email'] = user.get('email')
 
+    return dict(users=tag_users)
 
-
-    return dict(users=users,tags=get_tags_list())
 
 
 
@@ -144,9 +181,8 @@ def edit_user():
 
     names = request.json.get('full_name').split()
 
-
     tags = request.json.get('tags_list')
-    old_tags = get_user_tag_by_name(row)
+    old_tags = Helper.get_user_tag_by_name(row)
 
     missing = set(old_tags).difference(tags)
     added = set(tags).difference(old_tags)
@@ -156,7 +192,7 @@ def edit_user():
         # get the tag if it is stored in database
         t_id = db(db.global_tag.tag_name == tag.lower()).select().first()
 
-        if(t_id == None):
+        if (t_id == None):
             # if tag isn't stored in database, create new tags
             t_id = db.global_tag.insert(tag_name=tag.lower())
 
@@ -167,10 +203,9 @@ def edit_user():
         # get the tag if it is stored in database
         t_id = db(db.global_tag.tag_name == tag.lower()).select().first()
 
-        if(t_id == None):
+        if (t_id == None):
             # if tag isn't stored in database, create new tags
             t_id = db.global_tag.insert(tag_name=tag.lower())
-
 
         # now we insert tags in this many to many relationship
         db.user_tag.update_or_insert((db.user_tag.user_id == request.json.get('id')) & (db.user_tag.tag_id == t_id),

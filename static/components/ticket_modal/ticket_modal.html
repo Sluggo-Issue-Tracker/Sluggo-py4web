@@ -1,19 +1,33 @@
 <div class="modal is-active">
-    <div class="modal-background"></div>
+    <div class="modal-background" @click="close"></div>
     <div class="modal-content">
-        <section class="box is-16by9">
-            <div class="field">
-                                  <span class="subtitle">Title</span>
-                                  <input type="text" v-model="ticket.ticket_title" class="input" placeholder="Enter new title here">
-                                  </div>
-            <div class="field">
-                                  <span class="subtitle">Tags</span>
-                                  <v-select multiple placeholder="Choose some interests" v-model="selected" :options="options"></v-select>
-                                  </div>
-            <div class="field">
-                                  <span class="subtitle">Description</span>
-                                  <textarea v-model="ticket.ticket_text" class="textarea is-fullwidth" placeholder="Enter new ticket here"></textarea>
-                                  </div>
+        <section class="box ">
+            <div class="columns">
+                <div class="column is-three-quarters">
+                    <div class="field">
+                        <span class="subtitle">Title</span>
+                        <input type="text" v-model="ticket.ticket_title" class="input" placeholder="Enter new title here">
+                    </div>
+                    <div class="field">
+                        <span class="subtitle">Tags</span>
+                        <v-select multiple placeholder="Choose some interests" v-model="selected" :options="options"></v-select>
+                    </div>
+                    <div class="field">
+                        <span class="subtitle">Description</span>
+                        <textarea v-model="ticket.ticket_text" class="textarea is-fullwidth" placeholder="Enter new ticket here"></textarea>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <span class="subtitle">Due Date</span>
+                        <input class="input" type="date" placeholder="mm / dd / yyyy" v-model="due_date">
+                    </div>
+                    <div class="field">
+                        <span class="subtitle">Assignee</span>
+                        <v-select placeholder="No assignment" v-model="assigned_user" :options="users"></v-select>
+                    </div>
+                </div>
+            </div>
             <button class="button is-success" @click="submit">Save changes</button>
             <button class="button" @click="close">Cancel</button>
         </section>

@@ -3,7 +3,7 @@ Vue.component('v-select', VueSelect.VueSelect);
 (function() {
 
     let ticket_modal = {
-        props: {'ticket': Object, 'options': Array},
+        props: {'ticket': Object, 'options': Array, 'users': Array},
         data: null,
         methods: {}
     };
@@ -15,6 +15,8 @@ Vue.component('v-select', VueSelect.VueSelect);
             status_list: [],
             selected: [],
             date: "",
+            due_date: "",
+            assigned_user: "",
         };
 
         ticket_modal.methods.load.call(data);
@@ -28,9 +30,12 @@ Vue.component('v-select', VueSelect.VueSelect);
     ticket_modal.methods.submit = function () {
         let i = 0;
         for(let a of this.selected) {
-            this.ticket.tag_list.unshift({tag_name: a});
+            this.ticket.tag_list.unshift(a);
         }
+        console.log(this.due_date);
         console.log(this.ticket.tag_list);
+        this.ticket.due_date = this.due_date;
+        this.ticket.assigned_user = this.assigned_user;
         this.$emit('submit');
     };
 
