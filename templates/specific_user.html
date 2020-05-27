@@ -34,10 +34,20 @@
         <!-- Role Field -->
         <div class="field">
           <p class="title is-size-4">Role</p>
-          <div class="select">
-            <select disabled>
-              <option>{{current_user.role}}</option>
-              <option>With options</option>
+          <div v-if="checkAdmin()" class="select">
+            <select v-model="selected">
+              <template v-for="role in roles">
+                <option v-if="current_user.role === role" selected>{{current_user.role}}</option>
+                <option v-else>{{role}}</option>
+              </template>
+            </select>
+          </div>
+          <div v-else class="select">
+            <select disabled v-model="selected">
+              <template v-for="role in roles">
+                <option v-if="current_user.role === role" selected>{{current_user.role}}</option>
+                <option v-else>{{role}}</option>
+              </template>
             </select>
           </div>
         </div>
@@ -58,7 +68,7 @@
             </button>
           </div>
           <!-- Update and Cancel button -->
-          <div class="buttons is-right" v-if="checkUser()">
+          <div class="buttons is-right" v-if="checkAdmin() || checkUser()">
             <span v-if="success" class="has-text-primary"> <i class="fa fa-check-square-o fa-fw"></i> </span>
             <span v-if="error" class="has-text-danger"> <i class="fa fa fa-exclamation-triangle"></i> </span>
             <button class="button is-primary" :class="is_pending ? 'is-loading' : ''" @click="updateCurrent">
@@ -84,6 +94,7 @@
   let user_email = "[[=XML(user_email)]]";
   let username = "[[=XML(username)]]";
   let id = "[[=XML(id)]]";
+  let admin = "[[=XML(admin)]]";
 </script>
 <script src="js/vue-select.min.js"></script>
 <script src="js/specific-user.js"></script>

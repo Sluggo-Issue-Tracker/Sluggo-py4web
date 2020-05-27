@@ -13,6 +13,15 @@ from pydal.validators import *
 from .. common import db, session, T, cache, auth, signed_url
 from .. models import get_user_email, get_user_title, get_user_name, get_user, get_time, get_tags_list, get_user_tag_by_name
 
+
+
+def get_role():
+
+    user = db(db.users.user == get_user()).select().first()
+    return user.role.capitalize() if user is not None else "Unapproved"
+
+
+
 @action('users')
 @action.uses('users.html', signed_url, auth.user)
 def users():
@@ -38,7 +47,8 @@ def specific_user(id=None):
         user_email = get_user_email(),
         username = get_user_title(),
         user=auth.get_user(),
-        id=id
+        id=id,
+        admin=get_role(),
     )
 
 
@@ -62,7 +72,7 @@ def create_user():
 @action.uses(signed_url.verify(), auth.user, db)
 def add_user():
     u_id = db.users.insert(
-        role="admin" if db(db.users).isempty() else "member",
+        role="admin" if db(db.users).isempty() else "unapproved",
         bio=request.json.get('bio'),
         user=get_user(),
     )
@@ -101,6 +111,7 @@ def get_users():
         user['user_email'] = person.get('email')
 
 
+
     return dict(users=users,tags=get_tags_list())
 
 
@@ -118,7 +129,8 @@ def show_user():
                         (person.get('first_name'), person.get('last_name')) if person else "Unknown"
     user['tags_list'] = get_user_tag_by_name(user)
     user['user_email'] = person.get('email')
-    return dict(user=user,tags=get_tags_list())
+    user['role'] = user['role'].capitalize()
+    return dict(user=user,tags=get_tags_list(), )
 
 
 @action('edit_user', method="POST")

@@ -14,10 +14,13 @@ let init = (app) => {
         master: {},
         current_user: {},
         options: [],
+        roles: ["Admin", "Approved", "Unapproved"],
         is_pending: false,
         error: false,
         success: false,
         id: id,
+        selected: "",
+        isAdmin: admin  === "Admin",
 
         // Complete.
     };
@@ -46,11 +49,12 @@ let init = (app) => {
         if(user !== false) {
             app.data.is_pending = true;
             axios.post(edit_user_url, { bio : user.bio,
-                                        role : user.role,
+                                        role : app.data.selected,
                                         tags_list : user.tags_list,
                                         full_name : user.full_name,
                                         id : user.id })
             .then((response) => {
+                app.data.current_user.role = app.data.selected;
                 app.data.master = {...app.data.current_user};
                 app.data.is_pending = false;
                 app.show_value(false);
@@ -91,6 +95,10 @@ let init = (app) => {
         return app.data.user_email == app.data.current_user.user_email;
     };
 
+    app.checkAdmin = () => {
+        return app.data.isAdmin;
+    };
+
 
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
@@ -99,6 +107,7 @@ let init = (app) => {
         updateCurrent: app.updateCurrent,
         resetCurrent: app.resetCurrent,
         checkUser: app.checkUser,
+        checkAdmin: app.checkAdmin,
     };
 
     // This creates the Vue instance.
@@ -112,6 +121,7 @@ let init = (app) => {
         axios.get(show_user_url, {params: {"id": id}}).then((result) => {
             app.data.current_user = result.data.user;
             app.data.options = result.data.tags;
+            app.data.selected = app.data.current_user.role;
             axios.get(
                     get_icon_url,
                     {params: {"img": app.data.current_user["icon"]}}).then((result) => {
