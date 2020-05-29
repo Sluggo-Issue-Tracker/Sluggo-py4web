@@ -84,43 +84,38 @@
              </div>
           </div>
           <div class="column is-one-third">
-             <div class="box">
+             <div @click="placeholder()" class="box">
                 <div class="level">
                    <div class="level-item level-left">
-                      <p class="is-size-4 has-text-weight-semibold">Pinned Tickets</p>
+                      <p class="is-size-4 has-text-weight-semibold">Pinned Tickets (placeholder)</p>
                    </div>
-                   <!-- <div class="level-item level-right buttons">
+                   <div class="level-item level-right buttons">
                       <div class="button">
                          Edit
                       </div>
-                   </div> -->
+                   </div>
                 </div>
-                [[for ticket in pinned_tickets:]]
-                <div class="notification [[=ticket.style]]">
+                <div class="notification is-info">
                    <div class="columns">
                       <div class="column is-two-thirds">
-                         [[print(ticket)]]
-                         <p class="is-size-5" >Ticket [[=ticket.id]] | [[=ticket.tags]] | [[=ticket.ticket_title]]</p>
-                         <!-- <p>Due May 25, 2020.</p> -->
+                         <p class="is-size-5">Ticket 21 | #software | Submit project proposal for issue tracker in CSE183</p>
+                         <p>Due May 25, 2020.</p>
                       </div>
                       <div class="column">
                          <div class="buttons">
-                            <div class="button">
-                               <a href="[[=URL('ticket_details', ticket.id)]]">
-                                 <p>View</p>
-                               </a>
+                            <div class="button is-static">
+                               <p>Complete</p>
                             </div>
                          </div>
                       </div>
                    </div>
                    <div class="columns">
-                      <!-- <div class="column">
+                      <div class="column">
                          <p class="is-size-6 has-text-weight-semibold">50% Complete (2/4)</p>
                          <progress class="progress" value="50" max="100">50%</progress>
-                      </div> -->
+                      </div>
                    </div>
-                  </div>
-                  [[pass]]
+                </div>
              </div>
              <div class="box">
                 <div class="level">
@@ -164,6 +159,7 @@
     [[block page_scripts]]
     <script>
       let date = "[[=XML(date)]]";
-   </script>
+      let get_pinned_tickets_url = "[[=XML(get_pinned_tickets_url)]]";
+    </script>
     <script src="js/index.js"></script>
     [[end]]
