@@ -153,6 +153,15 @@ let init = (app) => {
         app.data.current_status = app.data.status;
     };
 
+    app.select_user = () => {
+         axios.post(assign_user_url,{
+             user_id: app.data.assigned.id,
+             ticket_id: app.data.ticket_id
+         }).then((response) => {
+            console.log(response);
+         });
+    };
+
     /**
      *
      * @param list
@@ -177,7 +186,8 @@ let init = (app) => {
         redirect_ticket: app.redirect_ticket,
         submit_edit: app.submit_edit,
         change_status: app.change_status,
-        cancel_edit: app.cancel_edit
+        cancel_edit: app.cancel_edit,
+        select_user: app.select_user
     };
 
     // This creates the Vue instance.

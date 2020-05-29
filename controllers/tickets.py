@@ -70,6 +70,7 @@ def ticket_details(ticket_id=None):
         delete_tag_url=URL('delete_tag', signer=signed_url),
         update_progress_url=URL('update_ticket_progress', signer=signed_url),
         get_users_by_tag_list_url=URL('get_users_by_tag_list', signer=signed_url),
+        assign_user_url=URL('assign_user', signer=signed_url),
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
         user=auth.get_user()
