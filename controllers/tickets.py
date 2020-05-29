@@ -34,7 +34,6 @@ def generate_ticket_status(ticket):
 @action('tickets')
 @action.uses('tickets.html', signed_url, auth.user)
 def tickets():
-    tag = request.query.get('tag')
     return dict(
         get_tickets_url=URL('get_tickets', signer=signed_url),
         add_tickets_url=URL('add_tickets', signer=signed_url),
@@ -50,8 +49,7 @@ def tickets():
         get_users_by_tag_list_url=URL('get_users_by_tag_list', signer=signed_url),
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
-        user=auth.get_user(),
-        tag = tag
+        user=auth.get_user()
     )
 
 

@@ -63,23 +63,11 @@ def tickets():
             foundTicket.style = "is-info"
         pinned_tickets.append(foundTicket)
 
-    # MARK: Grab tags
-    tags = db(db.user_tag.user_id == user.get('id')).select(db.global_tag.tag_name, left=db.global_tag.on(
-            db.global_tag.id == db.user_tag.tag_id))
-    print("THIS")
-    print(tags)
-    user_tags = []
-    for tag in tags:
-        tag['tag_display_title'] = tag.get('tag_name').capitalize()
-        tag['tag_redirect_url'] = URL('tickets', vars=dict(tag=tag.tag_name))
-        user_tags.append(tag)
-
     return(dict(
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
         user=auth.get_user(),
         date=str(Helper.get_time().isoformat()),
-        pinned_tickets = pinned_tickets,
-        user_tags = user_tags
+        pinned_tickets = pinned_tickets
     ))
 

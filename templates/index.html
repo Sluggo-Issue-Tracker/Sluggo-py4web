@@ -125,26 +125,36 @@
              <div class="box">
                 <div class="level">
                    <div class="level-item level-left">
-                      <p class="is-size-4 has-text-weight-semibold">Your Tags</p>
+                      <p class="is-size-4 has-text-weight-semibold">Your Tags (placeholder)</p>
                    </div>
-                   <!-- <div class="level-item level-right buttons">
+                   <div class="level-item level-right buttons">
                       <div @click="placeholder()" class="button">
                          Edit
                       </div>
-                   </div> -->
+                   </div>
                 </div>
-                [[for tag in user_tags:]]
                 <div class="tile is-ancestor">
                    <div class="tile is-parent is-vertical">
-                      <article class="tile is-child notification is-grey-lighter">
-                         <!-- <p>Admin <span class="has-text-weight-bold has-text-danger">(1 Overdue Assigned)</span></p> -->
-                         <a href="[[=tag.tag_redirect_url]]">
-                           <p>[[=tag.tag_display_title]]</p>
-                         </a>
+                      <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
+                         <p>Admin <span class="has-text-weight-bold has-text-danger">(1 Overdue Assigned)</span></p>
+                      </article>
+                      <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
+                         <p>Auto <span class="has-text-weight-bold">(4 New)</span></p>
+                      </article>
+                       <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
+                         <p>Electronics</p>
+                      </article>
+                      <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
+                         <p>Software <span class="has-text-weight-bold">(1 New)</span></p>
+                      </article>
+                      <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
+                         <p>Systems <span class="has-text-weight-bold">(1 New)</span></p>
+                      </article>
+                      <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
+                         <p>S-Lab</p>
                       </article>
                    </div>
                 </div>
-                [[pass]]
              </div>
           </div>
        </div>
