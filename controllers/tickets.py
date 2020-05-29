@@ -138,7 +138,7 @@ def get_pinned_tickets():  # grabs pinned tickets for logged in user
 # helper for adding tags
 def register_tag(tag_list, ticket_id):
     for tag in tag_list:
-        global_tag = db(db.global_tag.id== tag.get('tag_id')).select(db.global_tag.id).first()
+        global_tag = db(db.global_tag.id == tag.get('id')).select(db.global_tag.id).first()
         tag_id = db.global_tag.insert(tag_name=tag.get('tag_name')) if global_tag is None else global_tag.id
         db.ticket_tag.insert(ticket_id=ticket_id, tag_id=tag_id)
 

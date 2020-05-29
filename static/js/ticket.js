@@ -174,7 +174,7 @@ let init = (app) => {
         app.data.tickets = app.data.master.filter((ticket) => {
 
             // check if the tag lists match the currently selected tags
-            if(!app.data.selected_tags.filter(x => ticket.tag_list.map(e => e.tag_name).includes(x)).length > 0 &&
+            if(!app.data.selected_tags.map(e => e.tag_name).filter(x => ticket.tag_list.map(e => e.tag_name).includes(x)).length > 0 &&
                 app.data.selected_tags.length > 0) return false;
 
             // check if the ticket is completed
