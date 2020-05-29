@@ -267,7 +267,15 @@ let init = (app) => {
         }).then((result) => {
            app.data.pinned_tickets = result.data.pinned_tickets;
            app.refreshPinGraphics();
-        });
+        }).then(() => {
+            if(tag != "None") {
+                // we have a tag, theoretically
+                // grab the corresponding tag
+                let foundTags = app.data.ticket_tags.filter(ttag => ttag.tag_name == tag);
+                Vue.set(app.data, "selected_tags", foundTags);
+                app.filter_list();
+            }
+        })
         axios.get(get_users_url).then((result) => {
             app.data.project_users = result.data.users.map((user) => {
                 user.label = user.full_name;
