@@ -81,14 +81,6 @@ let init = (app) => {
     };
 
     /**
-     * this should do a post request to register the assignment of a ticket
-     * @param user
-     */
-    app.assign_user= (user) => {
-        // TODO: implement this
-    };
-
-    /**
      * redirect t
      * @param id
      */
@@ -159,13 +151,12 @@ let init = (app) => {
              ticket_id: app.data.ticket_id
          }).then((response) => {
             console.log(response);
+            app.init();
          });
     };
 
     /**
-     *
-     * @param list
-     * @returns {*}
+     * reindexes the user list
      */
     app.reindex = (list) => {
         let i = 0;
@@ -182,7 +173,6 @@ let init = (app) => {
         pre_add: app.pre_add,
         add_ticket: app.add_ticket,
         close_modal: app.close_modal,
-        assign_user: app.assign_user,
         redirect_ticket: app.redirect_ticket,
         submit_edit: app.submit_edit,
         change_status: app.change_status,
@@ -201,6 +191,8 @@ let init = (app) => {
     app.init = () => {
         axios.get(get_ticket_by_id_url).then((result) => {
             app.data.ticket = result.data.ticket;
+            app.data.assigned = result.data.assigned_user;
+            app.data.assigned.label = app.data.assigned.full_name;
 
             app.set_fields(result.data.ticket);
 

@@ -18,7 +18,7 @@ from ..models import Helper
 
 def get_role():
 
-    user = db(db.users.user == get_user()).select().first()
+    user = db(db.users.user == Helper.get_user()).select().first()
     return user.role.capitalize() if user is not None else "Unapproved"
 
 
@@ -45,8 +45,8 @@ def specific_user(id=None):
         show_user_url = URL('users/show_user', signer=signed_url),
         get_icons_url = URL('users/get_icons', signer=signed_url),
         edit_user_url = URL('edit_user', signer=signed_url),
-        user_email = get_user_email(),
-        username = get_user_title(),
+        user_email = Helper.get_user_email(),
+        username = Helper.get_user_title(),
         user=auth.get_user(),
         id=id,
         admin=get_role(),
@@ -123,7 +123,7 @@ def get_users():
 
 
 @action('get_users_by_tag_list', method="POST")
-@action.uses(signed_url.verify(), auth.user)
+@action.uses(auth.user)
 def get_users_by_tag_list():
     tag_list = request.json.get('tag_list')
 
@@ -154,7 +154,7 @@ def get_users_by_tag_list():
 
 
 @action('users/show_user')
-@action.uses(signed_url.verify(), auth.user)
+@action.uses(auth.user)
 def show_user():
     id = request.params.id
     user = db(db.users.id == id).select().as_list()[0]
@@ -164,10 +164,10 @@ def show_user():
                    (person.get('first_name').lower(), person.get('last_name').lower()) if person else "Unknown"
     user["full_name"] = "%s %s" % \
                         (person.get('first_name'), person.get('last_name')) if person else "Unknown"
-    user['tags_list'] = get_user_tag_by_name(user)
+    user['tags_list'] = Helper.get_user_tag_by_name(user)
     user['user_email'] = person.get('email')
     user['role'] = user['role'].capitalize()
-    return dict(user=user,tags=get_tags_list(), )
+    return dict(user=user,tags= Helper.get_tags_list(), )
 
 
 @action('edit_user', method="POST")
@@ -218,7 +218,7 @@ def edit_user():
 
 
 @action('users/get_icons')
-@action.uses(signed_url.verify())
+@action.uses()
 def get_img():
     """Returns a single image, URL encoded."""
     # Reads the image.
