@@ -145,14 +145,21 @@ let init = (app) => {
         app.data.current_status = app.data.status;
     };
 
+    app.set_assigned = (user_object) => {
+        if(user_object === null) {
+            app.data.assigned = "No one has been assigned";
+            return;
+        }
+        app.data.assigned = user_object;
+        app.data.assigned.label = user_object.full_name;
+    };
+
     app.select_user = () => {
-         axios.post(assign_user_url,{
-             user_id: app.data.assigned.id,
-             ticket_id: app.data.ticket_id
-         }).then((response) => {
-            console.log(response);
-            app.init();
-         });
+        let post_object = app.data.assigned ? {user_id : app.data.assigned.id, ticket_id: app.data.ticket_id}
+                                            : {user_id : null, ticket_id: app.data.ticket_id};
+        axios.post(assign_user_url,post_object).then((response) => {
+           console.log(response);
+        });
     };
 
     /**
@@ -191,9 +198,8 @@ let init = (app) => {
     app.init = () => {
         axios.get(get_ticket_by_id_url).then((result) => {
             app.data.ticket = result.data.ticket;
-            app.data.assigned = result.data.assigned_user;
-            app.data.assigned.label = app.data.assigned.full_name;
 
+            app.set_assigned(result.data.assigned_user);
             app.set_fields(result.data.ticket);
 
             app.data.selected_tags = app.data.ticket.tag_list.map((e) => {

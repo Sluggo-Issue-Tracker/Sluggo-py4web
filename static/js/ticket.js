@@ -183,6 +183,8 @@ let init = (app) => {
                 app.data.selected_progress.length > 0) return false;
 
             // check if the assigned user is correct
+            if(!app.data.selected_users.map(e => e.id).includes(ticket.assigned_user) &&
+                app.data.selected_users.length > 0) return false;
 
             if(ticket.ticket_text.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
                ticket.ticket_title.toLowerCase().includes(app.data.searchText.trim().toLowerCase())) {

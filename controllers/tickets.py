@@ -127,7 +127,12 @@ def get_ticket_by_id(ticket_id=None):
                             (user.get('first_name'), user.get('last_name')) if user else "Unknown"
         user['user_email'] = user.get('email')
 
-    return dict(ticket=ticket, assigned_user=assigned_user[0] if assigned_user is not None else None)
+    if len(assigned_user) > 0:
+        assigned_user = assigned_user[0]
+    else:
+        assigned_user = None
+
+    return dict(ticket=ticket, assigned_user=assigned_user)
 
 
 # MARK: Ticket Pinning
@@ -321,7 +326,9 @@ def assign_user():
     ticket_id = request.json.get('ticket_id')
     user_id = request.json.get('user_id')
 
-    if user_id is None or ticket_id is None:
+    print(user_id)
+
+    if ticket_id is None:
         return dict(message="ids are undefined")
 
     ticket = db.tickets[ticket_id]
