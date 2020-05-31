@@ -25,11 +25,16 @@ app.formatTag = (tag_str) => {
     return sluggo.capitalizeString(tag_str);
 }
 
+app.goToTag = (tag_id) => {
+    window.location.href = tickets_url + "?tag_id=" + tag_id
+}
+
 app.methods = {
     setFormattedDate: app.setFormattedDate,
     placeholder: app.placeholder,
     goToTicket: app.goToTicket,
-    formatTag: app.formatTag
+    formatTag: app.formatTag,
+    goToTag: app.goToTag
 }
 
 app.vm = new Vue({

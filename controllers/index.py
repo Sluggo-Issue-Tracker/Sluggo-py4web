@@ -43,6 +43,7 @@ def tickets():
         user=auth.get_user(),
         date=str(Helper.get_time().isoformat()),
         ticket_details_url = URL('ticket_details'),
+        tickets_url = URL('tickets'),
         pinned_tickets = Helper.safe_json_dumps(pinned_tickets),
         user_tags = Helper.safe_json_dumps(user_tags)
     ))

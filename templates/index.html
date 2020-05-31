@@ -133,7 +133,7 @@
                 </div>
                 <div class="tile is-ancestor">
                    <div class="tile is-parent is-vertical">
-                      <article class="sluggo_hp_tag tile is-child notification is-grey-lighter" v-for="tag in user_tags">
+                      <article class="sluggo_hp_tag tile is-child notification is-grey-lighter" v-for="tag in user_tags" @click="goToTag(tag.tag_id)">
                          <p>{{formatTag(tag.tag_name)}}</p>
                       </article>
                    </div>
@@ -149,6 +149,7 @@
       let date = "[[=XML(date)]]";
       let pinned_tickets = '[[=XML(pinned_tickets)]]';
       let ticket_details_url = '[[=XML(ticket_details_url)]]';
+      let tickets_url = '[[=XML(tickets_url)]]';
       let user_tags = '[[=XML(user_tags)]]';
     </script>
     <script src="js/index.js"></script>
