@@ -1,0 +1,93 @@
+<!-- users.html - mockup page for viewing users
+# Copyright (c) 2020 Andrew Gavgavian, Samuel Schmidt, and Isaac
+# Trimble-Pederson, All Rights Reserved-->
+
+[[extend 'layout.html']]
+<div id="vue-admin">
+  <div class="section">
+    <p class="title">Admin Dashboard</p>
+
+    <div class="columns">
+      <div class="column is-one-fifth">
+        <aside class="menu">
+          <p class="menu-label">
+            Administration
+          </p>
+          <ul class="menu-list">
+            <li>
+              <a>Team Settings</a>
+            </li>
+            <li>
+              <a>Manage Your Team</a>
+              <ul>
+                <li>
+                  <a class="is-active">Approve a member</a>
+                </li>
+                <li>
+                  <a>Members</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <a>Authentication</a>
+            </li>
+          </ul>
+        </aside>
+      </div>
+      <div class="column is-four-fifth">
+
+
+
+        <!-- Approving Users -->
+        <div>
+          <p class="title">
+            Approve a Member
+          </p>
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Tags</th>
+                <th>Bio</th>
+                <th>Approve?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="user in users">
+                <th>{{user.full_name}}</th>
+                <td>{{user.tags_list}}</td>
+                <td>{{user.bio}}</td>
+                <td>
+                  <div class="control">
+                    <label class="radio">
+                      <input type="radio" value="Approved" v-bind:name="user.user_email" v-model="user.role" @click="updateRoles(user._idx, 'Approved')">
+                      Approved
+                    </label>
+                    <label class="radio">
+                      <input type="radio" value="Unapproved" v-bind:name="user.user_email"  v-model="user.role" @click="updateRoles(user._idx,'Unapproved')">
+                      Unapproved
+                    </label>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script>
+  let get_users_url = "[[=XML(get_unapproved_users_url)]]";
+  let set_role_url = "[[=XML(set_role_url)]]";
+  // Complete with other URLs you need.
+  let user_email = "[[=XML(user_email)]]";
+  let username = "[[=XML(username)]]";
+</script>
+<script src="js/admin.js"></script>
+
+<script
+[[end]]

@@ -97,8 +97,6 @@ def attach_user_information(users):
     if type(users) is not list:
         return
 
-    print(users)
-
     for user in users:
         person = db(db.auth_user.id == user.get('user')).select().first()
 
@@ -174,7 +172,7 @@ def edit_user():
     user = db(db.auth_user.id == row.get('user')).select().first()
 
     row.update_record(bio=request.json.get('bio'),
-                      role=request.json.get('role'))
+                      role=request.json.get('role').lower())
 
     names = request.json.get('full_name').split()
 
