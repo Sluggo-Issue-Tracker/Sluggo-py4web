@@ -96,30 +96,30 @@
                       </div>
                    </div> -->
                 </div>
-                <div class="notification is-info">
-                   <div class="columns">
-                      <div class="column">
-                         <p class="is-size-5">Ticket 21 | #software | Submit project proposal for issue tracker in CSE183</p>
-                         <p>Due May 25, 2020.</p>
-                      </div>
-                      <!-- TODO: Determine how to expose ticket completion
+               <div class="sluggo_pinned_ticket notification is-info" v-for="pt in pinned_tickets" @click="goToTicket(pt.id)">
+                  <div class="columns">
+                     <div class="column">
+                        <p class="is-size-5">Ticket {{pt.id}} | {{pt.tag_string}} | {{pt.ticket_title}} </p>
+                        <!-- <p>Due May 25, 2020.</p> -->
+                     </div>
+                     <!-- TODO: Determine how to expose ticket completion
                      endpoints on the homepage -->
-                      <!-- <div class="column">
-                         <div class="buttons">
-                            <div class="button is-static">
-                               <p>Complete</p>
-                            </div>
-                         </div>
-                      </div> -->
-                   </div>
-                   <!-- TODO: Progress indicator -->
-                   <!-- <div class="columns">
-                      <div class="column">
-                         <p class="is-size-6 has-text-weight-semibold">50% Complete (2/4)</p>
-                         <progress class="progress" value="50" max="100">50%</progress>
-                      </div>
-                   </div> -->
-                </div>
+                     <!-- <div class="column">
+                        <div class="buttons">
+                           <div class="button is-static">
+                              <p>Complete</p>
+                           </div>
+                        </div>
+                     </div> -->
+                  <!-- TODO: Progress indicator -->
+                  <!-- <div class="columns">
+                     <div class="column">
+                        <p class="is-size-6 has-text-weight-semibold">50% Complete (2/4)</p>
+                        <progress class="progress" value="50" max="100">50%</progress>
+                     </div>
+                  </div> -->
+               </div>
+            </div>
              </div>
              <div class="box">
                 <div class="level">
@@ -143,7 +143,8 @@
     [[block page_scripts]]
     <script>
       let date = "[[=XML(date)]]";
-      let get_pinned_tickets_url = "[[=XML(get_pinned_tickets_url)]]";
+      let pinned_tickets = '[[=XML(pinned_tickets)]]';
+      let ticket_details_url = '[[=XML(ticket_details_url)]]';
     </script>
     <script src="js/index.js"></script>
     [[end]]

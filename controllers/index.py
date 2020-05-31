@@ -27,12 +27,21 @@ def tickets():
     if user == None:
         redirect(URL('create_profile'))
         # TODO: is this ^ a comprehensive enough redirect?
+    
+    # Grab pinned tickets
+    pinned_tickets = Helper.get_tickets_for_ids(Helper.get_pinned_ticket_ids_for_user(Helper.get_user()))
+    
+    # Attach tag list to tickets
+    Helper.attach_tags_for_tickets(pinned_tickets)
+
+    print(Helper.safe_json_dumps(pinned_tickets))
 
     return(dict(
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
         user=auth.get_user(),
         date=str(Helper.get_time().isoformat()),
-        get_pinned_tickets_url = URL('get_pinned_tickets', signer=signed_url)
+        ticket_details_url = URL('ticket_details'),
+        pinned_tickets = Helper.safe_json_dumps(pinned_tickets)
     ))
 
