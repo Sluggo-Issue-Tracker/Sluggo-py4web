@@ -84,6 +84,26 @@ class Helper:
         return list
 
     @staticmethod
+    def get_web_tag_list_for_user_id(user_id):
+        tagRels = db(db.user_tag.user_id == user_id).select().as_list()
+        tags = []
+        for tagRel in tagRels:
+            # Find the corresponding tag
+            foundTag = db(db.global_tag.id == tagRel["tag_id"]).select().first()
+            tags.append(foundTag)
+
+        webTagPairs = []
+
+        for tag in tags:
+            workingWebTag = dict()
+            workingWebTag["tag_name"] = tag.tag_name
+            workingWebTag["tag_id"] = tag.id
+            
+            webTagPairs.append(workingWebTag)
+        
+        return webTagPairs
+
+    @staticmethod
     def get_ticket_tags_by_id(ticket_id):
         if ticket_id is None:
             return list()

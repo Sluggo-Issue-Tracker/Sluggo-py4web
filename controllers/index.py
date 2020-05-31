@@ -34,6 +34,8 @@ def tickets():
     # Attach tag list to tickets
     Helper.attach_tags_for_tickets(pinned_tickets)
 
+    # Grab user tags
+    user_tags = Helper.get_web_tag_list_for_user_id(Helper.get_user())
 
     return(dict(
         user_email=Helper.get_user_email(),
@@ -41,6 +43,7 @@ def tickets():
         user=auth.get_user(),
         date=str(Helper.get_time().isoformat()),
         ticket_details_url = URL('ticket_details'),
-        pinned_tickets = Helper.safe_json_dumps(pinned_tickets)
+        pinned_tickets = Helper.safe_json_dumps(pinned_tickets),
+        user_tags = Helper.safe_json_dumps(user_tags)
     ))
 

@@ -1,5 +1,9 @@
 [[extend "layout.html"]]
 
+[[block page_head]]
+<link rel="stylesheet" href="[[=URL('static', 'css/pages/index.css')]]">
+[[end]]
+
 <div v-cloak id="hp-target" class="section">
     <div class="container">
        <div class="columns">
@@ -129,8 +133,8 @@
                 </div>
                 <div class="tile is-ancestor">
                    <div class="tile is-parent is-vertical">
-                      <article class="tile is-child notification is-grey-lighter">
-                         <p>Admin</p>
+                      <article class="sluggo_hp_tag tile is-child notification is-grey-lighter" v-for="tag in user_tags">
+                         <p>{{formatTag(tag.tag_name)}}</p>
                       </article>
                    </div>
                 </div>
@@ -145,6 +149,7 @@
       let date = "[[=XML(date)]]";
       let pinned_tickets = '[[=XML(pinned_tickets)]]';
       let ticket_details_url = '[[=XML(ticket_details_url)]]';
+      let user_tags = '[[=XML(user_tags)]]';
     </script>
     <script src="js/index.js"></script>
     [[end]]
