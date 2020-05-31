@@ -9,7 +9,9 @@ let init = (app) => {
 
     app.data = {
         users: [],
+        all_users: [],
         is_pending: false,
+        page: "approve"
 
 
     };
@@ -23,10 +25,13 @@ let init = (app) => {
         return a;
     };
 
-    app.updateRoles = (user_index, value) => {
-        let user = app.data.users[user_index];
-        user.role = value;
+    app.updateRoles = (user_index, value, table) => {
 
+        let user = table === 'all' ?
+            app.data.all_users[user_index] : app.data.users[user_index];
+
+        if (user.role === value) return;
+        user.role = value;
         axios.post(set_role_url, {
                                 id: user.id,
                                 role: user.role })
@@ -38,8 +43,13 @@ let init = (app) => {
         });
     };
 
+    app.goto = (page) => {
+        app.data.page = page;
+    };
+
     app.methods = {
         updateRoles: app.updateRoles,
+        goto : app.goto,
 
     };
 
@@ -52,11 +62,19 @@ let init = (app) => {
 
 
     app.init = () => {
-        axios.get(get_users_url).then((result) => {
+        axios.get(get_unapproved_users_url).then((result) => {
             let users = result.data.users;
             app.reindex(users);
             app.data.users = users;
         });
+
+        axios.get(get_users_url).then((result) => {
+            let users = result.data.users;
+            users.sort((a,b) => (a.role > b.role) ? 1 : ((b.role > a.role) ? -1 : 0));
+            app.reindex(users);
+            app.data.all_users = users;
+        });
+
 
 
     };

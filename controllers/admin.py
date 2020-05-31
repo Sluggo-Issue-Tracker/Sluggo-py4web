@@ -15,7 +15,7 @@ from ..models import Helper
 
 
 
-def get_unapproved_info(users):
+def get_info(users):
     if type(users) is not list:
         return
 
@@ -41,7 +41,7 @@ def admin():
 
 
     return dict(
-
+        get_users_url=URL('admin/get_users', signer=signed_url),
         get_unapproved_users_url=URL('admin/get_unapproved_users', signer=signed_url),
         set_role_url=URL('set_role', signer=signed_url),
         user_email=Helper.get_user_email(),
@@ -53,10 +53,18 @@ def admin():
 
 @action('admin/get_unapproved_users')
 @action.uses(signed_url.verify(), auth.user)
-def get_users():
+def get_unapproved_users():
     users = db(db.users.role == "unapproved").select().as_list()
 
-    get_unapproved_info(users)
+    get_info(users)
+    return dict(users=users)
+
+@action('admin/get_users')
+@action.uses(signed_url.verify(), auth.user)
+def get_admin_users():
+    users = db(db.users.role).select().as_list()
+
+    get_info(users)
     return dict(users=users)
 
 

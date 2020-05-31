@@ -21,10 +21,14 @@
               <a>Manage Your Team</a>
               <ul>
                 <li>
-                  <a class="is-active">Approve a member</a>
+                  <a :class="page === 'approve' ? 'is-active' :'' " @click="goto('approve')">
+                    Approve a member
+                  </a>
                 </li>
                 <li>
-                  <a>Members</a>
+                  <a :class="page === 'members' ? 'is-active' :'' " @click="goto('members')">
+                    Members
+                  </a>
                 </li>
               </ul>
             </li>
@@ -39,7 +43,7 @@
 
 
         <!-- Approving Users -->
-        <div>
+        <div v-if="page === 'approve' ">
           <p class="title">
             Approve a Member
           </p>
@@ -58,21 +62,49 @@
                 <td>{{user.tags_list}}</td>
                 <td>{{user.bio}}</td>
                 <td>
-                  <div class="control">
-                    <label class="radio">
-                      <input type="radio" value="Approved" v-bind:name="user.user_email" v-model="user.role" @click="updateRoles(user._idx, 'Approved')">
-                      Approved
-                    </label>
-                    <label class="radio">
-                      <input type="radio" value="Unapproved" v-bind:name="user.user_email"  v-model="user.role" @click="updateRoles(user._idx,'Unapproved')">
-                      Unapproved
-                    </label>
+                  <button class="button is-success" @click="updateRoles(user._idx, 'Approved', 'users')">Approve</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+
+        <!-- See all users -->
+        <div v-if="page === 'members' ">
+          <p class="title">
+            Members
+          </p>
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Tags</th>
+                <th>Bio</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="user in all_users">
+                <th>{{user.full_name}}</th>
+                <th :class="user.role == 'Admin' ? 'has-text-success' : (user.role == 'Approved' ? 'has-text-info' : 'has-text-danger')">{{user.role}}</th>
+                <td>{{user.tags_list}}</td>
+                <td>{{user.bio}}</td>
+                <td>
+                  <div class="buttons">
+                    <button v-if="user.role != 'Admin'" class="button is-success" @click="updateRoles(user._idx, 'Admin', 'all')">Make Admin</button>
+                    <button v-else class="button is-success" @click="updateRoles(user._idx, 'Approved', 'all')">Revoke Admin</button>
+                    <button v-if="user.role != 'Unapproved'" class="button is-info" @click="updateRoles(user._idx, 'Unapproved', 'all')">Unapprove</button>
+                    <button v-else class="button is-info" @click="updateRoles(user._idx, 'Approved', 'all')">Approve</button>
                   </div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
+
+
       </div>
     </div>
   </div>
@@ -81,7 +113,8 @@
 [[block page_scripts]]
 <!-- Loads the index-specific js for Vue -->
 <script>
-  let get_users_url = "[[=XML(get_unapproved_users_url)]]";
+  let get_unapproved_users_url = "[[=XML(get_unapproved_users_url)]]";
+  let get_users_url = "[[=XML(get_users_url)]]";
   let set_role_url = "[[=XML(set_role_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";
