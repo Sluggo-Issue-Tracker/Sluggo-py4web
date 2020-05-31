@@ -40,7 +40,8 @@ let init = (app) => {
             0: "is-link",
             1: "is-warning",
             2: "is-success"
-        }
+        },
+        delete_status: false
     };
 
     app.pre_add = () => {
@@ -64,7 +65,7 @@ let init = (app) => {
      * uses the value newly generated from the submitted modal
      */
     app.add_ticket = () => {
-        axios.post(add_sub_ticket_url, app.data.new_ticket).then((response) => {
+        axios.post(add_tickets_url, app.data.new_ticket).then((response) => {
            app.data.ticket.sub_tickets.unshift(response.data.ticket);
         }).catch((error) => {
             console.log(error);
@@ -162,6 +163,15 @@ let init = (app) => {
         });
     };
 
+    app.delete_ticket = () => {
+        app.data.delete = false;
+        if (app.data.ticket_id !== false) { // ticket_id should never be false
+            axios.post(delete_tickets_url, {id: app.data.ticket_id}).then((response) => {
+                window.location.href = ticket_page_url;
+            });
+        }
+    };
+
     /**
      * reindexes the user list
      */
@@ -184,7 +194,8 @@ let init = (app) => {
         submit_edit: app.submit_edit,
         change_status: app.change_status,
         cancel_edit: app.cancel_edit,
-        select_user: app.select_user
+        select_user: app.select_user,
+        delete_ticket: app.delete_ticket,
     };
 
     // This creates the Vue instance.

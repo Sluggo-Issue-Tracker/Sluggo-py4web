@@ -23,6 +23,10 @@
                         <input class="input" type="date" placeholder="mm / dd / yyyy" v-model="due_date">
                     </div>
                     <div class="field">
+                        <span class="subtitle">Time</span>
+                       <input class="input" type="time" v-model="due_time">
+                    </div>
+                    <div class="field">
                         <span class="subtitle">Assignee</span>
                         <v-select placeholder="No assignment" v-model="assigned_user" :options="users"></v-select>
                     </div>

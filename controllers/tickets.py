@@ -7,6 +7,8 @@ import pathlib
 import uuid
 
 from py4web import action, request, abort, redirect, URL, Field
+from datetime import datetime
+from dateutil.parser import parse
 from ..common import db, session, T, cache, auth, signed_url
 from ..models import Helper
 
@@ -60,10 +62,10 @@ def ticket_details(ticket_id=None):
     return dict(
         get_ticket_by_id_url=URL('get_ticket_by_id', ticket_id),
         add_tickets_url=URL('add_tickets', signer=signed_url),
-        add_sub_ticket_url=URL('add_sub_ticket', signer=signed_url),
         edit_ticket_url=URL('edit_ticket', signer=signed_url),
         tickets_details_url=URL('ticket_details'),
-        delete_tickets_url=URL('delete_ticket', signer=signed_url),
+        ticket_page_url=URL('tickets'),
+        delete_tickets_url=URL('delete_tickets', signer=signed_url),
         get_all_tags=URL('get_tags'),
         get_all_progress=URL('get_all_progress'),
         get_users_url=URL('users/get_users'),
@@ -167,24 +169,27 @@ def register_tag(tag_list, ticket_id):
 @action('add_tickets', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def add_tickets():
+    parent_id = request.json.get('parent_id')
     ticket_title = request.json.get('ticket_title')
     ticket_text = request.json.get('ticket_text')
     ticket_due_date = request.json.get('due_date')
     assigned_user = request.json.get('assigned_user')
-    due_date = request.json.get('due_date')
-
-    print(due_date)
 
     ticket_id = db.tickets.insert(
         ticket_title=ticket_title,
         ticket_text=ticket_text,
-        ticket_due_date=ticket_due_date,
+        due=parse(ticket_due_date) if ticket_due_date is not None else None,
         assigned_user=assigned_user.get('id') if type(assigned_user) is dict else None
     )
 
+    # apply tags
     register_tag(request.json.get('tag_list'), ticket_id)
     ticket = db(db.tickets.id == ticket_id).select().as_list()
     ticket[0]["tag_list"] = request.json.get('tag_list')
+
+    # create subticket entry if parent_id set
+    if parent_id is not None:
+        db.sub_tickets.insert(parent_id=parent_id, child_id=ticket_id)
 
     return dict(ticket=ticket[0])  # return the record
 
@@ -224,7 +229,6 @@ def add_ticket_tag():
 @action('pin_ticket', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def pin_ticket():
-    # TODO: pinning and unpinning should be mapped to two different calls to maintain distinct CRUD mapping
     ticketID = request.json.get("ticket_id")
     if ticketID is None:
         abort(400, "Ticket ID to pin not provided")
@@ -252,7 +256,7 @@ def edit_ticket():
     title = request.json.get('title')
     text = request.json.get('text')
     tag_list = request.json.get('tag_list')
-    due_date = request.json.get('due_date') # TODO: implement due dates here
+    due_date = request.json.get('due_date')  # TODO: implement due dates here
 
     print(request.json)
 

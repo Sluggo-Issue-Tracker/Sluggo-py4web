@@ -16,7 +16,9 @@ Vue.component('v-select', VueSelect.VueSelect);
             selected: [],
             date: "",
             due_date: "",
+            due_time: "",
             assigned_user: "",
+            time_zone: luxon.DateTime.local().zoneName
         };
 
         ticket_modal.methods.load.call(data);
@@ -32,9 +34,11 @@ Vue.component('v-select', VueSelect.VueSelect);
         for(let a of this.selected) {
             this.ticket.tag_list.unshift(a);
         }
-        console.log(this.due_date);
-        console.log(this.ticket.tag_list);
-        this.ticket.due_date = this.due_date;
+
+        let local_t = luxon.DateTime.fromISO(this.due_date + "T" + this.due_time);
+        let utc = local_t.setZone("utc");
+        this.ticket.due_date = utc.toString();
+
         this.ticket.assigned_user = this.assigned_user;
         this.$emit('submit');
     };
