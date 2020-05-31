@@ -34,5 +34,4 @@ dependencies:
     - tornado==6.0.3
     - urllib3==1.25.8
     - yatl==1.0.11
-prefix: /home/sam/anaconda3/envs/py4web
 
