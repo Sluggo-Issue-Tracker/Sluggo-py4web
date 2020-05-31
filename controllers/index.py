@@ -34,7 +34,6 @@ def tickets():
     # Attach tag list to tickets
     Helper.attach_tags_for_tickets(pinned_tickets)
 
-    print(Helper.safe_json_dumps(pinned_tickets))
 
     return(dict(
         user_email=Helper.get_user_email(),
