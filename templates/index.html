@@ -1,5 +1,9 @@
 [[extend "layout.html"]]
 
+[[block page_head]]
+<link rel="stylesheet" href="[[=URL('static', 'css/pages/index.css')]]">
+[[end]]
+
 <div v-cloak id="hp-target" class="section">
     <div class="container">
        <div class="columns">
@@ -84,69 +88,53 @@
              </div>
           </div>
           <div class="column is-one-third">
-             <div @click="placeholder()" class="box">
+             <div class="box">
                 <div class="level">
                    <div class="level-item level-left">
-                      <p class="is-size-4 has-text-weight-semibold">Pinned Tickets (placeholder)</p>
+                      <p class="is-size-4 has-text-weight-semibold">Pinned Tickets</p>
                    </div>
-                   <div class="level-item level-right buttons">
+                   <!-- TODO: Implement easy pinned ticket modification -->
+                   <!-- <div class="level-item level-right buttons">
                       <div class="button">
                          Edit
                       </div>
-                   </div>
+                   </div> -->
                 </div>
-                <div class="notification is-info">
-                   <div class="columns">
-                      <div class="column is-two-thirds">
-                         <p class="is-size-5">Ticket 21 | #software | Submit project proposal for issue tracker in CSE183</p>
-                         <p>Due May 25, 2020.</p>
-                      </div>
-                      <div class="column">
-                         <div class="buttons">
-                            <div class="button is-static">
-                               <p>Complete</p>
-                            </div>
-                         </div>
-                      </div>
-                   </div>
-                   <div class="columns">
-                      <div class="column">
-                         <p class="is-size-6 has-text-weight-semibold">50% Complete (2/4)</p>
-                         <progress class="progress" value="50" max="100">50%</progress>
-                      </div>
-                   </div>
-                </div>
+               <div class="sluggo_pinned_ticket notification is-info" v-for="pt in pinned_tickets" @click="goToTicket(pt.id)">
+                  <div class="columns">
+                     <div class="column">
+                        <p class="is-size-5">Ticket {{pt.id}} | {{pt.tag_string}} | {{pt.ticket_title}} </p>
+                        <!-- <p>Due May 25, 2020.</p> -->
+                     </div>
+                     <!-- TODO: Determine how to expose ticket completion
+                     endpoints on the homepage -->
+                     <!-- <div class="column">
+                        <div class="buttons">
+                           <div class="button is-static">
+                              <p>Complete</p>
+                           </div>
+                        </div>
+                     </div> -->
+                  <!-- TODO: Progress indicator -->
+                  <!-- <div class="columns">
+                     <div class="column">
+                        <p class="is-size-6 has-text-weight-semibold">50% Complete (2/4)</p>
+                        <progress class="progress" value="50" max="100">50%</progress>
+                     </div>
+                  </div> -->
+               </div>
+            </div>
              </div>
              <div class="box">
                 <div class="level">
                    <div class="level-item level-left">
-                      <p class="is-size-4 has-text-weight-semibold">Your Tags (placeholder)</p>
-                   </div>
-                   <div class="level-item level-right buttons">
-                      <div @click="placeholder()" class="button">
-                         Edit
-                      </div>
+                      <p class="is-size-4 has-text-weight-semibold">Your Tags</p>
                    </div>
                 </div>
                 <div class="tile is-ancestor">
                    <div class="tile is-parent is-vertical">
-                      <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
-                         <p>Admin <span class="has-text-weight-bold has-text-danger">(1 Overdue Assigned)</span></p>
-                      </article>
-                      <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
-                         <p>Auto <span class="has-text-weight-bold">(4 New)</span></p>
-                      </article>
-                       <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
-                         <p>Electronics</p>
-                      </article>
-                      <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
-                         <p>Software <span class="has-text-weight-bold">(1 New)</span></p>
-                      </article>
-                      <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
-                         <p>Systems <span class="has-text-weight-bold">(1 New)</span></p>
-                      </article>
-                      <article @click="placeholder()" class="tile is-child notification is-grey-lighter">
-                         <p>S-Lab</p>
+                      <article class="sluggo_hp_tag tile is-child notification is-grey-lighter" v-for="tag in user_tags" @click="goToTag(tag.tag_id)">
+                         <p>{{formatTag(tag.tag_name)}}</p>
                       </article>
                    </div>
                 </div>
@@ -159,7 +147,10 @@
     [[block page_scripts]]
     <script>
       let date = "[[=XML(date)]]";
-      let get_pinned_tickets_url = "[[=XML(get_pinned_tickets_url)]]";
+      let pinned_tickets = '[[=XML(pinned_tickets)]]';
+      let ticket_details_url = '[[=XML(ticket_details_url)]]';
+      let tickets_url = '[[=XML(tickets_url)]]';
+      let user_tags = '[[=XML(user_tags)]]';
     </script>
     <script src="js/index.js"></script>
     [[end]]
