@@ -140,7 +140,7 @@
                     <br>
                     <div>
                         <span>
-                       <a class="has-text-danger" v-if="!delete_status" @click="delete_status = true">
+                       <a class="has-text-danger" v-if="!delete_status && check_user()" @click="delete_status = true">
                            Delete Ticket
                        </a>
                         </span>
