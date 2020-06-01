@@ -7,6 +7,8 @@ import pathlib
 import uuid
 
 from py4web import action, request, abort, redirect, URL, Field
+from datetime import datetime
+from dateutil.parser import parse
 from ..common import db, session, T, cache, auth, signed_url
 from ..models import Helper
 
@@ -60,18 +62,19 @@ def tickets():
 def ticket_details(ticket_id=None):
     # return all the links that the front end will use of requests
     return dict(
-        get_ticket_by_id_url=URL('get_ticket_by_id', ticket_id, signer=signed_url),
+        get_ticket_by_id_url=URL('get_ticket_by_id', ticket_id),
         add_tickets_url=URL('add_tickets', signer=signed_url),
-        add_sub_ticket_url=URL('add_sub_ticket', signer=signed_url),
         edit_ticket_url=URL('edit_ticket', signer=signed_url),
         tickets_details_url=URL('ticket_details'),
-        delete_tickets_url=URL('delete_ticket', signer=signed_url),
-        get_all_tags=URL('get_tags', signer=signed_url),
-        get_all_progress=URL('get_all_progress', signer=signed_url),
-        get_users_url=URL('users/get_users', signer=signed_url),
+        ticket_page_url=URL('tickets'),
+        delete_tickets_url=URL('delete_tickets', signer=signed_url),
+        get_all_tags=URL('get_tags'),
+        get_all_progress=URL('get_all_progress'),
+        get_users_url=URL('users/get_users'),
         delete_tag_url=URL('delete_tag', signer=signed_url),
         update_progress_url=URL('update_ticket_progress', signer=signed_url),
-        get_users_by_tag_list_url=URL('get_users_by_tag_list', signer=signed_url),
+        get_users_by_tag_list_url=URL('get_users_by_tag_list'),
+        assign_user_url=URL('assign_user', signer=signed_url),
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
         user=auth.get_user()
@@ -79,20 +82,20 @@ def ticket_details(ticket_id=None):
 
 
 @action('get_tags')
-@action.uses(signed_url.verify(), auth.user)
+@action.uses(auth.user)
 def get_tags():
     tags = db(db.global_tag).select(orderby=db.global_tag.tag_name).as_list()
     return dict(tags=tags)
 
 
 @action('get_all_progress')
-@action.uses(signed_url.verify(), auth.user)
+@action.uses(auth.user)
 def get_all_progress():
     return dict(valid_statuses=valid_statuses)
 
 
 @action('get_tickets')
-@action.uses(signed_url.verify(), auth.user)
+@action.uses(auth.user)
 def get_tickets():
     tickets = db(db.tickets).select(orderby=~db.tickets.created).as_list()
     ticket_tags = db(db.global_tag).select().as_list()
@@ -106,7 +109,7 @@ def get_tickets():
 
 
 @action('get_ticket_by_id/<ticket_id>')
-@action.uses(signed_url.verify(), auth.user)
+@action.uses(auth.user)
 def get_ticket_by_id(ticket_id=None):
     ticket = db(db.tickets.id == ticket_id).select().as_list()[0]
 
@@ -115,12 +118,30 @@ def get_ticket_by_id(ticket_id=None):
     ticket["status"] = generate_ticket_status(ticket)
     ticket["sub_tickets"] = Helper.get_sub_tickets_by_parent_id(ticket.get('id'))
 
-    return dict(ticket=ticket)
+    assigned_user = db(db.users.id == ticket.get('assigned_user')).select(
+        db.users.ALL, db.auth_user.first_name, db.auth_user.last_name, db.auth_user.email,
+        left=(db.auth_user.on(db.auth_user.id == db.users.user))).as_list()
+
+    assigned_user = list(map(lambda x: {**x["users"], **x["auth_user"]}, assigned_user))
+
+    for user in assigned_user:
+        user["icon"] = "%s-%s.jpg" % \
+                       (user.get('first_name').lower(), user.get('last_name').lower()) if user else "Unknown"
+        user["full_name"] = "%s %s" % \
+                            (user.get('first_name'), user.get('last_name')) if user else "Unknown"
+        user['user_email'] = user.get('email')
+
+    if len(assigned_user) > 0:
+        assigned_user = assigned_user[0]
+    else:
+        assigned_user = None
+
+    return dict(ticket=ticket, assigned_user=assigned_user)
 
 
 # MARK: Ticket Pinning
 @action('get_pinned_tickets', method="GET")
-@action.uses(signed_url.verify(), auth.user, db)
+@action.uses(auth.user, db)
 def get_pinned_tickets():  # grabs pinned tickets for logged in user
     # Grab the current user's ID
     userID = Helper.get_user()
@@ -140,52 +161,36 @@ def get_pinned_tickets():  # grabs pinned tickets for logged in user
 # helper for adding tags
 def register_tag(tag_list, ticket_id):
     for tag in tag_list:
-        global_tag = db(db.global_tag.id== tag.get('tag_id')).select(db.global_tag.id).first()
+        global_tag = db(db.global_tag.id == tag.get('id')).select(db.global_tag.id).first()
         tag_id = db.global_tag.insert(tag_name=tag.get('tag_name')) if global_tag is None else global_tag.id
         db.ticket_tag.insert(ticket_id=ticket_id, tag_id=tag_id)
 
 
 # create ----------------------------------------------------------------------------------------------------
-@action('get_comment_thread')
 @action('add_tickets', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def add_tickets():
+    parent_id = request.json.get('parent_id')
     ticket_title = request.json.get('ticket_title')
     ticket_text = request.json.get('ticket_text')
     ticket_due_date = request.json.get('due_date')
     assigned_user = request.json.get('assigned_user')
-    due_date = request.json.get('due_date')
-
-    print(due_date)
 
     ticket_id = db.tickets.insert(
         ticket_title=ticket_title,
         ticket_text=ticket_text,
-        ticket_due_date=ticket_due_date,
+        due=parse(ticket_due_date) if ticket_due_date is not None else None,
         assigned_user=assigned_user.get('id') if type(assigned_user) is dict else None
     )
 
+    # apply tags
     register_tag(request.json.get('tag_list'), ticket_id)
     ticket = db(db.tickets.id == ticket_id).select().as_list()
     ticket[0]["tag_list"] = request.json.get('tag_list')
 
-    return dict(ticket=ticket[0])  # return the record
-
-
-@action('add_sub_ticket', method='POST')
-@action.uses(signed_url.verify(), auth.user, db)
-def add_sub_ticket():
-    # repetition sucks but i don't want to make classes just yet
-    parent_id = request.json.get('parent_id')
-    child_id = db.tickets.insert(
-        ticket_title=request.json.get('ticket_title'),
-        ticket_text=request.json.get('ticket_text'),
-    )
-
-    register_tag(request.json.get('tag_list'), child_id)
-    ticket = db(db.tickets.id == child_id).select().as_list()
-    ticket[0]["tag_list"] = request.json.get('tag_list')
-    db.sub_tickets.insert(parent_id=parent_id, child_id=child_id)
+    # create subticket entry if parent_id set
+    if parent_id is not None:
+        db.sub_tickets.insert(parent_id=parent_id, child_id=ticket_id)
 
     return dict(ticket=ticket[0])  # return the record
 
@@ -207,7 +212,6 @@ def add_ticket_tag():
 @action('pin_ticket', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def pin_ticket():
-    # TODO: pinning and unpinning should be mapped to two different calls to maintain distinct CRUD mapping
     ticketID = request.json.get("ticket_id")
     if ticketID is None:
         abort(400, "Ticket ID to pin not provided")
@@ -235,7 +239,7 @@ def edit_ticket():
     title = request.json.get('title')
     text = request.json.get('text')
     tag_list = request.json.get('tag_list')
-    due_date = request.json.get('due_date') # TODO: implement due dates here
+    due_date = request.json.get('due_date')  # TODO: implement due dates here
 
     print(request.json)
 
@@ -252,7 +256,8 @@ def edit_ticket():
         abort(500, "wrong values for title and text")
 
     ticket.update_record(ticket_title=title.strip(),
-                         ticket_text=text.strip())
+                         ticket_text=text.strip(),
+                         due=parse(due_date) if due_date is not None else None)
 
     current_tickets = Helper.get_ticket_tags_by_id(ticket_id)
 
@@ -309,7 +314,9 @@ def assign_user():
     ticket_id = request.json.get('ticket_id')
     user_id = request.json.get('user_id')
 
-    if user_id is None or ticket_id is None:
+    print(user_id)
+
+    if ticket_id is None:
         return dict(message="ids are undefined")
 
     ticket = db.tickets[ticket_id]

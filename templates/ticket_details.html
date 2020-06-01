@@ -25,7 +25,7 @@
                        <button class="button is-success" @click="edit = true">Edit</button>
                    </div>
                     <div class="level-item" v-if="edit">
-                        <button class="button" @click="cancel_edit">Cancel</button>
+                        <a @click="cancel_edit">Cancel</a>
                     </div>
                     <div class="level-item" v-if="edit">
                         <button class="button is-success" @click="submit_edit">Save Changes</button>
@@ -33,10 +33,7 @@
                 </div>
             </div>
 
-            <div v-if="!edit" style="padding-bottom: 10px; word-wrap: break-word;">
-                {{description}}
-            </div>
-            <textarea  v-if="edit" v-model="description" class="textarea"></textarea>
+
             <section style="border-bottom: darkgray 1px solid;"></section>
         </div>
     </section>
@@ -44,6 +41,13 @@
         <div class="container">
             <div class="columns has-background-light">
                 <div class="column is-three-quarters">
+                   <div class="box">
+                       <span class="subtitle">Description</span>
+                       <div v-if="!edit" style="padding-bottom: 10px; word-wrap: break-word;">
+                           {{description}}
+                       </div>
+                       <textarea  v-if="edit" v-model="description" class="textarea"></textarea>
+                   </div>
                         <div class="box">
                             <div class="columns">
                                 <div class="column is-one-fifth">
@@ -78,6 +82,19 @@
                     <div style="border-bottom: darkgray 1px solid">
                         <div class="level" >
                             <div class="level-left">
+                                <div class="level-item"><span>Due Date</span></div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <input class="input" type="date" placeholder="mm / dd / yyyy" :disabled = "!edit"
+                                   :value="due_date" @input="due_date = $event.target.value">
+                        </div>
+                        <br>
+                    </div>
+                    <br>
+                    <div style="border-bottom: darkgray 1px solid">
+                        <div class="level" >
+                            <div class="level-left">
                                 <div class="level-item"><span>Progress</span></div>
                             </div>
                         </div>
@@ -87,6 +104,7 @@
                         <br>
                     </div>
                     <br>
+
                     <div style="border-bottom: darkgray 1px solid">
                         <div class="level" >
                             <div class="level-left">
@@ -94,13 +112,9 @@
                                     Assignee
                                 </div>
                             </div>
-                            <div class="level-right">
-                                <div class="level-item">
-                                <a><i class="fa fa-plus"></i></a>
-                                </div>
-                            </div>
+
                         </div>
-                        <v-select class="has-background-white" v-model="assigned" :options="possible_users"></v-select>
+                        <v-select class="has-background-white" v-model="assigned" :options="possible_users" @input="select_user"></v-select>
                         <br>
                     </div>
                     <br>
@@ -117,13 +131,30 @@
                             </div>
                         </div>
                         <div v-for="t in ticket.sub_tickets">
-                            <span class="button has-background-white is-size-6 is-fullwidth has-text-left" @click="redirect(t.id)">
+                            <span class="button has-background-white is-size-6 is-fullwidth has-text-left" @click="redirect_ticket(t.id)">
                                 {{t.id}} | {{t.ticket_title}} | {{t.ticket_status}}
                             </span>
                         </div>
                         <br>
                     </div>
-                    <!-- probably want a card here -->
+                    <br>
+                    <div>
+                        <span>
+                       <a class="has-text-danger" v-if="!delete_status" @click="delete_status = true">
+                           Delete Ticket
+                       </a>
+                        </span>
+                        <span>
+                       <a class="has-text-danger" v-if="delete_status" @click="delete_ticket">
+                          Confirm
+                       </a>
+                        </span>
+                        <span>
+                       <a v-if="delete_status" @click="delete_status = false">
+                           Cancel
+                       </a>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -137,16 +168,17 @@
    let add_tickets_url="[[=XML(add_tickets_url)]]";
    let edit_ticket_url="[[=XML(edit_ticket_url)]]";
    let delete_tickets_url="[[=XML(delete_tickets_url)]]";
-   let add_sub_ticket_url="[[=XML(add_sub_ticket_url)]]";
    let tickets_details_url="[[=XML(tickets_details_url)]]";
-   let delete_tag_url="[[=XML(delete_tag_url)]]";
+   let ticket_page_url="[[=XML(ticket_page_url)]]";
    let update_progress_url="[[=XML(update_progress_url)]]";
    let get_all_tags="[[=XML(get_all_tags)]]";
    let get_all_progress="[[=XML(get_all_progress)]]";
    let get_users_by_tag_list_url="[[=XML(get_users_by_tag_list_url)]]";
+   let assign_user_url = "[[=XML(assign_user_url)]]";
 </script>
 
 <script src="js/vue-select.min.js"></script>
+<script src="js/luxon.min.js"></script>
 <script src="js/ticket_details.js"></script>
 <script src="components/ticket_modal/ticket_modal.js"></script>
 [[end]]
