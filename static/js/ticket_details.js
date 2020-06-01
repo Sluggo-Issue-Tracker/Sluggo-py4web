@@ -106,14 +106,12 @@ let init = (app) => {
     app.submit_edit = () => {
         if(app.data.ticket === null)
             return;
-        let local_t = luxon.DateTime.fromISO(app.data.due_date + 'T' + app.data.due_time);
-        let utc_t = local_t.setZone('utc');
         axios.post(edit_ticket_url, {
             id: app.data.ticket_id,
             title: app.data.title,
             text: app.data.description,
             tag_list: app.data.selected_tags,
-            due_date: utc_t.toString()
+            due_date: app.data.due_date,
         }).then((response) => {
             return axios.post(get_users_by_tag_list_url, {tag_list: app.data.selected_tags})
         }).then((result) => {
@@ -150,13 +148,7 @@ let init = (app) => {
         app.data.author = ticket_object.ticket_author;
         app.data.status = ticket_object.status;
         app.data.current_status = app.data.status;
-
-        console.log(ticket_object.due);
-        let utc_t = luxon.DateTime.fromISO(ticket_object.due);
-        console.log(utc_t.toString());
-        let local_t = utc_t.setZone(app.data.time_zone);
-        app.data.due_date = local_t.toString().split('T')[0];
-        app.data.due_time = local_t.toString().split('T')[1];
+        app.data.due_date = ticket_object.due;
     };
 
     app.set_assigned = (user_object) => {

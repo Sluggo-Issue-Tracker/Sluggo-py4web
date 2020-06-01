@@ -17,7 +17,6 @@ from ..models import Helper
 
 
 def get_role():
-
     user = db(db.users.user == Helper.get_user()).select().first()
     return user.role.capitalize() if user is not None else "Unapproved"
 
