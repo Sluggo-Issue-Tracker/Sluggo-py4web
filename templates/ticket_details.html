@@ -2,7 +2,7 @@
 <div id="vue-target">
 
     <ticket-modal v-if="show_modal" v-bind:ticket="new_ticket"
-                  v-bind:options="tag_options"
+                  v-bind:options="tag_options" v-bind:users="possible_users"
                   @submit="add_ticket" @cancel="close_modal">
     </ticket-modal>
     <section class="section">
