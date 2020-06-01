@@ -59,6 +59,10 @@ def tickets():
 @action.uses('ticket_details.html', signed_url, auth.user)
 def ticket_details(ticket_id=None):
     # return all the links that the front end will use of requests
+    full_user = db(db.users.user == Helper.get_user()).select().first()
+    user = auth.get_user()
+    user["role"] = full_user.role # attach more information as necessary
+
     return dict(
         get_ticket_by_id_url=URL('get_ticket_by_id', ticket_id),
         add_tickets_url=URL('add_tickets', signer=signed_url),
@@ -75,7 +79,7 @@ def ticket_details(ticket_id=None):
         assign_user_url=URL('assign_user', signer=signed_url),
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
-        user=auth.get_user()
+        user=user,
     )
 
 

@@ -22,8 +22,9 @@ let init = (app) => {
         ticket_id: "",
         title: "",
         description: "",
-        author: "",
+        author: {},
         status: "",
+        current_user: {},
         // data used by input
         new_ticket: {},
         selected_tags: [],
@@ -47,6 +48,9 @@ let init = (app) => {
         time_zone: luxon.DateTime.local().zoneName
     };
 
+    /** prepare the new ticket for sending to the backend
+     *
+     */
     app.pre_add = () => {
         app.data.new_ticket = { // object that the modal uses
             id: "",
@@ -177,6 +181,10 @@ let init = (app) => {
         }
     };
 
+    app.check_user = () => {
+        return app.data.current_user.email === app.data.ticket.user_email || current_user.role === "Admin";
+    };
+
     /**
      * reindexes the user list
      */
@@ -201,6 +209,7 @@ let init = (app) => {
         cancel_edit: app.cancel_edit,
         select_user: app.select_user,
         delete_ticket: app.delete_ticket,
+        check_user: app.check_user
     };
 
     // This creates the Vue instance.
@@ -236,6 +245,7 @@ let init = (app) => {
         axios.get(get_all_progress).then((result) => {
            app.data.status_strings = result.data.valid_statuses;
         });
+        app.data.current_user = JSON.parse(current_user.replace(/'/g,'"'));
     };
 
     // Call to the initializer.

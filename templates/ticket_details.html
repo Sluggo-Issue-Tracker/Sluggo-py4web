@@ -21,7 +21,7 @@
                    </div>
                </div>
                 <div class="level-right">
-                   <div class="level-item" v-if="!edit" >
+                   <div class="level-item" v-if="!edit && check_user()" >
                        <button class="button is-success" @click="edit = true">Edit</button>
                    </div>
                     <div class="level-item" v-if="edit">
@@ -175,6 +175,7 @@
    let get_all_progress="[[=XML(get_all_progress)]]";
    let get_users_by_tag_list_url="[[=XML(get_users_by_tag_list_url)]]";
    let assign_user_url = "[[=XML(assign_user_url)]]";
+   let current_user = "[[=XML(user)]]";
 </script>
 
 <script src="js/vue-select.min.js"></script>
