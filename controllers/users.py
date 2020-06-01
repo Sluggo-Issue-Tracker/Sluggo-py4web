@@ -82,7 +82,7 @@ def add_user():
         # now we insert tags in this many to many relationship
         db.user_tag.insert(
             user_id=u_id,
-            tag_id=t_idConflicting files
+            tag_id=t_id
         )
     return "ok"
 
