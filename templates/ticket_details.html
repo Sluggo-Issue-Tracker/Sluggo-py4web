@@ -33,10 +33,7 @@
                 </div>
             </div>
 
-            <div v-if="!edit" style="padding-bottom: 10px; word-wrap: break-word;">
-                {{description}}
-            </div>
-            <textarea  v-if="edit" v-model="description" class="textarea"></textarea>
+
             <section style="border-bottom: darkgray 1px solid;"></section>
         </div>
     </section>
@@ -44,6 +41,13 @@
         <div class="container">
             <div class="columns has-background-light">
                 <div class="column is-three-quarters">
+                   <div class="box">
+                       <span class="subtitle">Description</span>
+                       <div v-if="!edit" style="padding-bottom: 10px; word-wrap: break-word;">
+                           {{description}}
+                       </div>
+                       <textarea  v-if="edit" v-model="description" class="textarea"></textarea>
+                   </div>
                         <div class="box">
                             <div class="columns">
                                 <div class="column is-one-fifth">
@@ -78,6 +82,19 @@
                     <div style="border-bottom: darkgray 1px solid">
                         <div class="level" >
                             <div class="level-left">
+                                <div class="level-item"><span>Due Date</span></div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <input class="input" type="date" placeholder="mm / dd / yyyy" :disabled = "!edit"
+                                   :value="due_date" @input="due_date = $event.target.value">
+                        </div>
+                        <br>
+                    </div>
+                    <br>
+                    <div style="border-bottom: darkgray 1px solid">
+                        <div class="level" >
+                            <div class="level-left">
                                 <div class="level-item"><span>Progress</span></div>
                             </div>
                         </div>
@@ -87,6 +104,7 @@
                         <br>
                     </div>
                     <br>
+
                     <div style="border-bottom: darkgray 1px solid">
                         <div class="level" >
                             <div class="level-left">
@@ -120,7 +138,6 @@
                         <br>
                     </div>
                     <br>
-
                     <div>
                         <span>
                        <a class="has-text-danger" v-if="!delete_status" @click="delete_status = true">
@@ -161,7 +178,7 @@
 </script>
 
 <script src="js/vue-select.min.js"></script>
+<script src="js/luxon.min.js"></script>
 <script src="js/ticket_details.js"></script>
 <script src="components/ticket_modal/ticket_modal.js"></script>
-<script src="components/ticket_modal/luxon.min.js"></script>
 [[end]]

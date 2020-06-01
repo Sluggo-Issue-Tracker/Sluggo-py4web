@@ -165,7 +165,6 @@ def register_tag(tag_list, ticket_id):
 
 
 # create ----------------------------------------------------------------------------------------------------
-@action('get_comment_thread')
 @action('add_tickets', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def add_tickets():
@@ -190,24 +189,6 @@ def add_tickets():
     # create subticket entry if parent_id set
     if parent_id is not None:
         db.sub_tickets.insert(parent_id=parent_id, child_id=ticket_id)
-
-    return dict(ticket=ticket[0])  # return the record
-
-
-@action('add_sub_ticket', method='POST')
-@action.uses(signed_url.verify(), auth.user, db)
-def add_sub_ticket():
-    # repetition sucks but i don't want to make classes just yet
-    parent_id = request.json.get('parent_id')
-    child_id = db.tickets.insert(
-        ticket_title=request.json.get('ticket_title'),
-        ticket_text=request.json.get('ticket_text'),
-    )
-
-    register_tag(request.json.get('tag_list'), child_id)
-    ticket = db(db.tickets.id == child_id).select().as_list()
-    ticket[0]["tag_list"] = request.json.get('tag_list')
-    db.sub_tickets.insert(parent_id=parent_id, child_id=child_id)
 
     return dict(ticket=ticket[0])  # return the record
 
@@ -273,7 +254,8 @@ def edit_ticket():
         abort(500, "wrong values for title and text")
 
     ticket.update_record(ticket_title=title.strip(),
-                         ticket_text=text.strip())
+                         ticket_text=text.strip(),
+                         due=parse(due_date) if due_date is not None else None)
 
     current_tickets = Helper.get_ticket_tags_by_id(ticket_id)
 
