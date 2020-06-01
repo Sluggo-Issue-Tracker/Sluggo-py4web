@@ -23,6 +23,10 @@ from ..models import Helper
 @action('users')
 @action.uses('users.html', signed_url, auth.user)
 def users():
+
+    user = db(db.users.user == Helper.get_user()).select().first()
+    if user == None:
+        redirect(URL('create_profile'))
     return dict(
 
         get_users_url=URL('users/get_users', signer=signed_url),
@@ -37,6 +41,10 @@ def users():
 @action('users/<id>')
 @action.uses('specific_user.html', signed_url, auth.user)
 def specific_user(id=None):
+
+    user = db(db.users.user == Helper.get_user()).select().first()
+    if user == None:
+        redirect(URL('create_profile'))
     return dict(
 
         show_user_url = URL('users/show_user', signer=signed_url),
@@ -69,8 +77,9 @@ def create_user():
 @action('add_user', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def add_user():
+    role = "admin" if db(db.users).isempty() else "unapproved"
     u_id = db.users.insert(
-        role="admin" if db(db.users).isempty() else "unapproved",
+        role=role,
         bio=request.json.get('bio'),
         user=Helper.get_user(),
     )
@@ -83,7 +92,7 @@ def add_user():
 
         if (t_id == None):
             # if tag isn't stored in database, create new tags
-            t_id = db.global_tag.insert(tag_name=tag.lower())
+            t_id = db.global_tag.insert(tag_name=tag.lower(),approved=(True if role== "admin" else False))
 
         # now we insert tags in this many to many relationship
         db.user_tag.insert(
@@ -162,7 +171,7 @@ def show_user():
     user['tags_list'] = Helper.get_user_tag_by_name(user)
     user['user_email'] = person.get('email')
     user['role'] = user['role'].capitalize()
-    return dict(user=user,tags=Helper.get_tags_list(), )
+    return dict(user=user,tags=Helper.get_tags_list_approved() )
 
 
 @action('edit_user', method="POST")

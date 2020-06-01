@@ -1,6 +1,11 @@
-<!-- users.html - mockup page for viewing users
+<!-- admin.html - The admin dashboard for Sluggo
 # Copyright (c) 2020 Andrew Gavgavian, Samuel Schmidt, and Isaac
 # Trimble-Pederson, All Rights Reserved-->
+[[block page_head]]<title>Sluggo/Admin</title>[[end]]
+
+
+
+
 
 [[extend 'layout.html']]
 <div id="vue-admin">
@@ -15,18 +20,32 @@
           </p>
           <ul class="menu-list">
             <li>
-              <a>Team Settings</a>
-            </li>
-            <li>
-              <a>Manage Your Team</a>
+              <a :class="page === 'start_view' ? 'is-active' :'' " @click="goto('start_view')">
+                Team Settings
+              </a>
               <ul>
                 <li>
-                  <a :class="page === 'approve' ? 'is-active' :'' " @click="goto('approve')">
+                  <a :class="page === 'approve_tags' ? 'is-active' :'' " @click="goto('approve_tags')">
+                    Approve Tags
+                  </a>
+                </li>
+                <li>
+                  <a :class="page === 'manage_tags' ? 'is-active' :'' " @click="goto('manage_tags')">
+                    Tags
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <a @click="goto('approve_users')">Manage Your Team</a>
+              <ul>
+                <li>
+                  <a :class="page === 'approve_users' ? 'is-active' :'' " @click="goto('approve_users')">
                     Approve a member
                   </a>
                 </li>
                 <li>
-                  <a :class="page === 'members' ? 'is-active' :'' " @click="goto('members')">
+                  <a :class="page === 'manage_members' ? 'is-active' :'' " @click="goto('manage_members')">
                     Members
                   </a>
                 </li>
@@ -40,10 +59,68 @@
       </div>
       <div class="column is-four-fifth">
 
+        <!-- Approving Tags -->
+        <div v-if="page === 'start_view' " style="height:60vh;overflow:auto;">
+          <p class="title">
+            Welcome to the Admin Page, [[=username]].
+          </p>
 
+        </div>
+
+
+        <!-- Approving Tags -->
+        <div v-if="page === 'approve_tags' " style="height:60vh;overflow:auto;">
+          <p class="title">
+            Approve Tags
+          </p>
+          <table class="table is-striped is-fullwidth" >
+            <thead>
+              <tr>
+                <th>Tag</th>
+                <th>Approve?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="tag in tags">
+                <th>{{tag.tag_name}}</th>
+                <td>
+                  <button class="button is-success" @click="approveTags(tag._idx, true, 0)">
+                    Approve
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Manage Tags -->
+        <div v-if="page === 'manage_tags' " style="height:60vh;overflow:auto;">
+          <p class="title">
+            Manage Tags
+          </p>
+          <table class="table is-striped is-fullwidth" >
+            <thead>
+              <tr>
+                <th>Tag</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="tag in all_tags">
+                <th>{{tag.tag_name}}</th>
+                <td>
+                  <div class="buttons">
+                    <button v-if="tag.approved" class="button is-danger" @click="approveTags(tag._idx, false, 1)">Delete</button>
+                    <button v-else class="button is-success" @click="approveTags(tag._idx, true, 1)">Approve</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <!-- Approving Users -->
-        <div v-if="page === 'approve' ">
+        <div v-if="page === 'approve_users' " style="height:60vh;overflow:auto;">
           <p class="title">
             Approve a Member
           </p>
@@ -71,7 +148,7 @@
 
 
         <!-- See all users -->
-        <div v-if="page === 'members' ">
+        <div v-if="page === 'manage_members' " style="height:60vh;overflow:auto;">
           <p class="title">
             Members
           </p>
@@ -88,14 +165,15 @@
             <tbody>
               <tr v-for="user in all_users">
                 <th>{{user.full_name}}</th>
-                <th :class="user.role == 'Admin' ? 'has-text-success' : (user.role == 'Approved' ? 'has-text-info' : 'has-text-danger')">{{user.role}}</th>
+                <th :class="getColor(user._idx)">{{user.role}}</th>
                 <td>{{user.tags_list}}</td>
                 <td>{{user.bio}}</td>
                 <td>
                   <div class="buttons">
                     <button v-if="user.role != 'Admin'" class="button is-success" @click="updateRoles(user._idx, 'Admin', 'all')">Make Admin</button>
                     <button v-else class="button is-success" @click="updateRoles(user._idx, 'Approved', 'all')">Revoke Admin</button>
-                    <button v-if="user.role != 'Unapproved'" class="button is-info" @click="updateRoles(user._idx, 'Unapproved', 'all')">Unapprove</button>
+
+                    <button v-if="user.role != 'Unapproved'" class="button is-danger" @click="updateRoles(user._idx, 'Unapproved', 'all')">Unapprove</button>
                     <button v-else class="button is-info" @click="updateRoles(user._idx, 'Approved', 'all')">Approve</button>
                   </div>
                 </td>
@@ -114,8 +192,11 @@
 <!-- Loads the index-specific js for Vue -->
 <script>
   let get_unapproved_users_url = "[[=XML(get_unapproved_users_url)]]";
+  let get_unapproved_tags_url = "[[=XML(get_unapproved_tags_url)]]";
   let get_users_url = "[[=XML(get_users_url)]]";
+  let get_tags_url = "[[=XML(get_tags_url)]]";
   let set_role_url = "[[=XML(set_role_url)]]";
+  let set_tag_url = "[[=XML(set_tag_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";
   let username = "[[=XML(username)]]";

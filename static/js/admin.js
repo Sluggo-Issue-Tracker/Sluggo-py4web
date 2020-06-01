@@ -11,7 +11,9 @@ let init = (app) => {
         users: [],
         all_users: [],
         is_pending: false,
-        page: "approve"
+        page: "start_view",
+        tags: [],
+        all_tags: [],
 
 
     };
@@ -39,17 +41,52 @@ let init = (app) => {
             app.init();
         }).catch((error) => {
             console.log(error);
-            app.show_value(true);
         });
     };
+
+
+    app.approveTags = (tag_index, value, table) => {
+
+        console.log(tag_index);
+        let tag = table === 1 ?
+            app.data.all_tags[tag_index] : app.data.tags[tag_index];
+
+        if (tag.approved === value) return;
+        tag.approved = value;
+        console.log(tag.approved);
+        axios.post(set_tag_url, {
+                                id: tag.id,
+                                approved: tag.approved })
+        .then((response) => {
+            app.init();
+        }).catch((error) => {
+            console.log(error);
+        });
+    };
+
 
     app.goto = (page) => {
         app.data.page = page;
     };
 
+
+    app.getColor = (user_index) => {
+        let user = app.data.all_users[user_index];
+
+        if (user.role === "Admin")
+            return 'has-text-success';
+
+        else if (user.role === "Approved")
+            return 'has-text-info';
+
+        return 'has-text-danger';
+    };
+
     app.methods = {
         updateRoles: app.updateRoles,
+        approveTags: app.approveTags,
         goto : app.goto,
+        getColor : app.getColor,
 
     };
 
@@ -75,8 +112,18 @@ let init = (app) => {
             app.data.all_users = users;
         });
 
+        axios.get(get_unapproved_tags_url).then((result) => {
+            let tags = result.data.tags;
+            app.reindex(tags);
+            app.data.tags = tags;
+        });
 
-
+        axios.get(get_tags_url).then((result) => {
+            let tags = result.data.tags;
+            tags.sort((a,b) => (a.approved > b.approved) ? 1 : ((b.approved > a.approved) ? -1 : 0));
+            app.reindex(tags);
+            app.data.all_tags = tags;
+        });
     };
 
     app.init();
