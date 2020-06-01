@@ -8,3 +8,7 @@ sluggo.formatDate = (date) => { // consistent date formatting
 sluggo.placeholder = () => {
     alert("This has not been implemented yet.");
 }
+
+sluggo.capitalizeString = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}

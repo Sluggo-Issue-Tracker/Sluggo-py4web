@@ -1,7 +1,8 @@
 # quick and dirty moving the helper functions to their own class because our imports
-# were getting way to fucking long
+# were getting way too long
 
 from datetime import datetime, timezone
+import json
 from . common import db, Field, auth
 
 class Helper:
@@ -33,6 +34,11 @@ class Helper:
         return auth.current_user.get('id') if auth.current_user else None
 
     @staticmethod
+    def get_role():
+        user = db(db.users.user == Helper.get_user()).select().first()
+        return user.role.capitalize() if user is not None else "Unapproved"
+
+    @staticmethod
     def get_users_by_tag_id(tag_list):
         if tag_list is None:
             return list()
@@ -51,6 +57,15 @@ class Helper:
         time = Helper.get_time()
         return time.strftime("%m/%d/%Y %H:%M:%S %Z")
 
+    # MARK: Data transmission
+    @staticmethod
+    def safe_json_dumps(obj):
+        # Obtained from https://stackoverflow.com/a/56138540
+        # Attempt to run dumps and replace any non-compatible types
+        # (probably not needed in JS)
+        default = lambda obj: f"<<non-serializable: {type(obj).__qualname__}>>"
+        return json.dumps(obj, default=default, skipkeys=True)
+
     @staticmethod
     def get_tags_list():
         tags = db(db.global_tag).select().as_list()
@@ -67,6 +82,26 @@ class Helper:
         for tag in tags:
             list.append(tag.get('tag_name').capitalize())
         return list
+
+    @staticmethod
+    def get_web_tag_list_for_user_id(user_id):
+        tagRels = db(db.user_tag.user_id == user_id).select().as_list()
+        tags = []
+        for tagRel in tagRels:
+            # Find the corresponding tag
+            foundTag = db(db.global_tag.id == tagRel["tag_id"]).select().first()
+            tags.append(foundTag)
+
+        webTagPairs = []
+
+        for tag in tags:
+            workingWebTag = dict()
+            workingWebTag["tag_name"] = tag.tag_name
+            workingWebTag["tag_id"] = tag.id
+            
+            webTagPairs.append(workingWebTag)
+        
+        return webTagPairs
 
     @staticmethod
     def get_ticket_tags_by_id(ticket_id):
@@ -91,3 +126,31 @@ class Helper:
         # TODO: implement this once we get the chance
         return None
 
+    # MARK: Fetching tickets
+    @staticmethod
+    def get_tickets_for_ids(ticket_ids):
+        return list(map(lambda x: db(db.tickets.id == x).select().as_list()[0], ticket_ids))
+
+    @staticmethod
+    def attach_tags_for_tickets(tickets):
+        for ticket in tickets:
+            # Fetch tags from rels
+            fetchedRels = db(db.ticket_tag.ticket_id == ticket["id"]).select()
+            tags = list(map(lambda rel: db(db.global_tag.id == rel.tag_id).select().first(), fetchedRels))
+            if len(tags) == 0:
+                ticket["tag_string"] = "No Tags"
+                continue
+            else:
+                ticket["tag_string"] = ""
+                for tag in tags:
+                    ticket["tag_string"] = ticket["tag_string"] + tag.tag_name + " "
+
+    # MARK: Pinning tickets
+
+    @staticmethod
+    def get_pinned_ticket_ids_for_user(given_user_id):
+        # Assuming parameter is the auth.user object
+        # Query for pinned tickets given user ID
+        pinnedTicketsQuery = db(db.user_pins.auth_user_id == given_user_id).select().as_list()
+        pinnedTickets = list(map(lambda x: x['ticket_id'], pinnedTicketsQuery))
+        return pinnedTickets

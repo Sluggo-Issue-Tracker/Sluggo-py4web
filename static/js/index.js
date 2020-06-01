@@ -3,7 +3,9 @@
 app = {};
 
 app.data = {
-    formatted_date: "a new day"
+    formatted_date: "a new day",
+    pinned_tickets: [], // this is to be replaced by data passed in by py4web
+    user_tags: []
 }
 
 app.setFormattedDate = () => {
@@ -14,14 +16,25 @@ app.placeholder = () => {
     sluggo.placeholder();
 }
 
-app.getPinnedTickets = () => {
-    axios.get(get_pinned_tickets_url);
+app.goToTicket = (ticket_id) => {
+    // redirect to the ticket details page
+    window.location.href = ticket_details_url + "/" + ticket_id;
+}
+
+app.formatTag = (tag_str) => {
+    return sluggo.capitalizeString(tag_str);
+}
+
+app.goToTag = (tag_id) => {
+    window.location.href = tickets_url + "?tag_id=" + tag_id
 }
 
 app.methods = {
     setFormattedDate: app.setFormattedDate,
     placeholder: app.placeholder,
-    getPinnedTickets: app.getPinnedTickets
+    goToTicket: app.goToTicket,
+    formatTag: app.formatTag,
+    goToTag: app.goToTag
 }
 
 app.vm = new Vue({
@@ -32,7 +45,12 @@ app.vm = new Vue({
 
 app.init = () => {
     app.setFormattedDate();
-    app.getPinnedTickets();
+    
+    // Add the pinned tickets from the passed date
+    Vue.set(app.data, "pinned_tickets", JSON.parse(pinned_tickets));
+
+    // Add the user tags from the passed user tags
+    Vue.set(app.data, "user_tags", JSON.parse(user_tags));
 }
 
 app.init();

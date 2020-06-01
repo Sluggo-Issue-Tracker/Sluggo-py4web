@@ -269,6 +269,15 @@ let init = (app) => {
         }).then((result) => {
            app.data.pinned_tickets = result.data.pinned_tickets;
            app.refreshPinGraphics();
+        }).then(() => {
+            // handle if there's a tag input
+            console.log(app.data.ticket_tags);
+            if(tag_id != "None") {
+                // find the tag for given ID
+                foundTag = app.data.ticket_tags.find(tag => tag.id == tag_id);
+                app.data.selected_tags.push(foundTag);
+                app.filter_list();
+            }
         });
         axios.get(get_users_url).then((result) => {
             app.data.project_users = result.data.users.map((user) => {

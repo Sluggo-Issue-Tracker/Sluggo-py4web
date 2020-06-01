@@ -14,15 +14,6 @@ from ..common import db, session, T, cache, auth, signed_url
 from ..models import Helper
 
 
-
-
-def get_role():
-
-    user = db(db.users.user == Helper.get_user()).select().first()
-    return user.role.capitalize() if user is not None else "Unapproved"
-
-
-
 @action('users')
 @action.uses('users.html', signed_url, auth.user)
 def users():
@@ -49,7 +40,7 @@ def specific_user(id=None):
         username = Helper.get_user_title(),
         user=auth.get_user(),
         id=id,
-        admin=get_role(),
+        admin=Helper.get_role(),
     )
 
 
@@ -91,7 +82,7 @@ def add_user():
         # now we insert tags in this many to many relationship
         db.user_tag.insert(
             user_id=u_id,
-            tag_id=t_id
+            tag_id=t_idConflicting files
         )
     return "ok"
 
@@ -167,7 +158,8 @@ def show_user():
     user['tags_list'] = Helper.get_user_tag_by_name(user)
     user['user_email'] = person.get('email')
     user['role'] = user['role'].capitalize()
-    return dict(user=user,tags= Helper.get_tags_list(), )
+
+    return dict(user=user,tags=Helper.get_tags_list(), )
 
 
 @action('edit_user', method="POST")
