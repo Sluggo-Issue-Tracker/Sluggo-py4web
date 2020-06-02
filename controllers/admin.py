@@ -48,6 +48,7 @@ def admin():
         get_unapproved_tags_url=URL('admin/get_unapproved_tags'),
         set_role_url=URL('admin/set_role', signer=signed_url),
         set_tag_url=URL('admin/set_tag', signer=signed_url),
+        del_tag_url=URL('admin/del_tag', signer=signed_url),
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
         user=auth.get_user()
@@ -106,3 +107,13 @@ def set_tag():
 
     tag.update_record(approved=request.json.get('approved'))
     return "ok"
+
+
+@action('admin/del_tag', method="POST")
+@action.uses(signed_url.verify(), auth.user, db)
+def del_tag():
+
+    id = request.json.get('id')
+    if id is not None:
+        db(db.global_tag.id == id).delete()
+        return "ok"

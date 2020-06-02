@@ -47,16 +47,27 @@ let init = (app) => {
 
     app.approveTags = (tag_index, value, table) => {
 
-        console.log(tag_index);
         let tag = table === 1 ?
             app.data.all_tags[tag_index] : app.data.tags[tag_index];
 
         if (tag.approved === value) return;
-        tag.approved = value;
-        console.log(tag.approved);
+        tag.approved = value
         axios.post(set_tag_url, {
                                 id: tag.id,
                                 approved: tag.approved })
+        .then((response) => {
+            app.init();
+        }).catch((error) => {
+            console.log(error);
+        });
+    };
+
+    app.deleteTag = (tag_index) => {
+
+        let tag = app.data.all_tags[tag_index] ;
+
+        axios.post(del_tag_url, {
+                                id: tag.id })
         .then((response) => {
             app.init();
         }).catch((error) => {
@@ -87,6 +98,7 @@ let init = (app) => {
         approveTags: app.approveTags,
         goto : app.goto,
         getColor : app.getColor,
+        deleteTag : app.deleteTag,
 
     };
 

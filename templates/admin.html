@@ -110,8 +110,10 @@
                 <th>{{tag.tag_name}}</th>
                 <td>
                   <div class="buttons">
-                    <button v-if="tag.approved" class="button is-danger" @click="approveTags(tag._idx, false, 1)">Delete</button>
+                    <button v-if="tag.approved" class="button is-link" @click="approveTags(tag._idx, false, 1)">Unapprove</button>
                     <button v-else class="button is-success" @click="approveTags(tag._idx, true, 1)">Approve</button>
+
+                    <button v-if="tag.approved" class="button is-danger" @click="deleteTag(tag._idx)">Delete</button>
                   </div>
                 </td>
               </tr>
@@ -197,6 +199,7 @@
   let get_tags_url = "[[=XML(get_tags_url)]]";
   let set_role_url = "[[=XML(set_role_url)]]";
   let set_tag_url = "[[=XML(set_tag_url)]]";
+  let del_tag_url = "[[=XML(del_tag_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";
   let username = "[[=XML(username)]]";
