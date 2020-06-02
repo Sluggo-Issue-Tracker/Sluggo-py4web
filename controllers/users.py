@@ -64,7 +64,7 @@ def create_user():
         user=auth.get_user(),
         username=Helper.get_user_title(),
         admin=db(db.users).isempty(),
-        tags=Helper.get_tags_list()
+        tags=Helper.get_tags_list_approved()
     )
 
 
@@ -117,7 +117,7 @@ def get_users():
     users = db(db.users).select().as_list()
 
     attach_user_information(users)
-    return dict(users=users, tags=Helper.get_tags_list())
+    return dict(users=users, tags=Helper.get_tags_list_approved())
 
 
 @action('get_users_by_tag_list', method="POST")
