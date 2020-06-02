@@ -182,7 +182,7 @@ let init = (app) => {
     };
 
     app.check_user = () => {
-        return app.data.current_user.email === app.data.ticket.user_email || current_user.role === "Admin";
+        return app.data.current_user.email === app.data.ticket.user_email || current_user.role === "admin";
     };
 
     /**
