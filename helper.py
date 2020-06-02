@@ -99,8 +99,9 @@ class Helper:
         tags = []
         for tagRel in tagRels:
             # Find the corresponding tag
-            foundTag = db(db.global_tag.id == tagRel["tag_id"]).select().first()
-            tags.append(foundTag)
+            foundTag = db((db.global_tag.id == tagRel["tag_id"]) & (db.global_tag.approved == True)).select().first()
+            if foundTag:
+                tags.append(foundTag)
 
         webTagPairs = []
 
@@ -120,7 +121,7 @@ class Helper:
 
         return db(db.ticket_tag.ticket_id == ticket_id).select \
             (db.global_tag.ALL,
-             left=db.global_tag.on(db.global_tag.id == db.ticket_tag.tag_id)).as_list()
+             left=db.global_tag.on((db.global_tag.id == db.ticket_tag.tag_id) & (db.global_tag.approved == True))).as_list()
 
     @staticmethod
     def get_sub_tickets_by_parent_id(parent_id):

@@ -88,7 +88,7 @@ def ticket_details(ticket_id=None):
 @action('get_tags')
 @action.uses(auth.user)
 def get_tags():
-    tags = db(db.global_tag).select(orderby=db.global_tag.tag_name).as_list()
+    tags = db(db.global_tag.approved == True).select(orderby=db.global_tag.tag_name).as_list()
     return dict(tags=tags)
 
 
@@ -102,7 +102,7 @@ def get_all_progress():
 @action.uses(auth.user)
 def get_tickets():
     tickets = db(db.tickets).select(orderby=~db.tickets.created).as_list()
-    ticket_tags = db(db.global_tag).select().as_list()
+    ticket_tags = db(db.global_tag.approved == True).select().as_list()
 
     for ticket in tickets:
         ticket["ticket_author"] = Helper.get_user_name(ticket)
@@ -119,6 +119,7 @@ def get_ticket_by_id(ticket_id=None):
 
     ticket["ticket_author"] = Helper.get_user_name(ticket)
     ticket["tag_list"] = Helper.get_ticket_tags_by_id(ticket.get('id'))
+    print(ticket['tag_list'])
     ticket["status"] = generate_ticket_status(ticket)
     ticket["sub_tickets"] = Helper.get_sub_tickets_by_parent_id(ticket.get('id'))
 
