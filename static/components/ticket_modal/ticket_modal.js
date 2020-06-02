@@ -10,21 +10,15 @@ Vue.component('v-select', VueSelect.VueSelect);
 
     ticket_modal.data = function(){
 
-        let data = {
+        return {
             priority_list: [],
             status_list: [],
             selected: [],
             date: "",
             due_date: "",
             assigned_user: "",
+            time_zone: luxon.DateTime.local().zoneName
         };
-
-        ticket_modal.methods.load.call(data);
-        return data;
-    };
-
-    ticket_modal.methods.load = function () {
-        // potentially have this do a get request in the event that we want custom statuses
     };
 
     ticket_modal.methods.submit = function () {
@@ -32,8 +26,7 @@ Vue.component('v-select', VueSelect.VueSelect);
         for(let a of this.selected) {
             this.ticket.tag_list.unshift(a);
         }
-        console.log(this.due_date);
-        console.log(this.ticket.tag_list);
+
         this.ticket.due_date = this.due_date;
         this.ticket.assigned_user = this.assigned_user;
         this.$emit('submit');

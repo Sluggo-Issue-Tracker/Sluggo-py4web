@@ -70,7 +70,7 @@ let init = (app) => {
             return function (x) {
                 return new Promise(resolve => setTimeout(() => resolve(x), ms));
             };
-        }
+        };
 
     app.show_value = (flag) => {
         // Flashes an error if an error occurred.
@@ -89,10 +89,10 @@ let init = (app) => {
                 app.data.error = false;
                 app.data.success = false;
             });
-    }
+    };
 
     app.checkUser = () => {
-        return app.data.user_email == app.data.current_user.user_email;
+        return app.data.user_email === app.data.current_user.user_email;
     };
 
     app.checkAdmin = () => {

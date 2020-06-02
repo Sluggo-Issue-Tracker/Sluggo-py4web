@@ -22,13 +22,16 @@ let init = (app) => {
         ticket_id: "",
         title: "",
         description: "",
-        author: "",
+        author: {},
         status: "",
+        current_user: {},
         // data used by input
         new_ticket: {},
         selected_tags: [],
         current_status: "",
         assigned: "No one has been assigned", // going to be the string for the assigned user
+        due_date: null,
+        due_time: "",
         // represents values allowed by the backend
         tag_options: [],
         status_strings: [],
@@ -40,9 +43,14 @@ let init = (app) => {
             0: "is-link",
             1: "is-warning",
             2: "is-success"
-        }
+        },
+        delete_status: false,
+        time_zone: luxon.DateTime.local().zoneName
     };
 
+    /** prepare the new ticket for sending to the backend
+     *
+     */
     app.pre_add = () => {
         app.data.new_ticket = { // object that the modal uses
             id: "",
@@ -64,7 +72,7 @@ let init = (app) => {
      * uses the value newly generated from the submitted modal
      */
     app.add_ticket = () => {
-        axios.post(add_sub_ticket_url, app.data.new_ticket).then((response) => {
+        axios.post(add_tickets_url, app.data.new_ticket).then((response) => {
            app.data.ticket.sub_tickets.unshift(response.data.ticket);
         }).catch((error) => {
             console.log(error);
@@ -78,14 +86,6 @@ let init = (app) => {
     app.close_modal = () => {
         app.data.show_modal = false;
         app.data.new_ticket = {};
-    };
-
-    /**
-     * this should do a post request to register the assignment of a ticket
-     * @param user
-     */
-    app.assign_user= (user) => {
-        // TODO: implement this
     };
 
     /**
@@ -115,6 +115,7 @@ let init = (app) => {
             title: app.data.title,
             text: app.data.description,
             tag_list: app.data.selected_tags,
+            due_date: app.data.due_date,
         }).then((response) => {
             return axios.post(get_users_by_tag_list_url, {tag_list: app.data.selected_tags})
         }).then((result) => {
@@ -151,12 +152,41 @@ let init = (app) => {
         app.data.author = ticket_object.ticket_author;
         app.data.status = ticket_object.status;
         app.data.current_status = app.data.status;
+        app.data.due_date = ticket_object.due;
+    };
+
+    app.set_assigned = (user_object) => {
+        if(user_object === null) {
+            app.data.assigned = "No one has been assigned";
+            return;
+        }
+        app.data.assigned = user_object;
+        app.data.assigned.label = user_object.full_name;
+    };
+
+    app.select_user = () => {
+        let post_object = app.data.assigned ? {user_id : app.data.assigned.id, ticket_id: app.data.ticket_id}
+                                            : {user_id : null, ticket_id: app.data.ticket_id};
+        axios.post(assign_user_url,post_object).then((response) => {
+           console.log(response);
+        });
+    };
+
+    app.delete_ticket = () => {
+        app.data.delete = false;
+        if (app.data.ticket_id !== false) { // ticket_id should never be false
+            axios.post(delete_tickets_url, {id: app.data.ticket_id}).then((response) => {
+                window.location.href = ticket_page_url;
+            });
+        }
+    };
+
+    app.check_user = () => {
+        return app.data.current_user.email === app.data.ticket.user_email || current_user.role === "Admin";
     };
 
     /**
-     *
-     * @param list
-     * @returns {*}
+     * reindexes the user list
      */
     app.reindex = (list) => {
         let i = 0;
@@ -173,11 +203,13 @@ let init = (app) => {
         pre_add: app.pre_add,
         add_ticket: app.add_ticket,
         close_modal: app.close_modal,
-        assign_user: app.assign_user,
         redirect_ticket: app.redirect_ticket,
         submit_edit: app.submit_edit,
         change_status: app.change_status,
-        cancel_edit: app.cancel_edit
+        cancel_edit: app.cancel_edit,
+        select_user: app.select_user,
+        delete_ticket: app.delete_ticket,
+        check_user: app.check_user
     };
 
     // This creates the Vue instance.
@@ -192,6 +224,7 @@ let init = (app) => {
         axios.get(get_ticket_by_id_url).then((result) => {
             app.data.ticket = result.data.ticket;
 
+            app.set_assigned(result.data.assigned_user);
             app.set_fields(result.data.ticket);
 
             app.data.selected_tags = app.data.ticket.tag_list.map((e) => {
@@ -212,6 +245,7 @@ let init = (app) => {
         axios.get(get_all_progress).then((result) => {
            app.data.status_strings = result.data.valid_statuses;
         });
+        app.data.current_user = JSON.parse(current_user.replace(/'/g,'"'));
     };
 
     // Call to the initializer.

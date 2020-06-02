@@ -48,7 +48,7 @@ db.define_table(
     Field('created', 'datetime', default=Helper.get_time),
     Field('started', 'datetime'),
     Field('completed', 'datetime'),
-    Field('due', 'datetime'),
+    Field('due', 'date'),
 )
 
 db.define_table(  # credit tdimhcsleumas for design

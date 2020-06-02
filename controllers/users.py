@@ -14,12 +14,6 @@ from ..common import db, session, T, cache, auth, signed_url
 from ..models import Helper
 
 
-
-
-
-
-
-
 @action('users')
 @action.uses('users.html', signed_url, auth.user)
 def users():
@@ -127,7 +121,7 @@ def get_users():
 
 
 @action('get_users_by_tag_list', method="POST")
-@action.uses(signed_url.verify(), auth.user)
+@action.uses(auth.user)
 def get_users_by_tag_list():
     tag_list = request.json.get('tag_list')
 
@@ -158,7 +152,7 @@ def get_users_by_tag_list():
 
 
 @action('users/show_user')
-@action.uses(signed_url.verify(), auth.user)
+@action.uses(auth.user)
 def show_user():
     id = request.params.id
     user = db(db.users.id == id).select().as_list()[0]
@@ -222,7 +216,7 @@ def edit_user():
 
 
 @action('users/get_icons')
-@action.uses(signed_url.verify())
+@action.uses()
 def get_img():
     """Returns a single image, URL encoded."""
     # Reads the image.
