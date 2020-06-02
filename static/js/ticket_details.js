@@ -22,8 +22,9 @@ let init = (app) => {
         ticket_id: "",
         title: "",
         description: "",
-        author: "",
+        author: {},
         status: "",
+        current_user: {},
         // data used by input
         new_ticket: {},
         selected_tags: [],
@@ -47,6 +48,9 @@ let init = (app) => {
         time_zone: luxon.DateTime.local().zoneName
     };
 
+    /** prepare the new ticket for sending to the backend
+     *
+     */
     app.pre_add = () => {
         app.data.new_ticket = { // object that the modal uses
             id: "",
@@ -106,14 +110,12 @@ let init = (app) => {
     app.submit_edit = () => {
         if(app.data.ticket === null)
             return;
-        let local_t = luxon.DateTime.fromISO(app.data.due_date + 'T' + app.data.due_time);
-        let utc_t = local_t.setZone('utc');
         axios.post(edit_ticket_url, {
             id: app.data.ticket_id,
             title: app.data.title,
             text: app.data.description,
             tag_list: app.data.selected_tags,
-            due_date: utc_t.toString()
+            due_date: app.data.due_date,
         }).then((response) => {
             return axios.post(get_users_by_tag_list_url, {tag_list: app.data.selected_tags})
         }).then((result) => {
@@ -150,13 +152,7 @@ let init = (app) => {
         app.data.author = ticket_object.ticket_author;
         app.data.status = ticket_object.status;
         app.data.current_status = app.data.status;
-
-        console.log(ticket_object.due);
-        let utc_t = luxon.DateTime.fromISO(ticket_object.due);
-        console.log(utc_t.toString());
-        let local_t = utc_t.setZone(app.data.time_zone);
-        app.data.due_date = local_t.toString().split('T')[0];
-        app.data.due_time = local_t.toString().split('T')[1];
+        app.data.due_date = ticket_object.due;
     };
 
     app.set_assigned = (user_object) => {
@@ -185,6 +181,10 @@ let init = (app) => {
         }
     };
 
+    app.check_user = () => {
+        return app.data.current_user.email === app.data.ticket.user_email || current_user.role === "Admin";
+    };
+
     /**
      * reindexes the user list
      */
@@ -209,6 +209,7 @@ let init = (app) => {
         cancel_edit: app.cancel_edit,
         select_user: app.select_user,
         delete_ticket: app.delete_ticket,
+        check_user: app.check_user
     };
 
     // This creates the Vue instance.
@@ -244,6 +245,7 @@ let init = (app) => {
         axios.get(get_all_progress).then((result) => {
            app.data.status_strings = result.data.valid_statuses;
         });
+        app.data.current_user = JSON.parse(current_user.replace(/'/g,'"'));
     };
 
     // Call to the initializer.

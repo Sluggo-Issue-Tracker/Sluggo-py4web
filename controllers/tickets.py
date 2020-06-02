@@ -61,6 +61,10 @@ def tickets():
 @action.uses('ticket_details.html', signed_url, auth.user)
 def ticket_details(ticket_id=None):
     # return all the links that the front end will use of requests
+    full_user = db(db.users.user == Helper.get_user()).select().first()
+    user = auth.get_user()
+    user["role"] = full_user.role # attach more information as necessary
+
     return dict(
         get_ticket_by_id_url=URL('get_ticket_by_id', ticket_id),
         add_tickets_url=URL('add_tickets', signer=signed_url),
@@ -77,7 +81,7 @@ def ticket_details(ticket_id=None):
         assign_user_url=URL('assign_user', signer=signed_url),
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
-        user=auth.get_user()
+        user=user,
     )
 
 
@@ -179,7 +183,7 @@ def add_tickets():
     ticket_id = db.tickets.insert(
         ticket_title=ticket_title,
         ticket_text=ticket_text,
-        due=parse(ticket_due_date) if ticket_due_date is not None else None,
+        due=ticket_due_date,
         assigned_user=assigned_user.get('id') if type(assigned_user) is dict else None
     )
 
@@ -193,20 +197,6 @@ def add_tickets():
         db.sub_tickets.insert(parent_id=parent_id, child_id=ticket_id)
 
     return dict(ticket=ticket[0])  # return the record
-
-
-@action('add_ticket_tag', method="POST")
-@action.uses(signed_url.verify(), auth.user, db)
-def add_ticket_tag():
-    ticket_id = request.json.get('ticket_id')
-    for tag in request.json.get('tags'):
-        tag_name = tag.name
-        if tag_name is not None and ticket_id is not None:
-            tag = db(db.global_tag.tag_name == tag_name).select().first()
-            tag_id = db.global_tag.insert(tag_name=tag_name) if tag is None else tag.id
-            db.ticket_tag.insert(tag_id=tag_id, ticket_id=ticket_id)
-
-    return 'ok'
 
 
 @action('pin_ticket', method="POST")
@@ -240,8 +230,6 @@ def edit_ticket():
     text = request.json.get('text')
     tag_list = request.json.get('tag_list')
     due_date = request.json.get('due_date')  # TODO: implement due dates here
-
-    print(request.json)
 
     ticket = db.tickets[ticket_id]
     if ticket is None:
