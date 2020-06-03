@@ -59,7 +59,8 @@ db.define_table(  # credit tdimhcsleumas for design
 
 db.define_table(  #
     'global_tag',
-    Field('tag_name', 'text')
+    Field('tag_name', 'text'),
+    Field('approved', 'boolean', default=False)
 )
 
 db.define_table(

@@ -1,4 +1,4 @@
-<!-- users.html - mockup page for viewing users
+<!-- specific_users.html - A view of a specific user
 # Copyright (c) 2020 Andrew Gavgavian, Samuel Schmidt, and Isaac
 # Trimble-Pederson, All Rights Reserved-->
 
@@ -26,6 +26,7 @@
 
         <!-- Proj Field -->
         <p class="title is-size-4">Project Tags</p>
+        <p class="subtitle is-size-6 is-italic">Note, all new tags will not be visable until an admin approve them. Please ping your admin on Slack when you want new tags to be approved.</p>
         <div class="field">
           <v-select v-if="checkUser()" taggable multiple push-tags v-model="current_user.tags_list" :options="options"> </v-select>
           <v-select v-else disabled multiple v-model="current_user.tags_list"> </v-select>

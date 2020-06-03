@@ -75,12 +75,21 @@ class Helper:
         return list
 
     @staticmethod
-    def get_user_tag_by_name(user):
-        tags = db(db.user_tag.user_id == user.get('id')).select(db.global_tag.tag_name, left=db.global_tag.on(
-            db.global_tag.id == db.user_tag.tag_id))
+    def get_tags_list_approved():
+        tags = db(db.global_tag.approved == True).select().as_list()
         list = []
         for tag in tags:
             list.append(tag.get('tag_name').capitalize())
+        return list
+
+    @staticmethod
+    def get_user_tag_by_name(user):
+        tags = db(db.user_tag.user_id == user.get('id')).select(db.global_tag.ALL, left=db.global_tag.on(
+            db.global_tag.id == db.user_tag.tag_id))
+        list = []
+        for tag in tags:
+            if tag.get('approved'):
+                list.append(tag.get('tag_name').capitalize())
         return list
 
     @staticmethod
@@ -89,8 +98,9 @@ class Helper:
         tags = []
         for tagRel in tagRels:
             # Find the corresponding tag
-            foundTag = db(db.global_tag.id == tagRel["tag_id"]).select().first()
-            tags.append(foundTag)
+            foundTag = db((db.global_tag.id == tagRel["tag_id"]) & (db.global_tag.approved == True)).select().first()
+            if foundTag:
+                tags.append(foundTag)
 
         webTagPairs = []
 
@@ -98,19 +108,25 @@ class Helper:
             workingWebTag = dict()
             workingWebTag["tag_name"] = tag.tag_name
             workingWebTag["tag_id"] = tag.id
-            
+
             webTagPairs.append(workingWebTag)
-        
+
         return webTagPairs
+
 
     @staticmethod
     def get_ticket_tags_by_id(ticket_id):
         if ticket_id is None:
             return list()
-
-        return db(db.ticket_tag.ticket_id == ticket_id).select \
+        tags = db(db.ticket_tag.ticket_id == ticket_id).select \
             (db.global_tag.ALL,
-             left=db.global_tag.on(db.global_tag.id == db.ticket_tag.tag_id)).as_list()
+             left=db.global_tag.on(db.global_tag.id == db.ticket_tag.tag_id))
+
+        list = []
+        for tag in tags:
+            if tag.get('approved'):
+                list.append(tag.as_dict())
+        return list
 
     @staticmethod
     def get_sub_tickets_by_parent_id(parent_id):
