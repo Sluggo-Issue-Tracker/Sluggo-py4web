@@ -1,6 +1,9 @@
 (function() {
     let comment = {
-        props: {'get-url': String, 'add-url': String},
+        props: {'get_url': String,
+                'add_url': String,
+                'edit_url': String,
+                'delete_url': String},
         data: null,
         methods: {}
     };
