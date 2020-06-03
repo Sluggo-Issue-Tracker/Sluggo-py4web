@@ -49,8 +49,11 @@
         this.edit = false;
     };
 
-    comment.methods.click = function() {
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    comment.methods.toggle = function(idx) {
+        // using this blasphemy because the vue doesn't detect changes to array elements
+        let selected = this.comments[idx];
+        selected.show_settings = !selected.show_settings;
+        this.comments.splice(idx, 1, selected);
     };
 
     comment.methods.submit = function() {
@@ -77,12 +80,18 @@
         // prepare the comment for editing, if necessary
         // gotta set the edit flag for the currently selected ticket, maybe the submit functionality will be separate
         // after all
-        this.comments[idx].show_settings = false;
+        comment.methods.toggle(idx);
     };
 
     comment.methods.delete_comment = function(idx) {
         // delete the comment
-        this.comments[idx].show_settings = false;
+        comment.methods.toggle.call(this,idx);
+        axios.post(this.delete_url, {
+            comment_id:  this.comments[idx].id
+        }).then((result) => {
+            this.comments.splice(idx, 1);
+            this.comments = comment.methods.reindex(this.comments);
+        });
     };
 
     utils.register_vue_component('comment', 'components/comment/comment.html',

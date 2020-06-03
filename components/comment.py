@@ -66,7 +66,6 @@ class Comment(Fixture):
         content = request.json.get('content')
         ticket_id = request.json.get('ticket_id')
 
-
         if not content or not ticket_id:
             raise HTTP(500)
 
@@ -80,4 +79,10 @@ class Comment(Fixture):
     # delete a comment
     # using post for ids simple
     def delete_comment(self):
-        pass
+        comment_id = request.json.get('comment_id')
+
+        if not comment_id:
+            raise HTTP(500)
+
+        print(self.db(self.db.comment.id == comment_id).delete())
+        return "ok boomer"

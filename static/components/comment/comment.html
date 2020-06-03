@@ -1,6 +1,6 @@
 <div>
     <div class="box" v-for="comment in comments">
-        <div class="level">
+        <div class="level" style="border-bottom: darkgray 1px solid;">
             <div class="level-left">
                 <div class="level-item">
                     <strong>Morpheus Buress</strong>
@@ -10,7 +10,7 @@
                 <div class="level-item">
                     <div class="dropdown is-active is-right">
                         <div class="dropdown-trigger">
-                            <span @click="comment.show_settings = !comment.show_settings"><i class="fa fa-ellipsis-h"></i></span>
+                            <span @click="toggle(comment._idx)"><i class="fa fa-ellipsis-h"></i></span>
                         </div>
                         <div v-if="comment.show_settings" class="dropdown-menu">
                             <div class="dropdown-content">
