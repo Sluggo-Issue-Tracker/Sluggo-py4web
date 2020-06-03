@@ -1,0 +1,63 @@
+<div>
+    <div class="box">
+        <div class="level">
+            <div class="level-left">
+                <div class="level-item">
+                    <strong>Morpheus Buress</strong>
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <div class="dropdown is-active is-right">
+                        <div class="dropdown-trigger">
+                            <span @click="show_settings = !show_settings"><i class="fa fa-ellipsis-h"></i></span>
+                        </div>
+                        <div v-if="show_settings" class="dropdown-menu">
+                            <div class="dropdown-content">
+                                <div class="dropdown-item" @click="edit_comment()">Edit</div>
+                                <div class="dropdown-item" @click="delete_comment()">Delete</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- this is where the main comment information is stored -->
+        <div class="columns">
+            <div class="column is-one-fifth">
+                <!-- TODO: Samuel Schmidt 6 / 2 / 2020 include user pictures when that becomes available -->
+                <img src="https://laughingsquid.com/wp-content/uploads/2014/11/Screenshot-2014-11-19-17.41.33.png">
+            </div>
+            <div class="column">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            </div>
+        </div>
+    </div>
+    <div class="box" v-if="edit">
+        <div class="columns">
+            <div class="column is-one-fifth">
+                <img src="https://laughingsquid.com/wp-content/uploads/2014/11/Screenshot-2014-11-19-17.41.33.png">
+            </div>
+            <div class="column">
+                <textarea v-model="new_comment" class="textarea"></textarea>
+
+            </div>
+        </div>
+        <!-- i'm not sure why, but to get a level-right to display correctly, there needs to be a level left -->
+        <div class="level">
+            <div class="level-left">
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <a @click="cancel()">Cancel</a>
+                </div>
+                <div class="level-item">
+                    <button @click="submit" class="button is-success">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <a v-if="!edit" @click="edit = true"><i class="fa fa-plus"></i> Add a comment</a>
+    </div>
+</div>

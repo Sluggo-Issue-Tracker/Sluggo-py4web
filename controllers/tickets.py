@@ -245,7 +245,7 @@ def edit_ticket():
 
     ticket.update_record(ticket_title=title.strip(),
                          ticket_text=text.strip(),
-                         due=parse(due_date) if due_date is not None else None)
+                         due=due_date)
 
     current_tickets = Helper.get_ticket_tags_by_id(ticket_id)
 

@@ -48,19 +48,7 @@
                        </div>
                        <textarea  v-if="edit" v-model="description" class="textarea"></textarea>
                    </div>
-                        <div class="box">
-                            <div class="columns">
-                                <div class="column is-one-fifth">
-                                    <img src="https://laughingsquid.com/wp-content/uploads/2014/11/Screenshot-2014-11-19-17.41.33.png">
-                                </div>
-                                <div class="column">
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="section">
-                        <a><i class="fa fa-plus"></i> Add a comment</a>
-                        </div>
+                   <comment v-bind:get-url="'lmao'" v-bind:add-url="'lmao'"></comment>
                 </div>
                 <div class="column">
                      <div style="border-bottom: darkgray 1px solid">
@@ -182,4 +170,5 @@
 <script src="js/luxon.min.js"></script>
 <script src="js/ticket_details.js"></script>
 <script src="components/ticket_modal/ticket_modal.js"></script>
+<script src="components/comment/comment.js"></script>
 [[end]]
