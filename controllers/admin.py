@@ -134,7 +134,7 @@ def generate_bios():
     def attach_auth_users(users):
         newUsers = list()
         for user in users:
-            newDict = dict(user, auth_user=db(db.auth_user.id == user["user"]).select().as_list()[0])
+            newDict = dict(user, img_url="https://slugbotics.com/res/images/team/woahtreesman1920.jpg",auth_user=db(db.auth_user.id == user["user"]).select().as_list()[0])
             newUsers.append(newDict)
         return newUsers
 
@@ -148,9 +148,7 @@ def generate_bios():
     sortedAdmins = sorted(newAdmins, key=auth_user_name_key)
     sortedNonAdmins = sorted(newNonAdmins, key=auth_user_name_key)
 
-    print(sortedAdmins)
-    print(sortedNonAdmins)
-    
     return dict(
-        bios_output="<p>Test</p>\n<b>Second test</b>"
+        admins=sortedAdmins,
+        non_admins_html=None
     )
