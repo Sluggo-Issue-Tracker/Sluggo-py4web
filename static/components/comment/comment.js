@@ -28,6 +28,12 @@
         // dynamically attach comment information
         axios.get(data.get_url).then((result) => {
             data.comments = result.data.comments;
+
+            let _idx = 0;
+            for(let c of data.comments) {
+                c._idx = _idx++;
+                c.show_settings = false;
+            }
         });
         return data;
     };
@@ -44,16 +50,16 @@
         this.edit = false;
     };
 
-    comment.methods.edit_comment = function() {
+    comment.methods.edit_comment = function(idx) {
         // prepare the comment for editing, if necessary
         // gotta set the edit flag for the currently selected ticket, maybe the submit functionality will be separate
         // after all
-        this.show_settings = false;
+        this.comments[idx].show_settings = false;
     };
 
-    comment.methods.delete_comment = function() {
+    comment.methods.delete_comment = function(idx) {
         // delete the comment
-        this.show_settings = false;
+        this.comments[idx].show_settings = false;
     };
 
     utils.register_vue_component('comment', 'components/comment/comment.html',

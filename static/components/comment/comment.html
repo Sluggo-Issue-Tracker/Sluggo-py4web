@@ -10,12 +10,12 @@
                 <div class="level-item">
                     <div class="dropdown is-active is-right">
                         <div class="dropdown-trigger">
-                            <span @click="show_settings = !show_settings"><i class="fa fa-ellipsis-h"></i></span>
+                            <span @click="comment.show_settings = !comment.show_settings"><i class="fa fa-ellipsis-h"></i></span>
                         </div>
                         <div v-if="show_settings" class="dropdown-menu">
                             <div class="dropdown-content">
-                                <div class="dropdown-item" @click="edit_comment()">Edit</div>
-                                <div class="dropdown-item" @click="delete_comment()">Delete</div>
+                                <div class="dropdown-item" @click="edit_comment(comment._idx)">Edit</div>
+                                <div class="dropdown-item" @click="delete_comment(comment._idx)">Delete</div>
                             </div>
                         </div>
                     </div>
