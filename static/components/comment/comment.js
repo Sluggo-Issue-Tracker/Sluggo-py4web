@@ -3,7 +3,8 @@
         props: {'get_url': String,
                 'add_url': String,
                 'edit_url': String,
-                'delete_url': String},
+                'delete_url': String,
+                'ticket_id': String},
         data: null,
         methods: {}
     };
@@ -24,16 +25,20 @@
         return data;
     };
 
+    comment.methods.reindex = function(comments) {
+        let _idx = 0;
+        for(let c of comments) {
+            c._idx = _idx++;
+            c.show_settings = false;
+        }
+        return comments;
+    };
+
     comment.methods.load = function(data) {
         // dynamically attach comment information
         axios.get(data.get_url).then((result) => {
             data.comments = result.data.comments;
-
-            let _idx = 0;
-            for(let c of data.comments) {
-                c._idx = _idx++;
-                c.show_settings = false;
-            }
+            data.comments = comment.methods.reindex(data.comments);
         });
         return data;
     };
@@ -44,9 +49,27 @@
         this.edit = false;
     };
 
+    comment.methods.click = function() {
+        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    };
+
     comment.methods.submit = function() {
         // submit the newly added comment to the backend, then add to the comments list
-        this.new_comment = "";
+        if (!this.new_comment || this.new_comment.length === 0)
+            // TODO: switch control to an error view
+            return;
+
+        axios.post(this.add_url, {
+            content: this.new_comment,
+            ticket_id: this.ticket_id
+        }).then((result) => {
+            this.comments.push({
+                content: this.new_comment,
+                id: result.data.id
+            });
+            this.comments = comment.methods.reindex(this.comments);
+            this.new_comment = "";
+        });
         this.edit = false;
     };
 

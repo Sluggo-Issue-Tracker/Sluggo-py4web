@@ -10,7 +10,7 @@ from py4web.core import Fixture, HTTP
 
 class Comment(Fixture):
     COMMENT = """<comment get_url="{get_url}" add_url="{add_url}"
-    edit_url="{edit_url}" delete_url="{delete_url}"></comment>"""
+    edit_url="{edit_url}" delete_url="{delete_url}" ticket_id="{ticket_id}"></comment>"""
 
     def __init__(self, url, session, signer=None, db=None, auth=None):
         self.get_url = url + '/get'
@@ -47,7 +47,8 @@ class Comment(Fixture):
             get_url=URL(self.get_url, id, signer=self.signer),
             add_url=URL(self.add_url, signer=self.signer),
             edit_url=URL(self.edit_url, signer=self.signer),
-            delete_url=URL(self.delete_url, signer=self.signer)
+            delete_url=URL(self.delete_url, signer=self.signer),
+            ticket_id=id
         ))
 
     # retrieve all comments associated with this ticket
@@ -62,7 +63,14 @@ class Comment(Fixture):
     # insert a comment associated with this ticket
     # using post because it's way simpler to pass urls this way
     def add_comment(self):
-        pass
+        content = request.json.get('content')
+        ticket_id = request.json.get('ticket_id')
+
+
+        if not content or not ticket_id:
+            raise HTTP(500)
+
+        return dict(id=self.db.comment.insert(ticket_id=ticket_id, content=content))
 
     # edit a comment associated with this ticket
     # using post for ids
@@ -73,4 +81,3 @@ class Comment(Fixture):
     # using post for ids simple
     def delete_comment(self):
         pass
-

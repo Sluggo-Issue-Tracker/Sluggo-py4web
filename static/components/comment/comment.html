@@ -12,7 +12,7 @@
                         <div class="dropdown-trigger">
                             <span @click="comment.show_settings = !comment.show_settings"><i class="fa fa-ellipsis-h"></i></span>
                         </div>
-                        <div v-if="show_settings" class="dropdown-menu">
+                        <div v-if="comment.show_settings" class="dropdown-menu">
                             <div class="dropdown-content">
                                 <div class="dropdown-item" @click="edit_comment(comment._idx)">Edit</div>
                                 <div class="dropdown-item" @click="delete_comment(comment._idx)">Delete</div>

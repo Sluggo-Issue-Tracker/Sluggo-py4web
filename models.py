@@ -85,7 +85,8 @@ db.define_table(
     'comment',
     Field('ticket_id', 'integer', 'reference tickets'),
     Field('user_id', 'integer', 'reference users', default=Helper.get_user()),
-    Field('content', 'text')
+    Field('content', 'text'),
+    Field('created', 'datetime', default=Helper.get_time())
 )
 
 # TODO tags, roles, other fun things that require relationships
