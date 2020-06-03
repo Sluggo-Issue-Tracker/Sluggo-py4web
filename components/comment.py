@@ -5,7 +5,7 @@ this component serves to provide comment functionality
 from py4web import action, URL, request
 from yatl.helpers import XML
 from py4web.utils.url_signer import URLSigner
-from py4web.core import Fixture
+from py4web.core import Fixture, HTTP
 
 
 class Comment(Fixture):
@@ -18,6 +18,8 @@ class Comment(Fixture):
         self.edit_url = url + '/edit'
         self.delete_url = url + '/delete'
         self.signer = signer or URLSigner(session)
+        self.db = db
+        self.auth = auth
 
         # creates actions (entry points of the calls)
         # same as decorators but registered on object creation
@@ -50,7 +52,12 @@ class Comment(Fixture):
 
     # retrieve all comments associated with this ticket
     def get_comments(self, id=None):
-        pass
+        if not id.isnumeric():
+            raise HTTP(500)
+
+        # TODO: figure out if i want to attach image urls or have them load in a different call
+        comments = self.db(self.db.comment.ticket_id == id).select().as_list()
+        return dict(comments=comments)
 
     # insert a comment associated with this ticket
     # using post because it's way simpler to pass urls this way

@@ -14,15 +14,22 @@
             comments: [],
             edit: false,
             show_settings: false,
+            get_url: this.get_url,
+            add_url: this.add_url,
+            edit_url: this.edit_url,
+            delete_url: this.delete_url,
         };
 
-        this.load.call(data);
+        data = comment.methods.load(data);
         return data;
     };
 
-    comment.methods.load = function() {
+    comment.methods.load = function(data) {
         // dynamically attach comment information
-
+        axios.get(data.get_url).then((result) => {
+            data.comments = result.data.comments;
+        });
+        return data;
     };
 
     comment.methods.cancel = function() {
