@@ -50,6 +50,7 @@ def admin():
         set_role_url=URL('admin/set_role', signer=signed_url),
         set_tag_url=URL('admin/set_tag', signer=signed_url),
         del_tag_url=URL('admin/del_tag', signer=signed_url),
+        bios_export_url=URL('admin/generate_bios', signer=signed_url),
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
         user=auth.get_user()
@@ -122,7 +123,7 @@ def del_tag():
 # MARK: Bios HTML Generation
 # Ported from Isaac's old Swift script
 @action('admin/generate_bios', method="GET")
-@action.uses("bios_template.html", auth.user, db) # this has to be manually triggered - long term automate this
+@action.uses("bios_template.html", signed_url.verify(), auth.user, db) # this has to be manually triggered - long term automate this
 def generate_bios():
     # TODO: Migrate to proper image resource
     IMGSRC = "https://slugbotics.com/res/images/team/woahtreesman1920.jpg" # Tree pic SB web

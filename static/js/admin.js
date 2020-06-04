@@ -80,6 +80,11 @@ let init = (app) => {
         app.data.page = page;
     };
 
+    app.gotoBiosExport = () => {
+        console.log(bios_export_url);
+        window.location.href = bios_export_url;
+    }
+
 
     app.getColor = (user_index) => {
         let user = app.data.all_users[user_index];
@@ -99,6 +104,7 @@ let init = (app) => {
         goto : app.goto,
         getColor : app.getColor,
         deleteTag : app.deleteTag,
+        gotoBiosExport: app.gotoBiosExport,
 
     };
 
