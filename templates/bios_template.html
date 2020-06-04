@@ -23,6 +23,13 @@
       <div class="columns is-multiline" id="admins">
         [[for admin in admins:]]
         <div class="column is-one-third">
+          <div class="columns">
+            <div class="column is-full">
+              <div class="column is-full has-text-centered">
+                <img class="image is-inline-block" style="max-width: 256px;" src="https://slugbotics.com/res/images/team/woahtreesman1920.jpg">
+              </div>
+            </div>
+          </div>
           <p class="title has-text-centered">
             [[=admin.get("auth_user").get("first_name") + admin.get("auth_user").get("last_name")]]
           </p>
