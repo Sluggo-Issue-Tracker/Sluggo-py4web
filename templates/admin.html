@@ -52,8 +52,11 @@
                 </li>
               </ul>
             </li>
-            <li>
+            <!-- <li>
               <a>Authentication</a>
+            </li> -->
+            <li>
+              <a @click="goto('bios_export')">Export Member Bios</a>
             </li>
           </ul>
         </aside>
@@ -222,6 +225,21 @@
           </table>
         </div>
 
+        <div v-if="page === 'bios_export' " style="height:60vh;overflow:auto;">
+          <p class="title">
+            Export Bios
+          </p>
+          <p>Click here to view your exported bios. The page source is portable and 
+            may be brought to a webpage of your choosing.
+          </p>
+          <br>
+          <div class="buttons">
+            <div @click="gotoBiosExport()" class="button is-primary">
+              Export Bios
+            </div>
+          </div>
+        </div>
+
 
       </div>
     </div>
@@ -240,6 +258,7 @@
   let set_tag_url = "[[=XML(set_tag_url)]]";
   let add_tag_url = "[[=XML(add_tag_url)]]";
   let del_tag_url = "[[=XML(del_tag_url)]]";
+  let bios_export_url = "[[=XML(bios_export_url)]]"
   let edit_tag_url = "[[=XML(edit_tag_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";

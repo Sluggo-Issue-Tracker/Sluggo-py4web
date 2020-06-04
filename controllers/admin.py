@@ -5,6 +5,7 @@ possibly should be in the controller as users idk tho
 import base64
 import pathlib
 import uuid
+import operator
 
 from py4web import action, request, abort, redirect, URL, Field
 from py4web.utils.form import Form, FormStyleBulma
@@ -49,6 +50,7 @@ def admin():
         set_role_url=URL('admin/set_role', signer=signed_url),
         set_tag_url=URL('admin/set_tag', signer=signed_url),
         del_tag_url=URL('admin/del_tag', signer=signed_url),
+        bios_export_url=URL('admin/generate_bios', signer=signed_url),
         edit_tag_url=URL('admin/edit_tag', signer=signed_url),
         add_tag_url=URL('admin/add_tag', signer=signed_url),
         user_email=Helper.get_user_email(),
@@ -137,3 +139,37 @@ def del_tag():
     if id is not None:
         db(db.global_tag.id == id).delete()
         return "ok"
+
+# MARK: Bios HTML Generation
+# Ported from Isaac's old Swift script
+@action('admin/generate_bios', method="GET")
+@action.uses("bios_template.html", signed_url.verify(), auth.user, db) # this has to be manually triggered - long term automate this
+def generate_bios():
+    # TODO: Migrate to proper image resource
+    IMGSRC = "https://slugbotics.com/res/images/team/woahtreesman1920.jpg" # Tree pic SB web
+    # Grab users, separated from users and nonusers
+    admins = db(db.users.role == "admin").select().as_list()
+    nonAdmins = db(db.users.role == "approved").select().as_list()
+
+    # Grab auth users for users
+    def attach_auth_users(users):
+        newUsers = list()
+        for user in users:
+            newDict = dict(user, img_url="https://slugbotics.com/res/images/team/woahtreesman1920.jpg",auth_user=db(db.auth_user.id == user["user"]).select().as_list()[0])
+            newUsers.append(newDict)
+        return newUsers
+
+    newAdmins = attach_auth_users(admins)
+    newNonAdmins = attach_auth_users(nonAdmins)
+
+    # Sort these each alphabetically based on last / first name
+    def auth_user_name_key(x):
+        return (x["auth_user"]["last_name"], x["auth_user"]["first_name"])
+    
+    sortedAdmins = sorted(newAdmins, key=auth_user_name_key)
+    sortedNonAdmins = sorted(newNonAdmins, key=auth_user_name_key)
+
+    return dict(
+        admins=sortedAdmins,
+        nonAdmins=sortedNonAdmins
+    )
