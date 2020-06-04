@@ -12,6 +12,7 @@ let init = (app) => {
         user_email: user_email,
         username: username,
         master: {},
+        download_url: "",
         current_user: {},
         options: [],
         roles: ["Admin", "Approved", "Unapproved"],
@@ -72,6 +73,10 @@ let init = (app) => {
             };
         };
 
+    app.download_urlSet = (e) => {
+        app.data.current_user.url = e;
+    }
+
     app.show_value = (flag) => {
         // Flashes an error if an error occurred.
 
@@ -108,6 +113,7 @@ let init = (app) => {
         resetCurrent: app.resetCurrent,
         checkUser: app.checkUser,
         checkAdmin: app.checkAdmin,
+        download_urlSet: app.download_urlSet,
     };
 
     // This creates the Vue instance.

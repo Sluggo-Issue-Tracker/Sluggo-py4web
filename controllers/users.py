@@ -13,6 +13,16 @@ from pydal.validators import *
 from ..common import db, session, T, cache, auth, signed_url
 from ..models import Helper
 
+from ..components.gcs_fileupload import GCSFileUpload
+
+from ..settings import GCS_KEYS
+
+
+BUCKET = '/sluggo-bucket/'
+
+
+gcs_uploader = GCSFileUpload('upload', BUCKET, gcs_keys=GCS_KEYS, session=session)
+
 
 @action('users')
 @action.uses('users.html', signed_url, auth.user)
@@ -49,6 +59,7 @@ def specific_user(id=None):
         user=auth.get_user(),
         id=id,
         admin=Helper.get_role(),
+        uploader = gcs_uploader(id=None),
     )
 
 
