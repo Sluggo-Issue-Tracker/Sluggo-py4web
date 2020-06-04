@@ -8,6 +8,7 @@
 
 
 [[extend 'layout.html']]
+
 <div id="vue-admin">
   <div class="section">
     <p class="title">Admin Dashboard</p>
@@ -60,10 +61,12 @@
           </ul>
         </aside>
       </div>
+
+      <div class="container">
       <div class="column is-four-fifth">
 
         <!-- Approving Tags -->
-        <div v-if="page === 'start_view' " style="height:60vh;overflow:auto;">
+        <div v-if="page === 'start_view' ">
           <p class="title">
             Welcome to the Admin Page, [[=username]].
           </p>
@@ -72,60 +75,95 @@
 
 
         <!-- Approving Tags -->
-        <div v-if="page === 'approve_tags' " style="height:60vh;overflow:auto;">
+        <div v-if="page === 'approve_tags' ">
           <p class="title">
             Approve Tags
           </p>
-          <table class="table is-striped is-fullwidth" >
-            <thead>
-              <tr>
-                <th>Tag</th>
-                <th>Approve?</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="tag in tags">
-                <th>{{tag.tag_name}}</th>
-                <td>
-                  <button class="button is-success" @click="approveTags(tag._idx, true, 0)">
-                    Approve
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="section" style="height:60vh;overflow:auto;">
+            <table class="table is-striped is-fullwidth" >
+              <thead>
+                <tr>
+                  <th>Tag</th>
+                  <th>Approve?</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="tag in tags">
+                  <th>{{tag.tag_name}}</th>
+                  <td>
+                    <button class="button is-success" @click="approveTags(tag._idx, true, 0)">
+                      Approve
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Manage Tags -->
-        <div v-if="page === 'manage_tags' " style="height:60vh;overflow:auto;">
-          <p class="title">
-            Manage Tags
-          </p>
-          <table class="table is-striped is-fullwidth" >
-            <thead>
-              <tr>
-                <th>Tag</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="tag in all_tags">
-                <th>{{tag.tag_name}}</th>
-                <td>
-                  <div class="buttons">
-                    <button v-if="tag.approved" class="button is-link" @click="approveTags(tag._idx, false, 1)">Unapprove</button>
-                    <button v-else class="button is-success" @click="approveTags(tag._idx, true, 1)">Approve</button>
+        <div v-if="page === 'manage_tags' ">
+          <div class="columns">
+            <div class="column is-four-fifth">
+              <p class="title">
+                Manage Tags
+              </p>
+            </div>
+            <div class="column is-one-fifth">
+              <div class="field has-addons is-pulled-right">
+                <div class="control">
+                  <input v-model="add_tag_text" class="input" type="text" placeholder="Add a Tag">
+                </div>
+                <div class="control">
+                  <a class="button is-info" @click="addTag">
+                    Add
+                  </a>
+                </div>
+              </div>
+              <p v-if="length_check" class="has-text-danger">Tag cannot be blank </p>
+            </div>
+          </div>
 
-                    <button v-if="tag.approved" class="button is-danger" @click="deleteTag(tag._idx)">Delete</button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+
+
+          <div class="section" style="height:60vh;overflow:auto;">
+            <table class="table is-striped is-fullwidth table-container" >
+              <thead>
+                <tr>
+                  <th>Tag</th>
+                  <th></th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="tag in all_tags">
+                  <td>
+                    <input v-if="tag.edited" v-model="tag.tag_name" class="input" type="text">
+                    <input v-else readonly v-model="tag.tag_name" class="input is-static is-bold" type="text">
+                  </td>
+                  <td>
+                    <div class="buttons">
+                      <button v-if="!tag.edited" class="button is-warning" @click="editTag(tag._idx)"><i class="fa fa-edit fa-fw"></i></button>
+                      <button v-if="tag.edited" class="button is-success" @click="saveTag(tag._idx)">Save</button>
+                      <button v-if="tag.edited" class="button is-warning" @click="cancelEdit(tag._idx)">Cancel</button>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="buttons">
+                      <button v-if="tag.approved" class="button is-link" @click="approveTags(tag._idx, false, 1)">Unapprove</button>
+                      <button v-else class="button is-success" @click="approveTags(tag._idx, true, 1)">Approve</button>
+
+                      <button v-if="tag.approved" class="button is-danger" @click="deleteTag(tag._idx)"><i class="fa fa-trash fa-fw"></i></button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Approving Users -->
-        <div v-if="page === 'approve_users' " style="height:60vh;overflow:auto;">
+        <div v-if="page === 'approve_users' ">
           <p class="title">
             Approve a Member
           </p>
@@ -153,7 +191,7 @@
 
 
         <!-- See all users -->
-        <div v-if="page === 'manage_members' " style="height:60vh;overflow:auto;">
+        <div v-if="page === 'manage_members' ">
           <p class="title">
             Members
           </p>
@@ -205,6 +243,7 @@
 
       </div>
     </div>
+    </div>
   </div>
 </div>
 
@@ -217,8 +256,10 @@
   let get_tags_url = "[[=XML(get_tags_url)]]";
   let set_role_url = "[[=XML(set_role_url)]]";
   let set_tag_url = "[[=XML(set_tag_url)]]";
+  let add_tag_url = "[[=XML(add_tag_url)]]";
   let del_tag_url = "[[=XML(del_tag_url)]]";
   let bios_export_url = "[[=XML(bios_export_url)]]"
+  let edit_tag_url = "[[=XML(edit_tag_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";
   let username = "[[=XML(username)]]";
