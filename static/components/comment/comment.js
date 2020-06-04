@@ -69,7 +69,9 @@
         }).then((result) => {
             this.comments.push({
                 content: this.new_comment,
-                id: result.data.id
+                id: result.data.id,
+                first_name: result.data.first_name,
+                last_name: result.data.last_name
             });
             this.comments = comment.methods.reindex(this.comments);
             this.new_comment = "";

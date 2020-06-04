@@ -57,7 +57,12 @@ class Comment(Fixture):
             raise HTTP(500)
 
         # TODO: figure out if i want to attach image urls or have them load in a different call
-        comments = self.db(self.db.comment.ticket_id == id).select().as_list()
+        comments = self.db(self.db.comment.ticket_id == id).select(
+            self.db.comment.ALL, self.db.auth_user.first_name, self.db.auth_user.last_name,
+            left=self.db.auth_user.on(self.db.comment.user_id == self.db.auth_user.id)
+        ).as_list()
+        comments = list(map(lambda x: {**x["comment"], **x["auth_user"]}, comments))
+        print(comments)
         return dict(comments=comments)
 
     # insert a comment associated with this ticket
@@ -69,7 +74,13 @@ class Comment(Fixture):
         if not content or not ticket_id:
             raise HTTP(500)
 
-        return dict(id=self.db.comment.insert(ticket_id=ticket_id, content=content))
+        # inserting it manually because the default does not seem to work
+        user_id = self.auth.current_user.get('id') if self.auth.current_user else None
+        first_name = self.auth.current_user.get('first_name') if self.auth.current_user else None
+        last_name = self.auth.current_user.get('last_name') if self.auth.current_user else None
+
+        return dict(id=self.db.comment.insert(ticket_id=ticket_id, content=content, user_id=user_id),
+                    first_name=first_name, last_name=last_name)
 
     # edit a comment associated with this ticket
     # using post for ids

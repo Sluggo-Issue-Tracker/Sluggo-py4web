@@ -84,7 +84,7 @@ db.define_table(
 db.define_table(
     'comment',
     Field('ticket_id', 'integer', 'reference tickets'),
-    Field('user_id', 'integer', 'reference users', default=Helper.get_user()),
+    Field('user_id', 'integer', 'reference auth_user', default=Helper.get_user()),
     Field('content', 'text'),
     Field('created', 'datetime', default=Helper.get_time())
 )
