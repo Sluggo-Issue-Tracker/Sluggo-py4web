@@ -11,6 +11,7 @@ from datetime import datetime
 from dateutil.parser import parse
 from ..common import db, session, T, cache, auth, signed_url
 from ..models import Helper
+from ..components.comment import Comment
 
 # if only i could mark something const in python : (
 # idx 0 should always be not started
@@ -53,17 +54,24 @@ def tickets():
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
         user=auth.get_user(),
-        tag_id = tag_id
+        tag_id=tag_id
     )
 
 
+# another floater, perhaps this should be a class
+comments = Comment("comment", session, signer=signed_url, db=db, auth=auth)
+
+
 @action('ticket_details/<ticket_id>', method=['GET'])
-@action.uses('ticket_details.html', signed_url, auth.user)
+@action.uses('ticket_details.html', signed_url, auth.user, comments)
 def ticket_details(ticket_id=None):
     # return all the links that the front end will use of requests
     full_user = db(db.users.user == Helper.get_user()).select().first()
     user = auth.get_user()
-    user["role"] = full_user.role # attach more information as necessary
+    user["role"] = full_user.role if full_user else None
+
+    if not ticket_id.isnumeric() or not db(db.tickets.id == ticket_id).select().first():
+        redirect(URL('tickets'))
 
     return dict(
         get_ticket_by_id_url=URL('get_ticket_by_id', ticket_id),
@@ -82,6 +90,7 @@ def ticket_details(ticket_id=None):
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
         user=user,
+        comments=comments(id=ticket_id)
     )
 
 
@@ -246,7 +255,7 @@ def edit_ticket():
 
     ticket.update_record(ticket_title=title.strip(),
                          ticket_text=text.strip(),
-                         due=parse(due_date) if due_date is not None else None)
+                         due=due_date)
 
     current_tickets = Helper.get_ticket_tags_by_id(ticket_id)
 
