@@ -71,7 +71,8 @@
                 content: this.new_comment,
                 id: result.data.id,
                 first_name: result.data.first_name,
-                last_name: result.data.last_name
+                last_name: result.data.last_name,
+                editable: true
             });
             this.comments = comment.methods.reindex(this.comments);
             this.new_comment = "";

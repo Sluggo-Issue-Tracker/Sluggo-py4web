@@ -8,7 +8,7 @@
             </div>
             <div class="level-right">
                 <div class="level-item">
-                    <div class="dropdown is-active is-right">
+                    <div class="dropdown is-active is-right" v-if="comment.editable">
                         <div class="dropdown-trigger">
                             <span @click="toggle(comment._idx)"><i class="fa fa-ellipsis-h"></i></span>
                         </div>

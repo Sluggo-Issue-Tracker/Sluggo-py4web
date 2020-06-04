@@ -56,13 +56,21 @@ class Comment(Fixture):
         if not id.isnumeric():
             raise HTTP(500)
 
+        user_id = self.auth.current_user.get('id')
+
         # TODO: figure out if i want to attach image urls or have them load in a different call
         comments = self.db(self.db.comment.ticket_id == id).select(
             self.db.comment.ALL, self.db.auth_user.first_name, self.db.auth_user.last_name,
             left=self.db.auth_user.on(self.db.comment.user_id == self.db.auth_user.id)
         ).as_list()
         comments = list(map(lambda x: {**x["comment"], **x["auth_user"]}, comments))
-        print(comments)
+
+        # fetch the full user
+        user = self.db(self.db.users.user == user_id).select().first()
+
+        for comment in comments:
+            comment['editable'] = comment.get('user_id') == self.auth.current_user.get('id') or user.role == "admin"
+
         return dict(comments=comments)
 
     # insert a comment associated with this ticket
@@ -87,11 +95,17 @@ class Comment(Fixture):
     def edit_comment(self):
         comment_id = request.json.get('comment_id')
         content = request.json.get('content')
+        auth_user_id = self.auth.current_user.get('id') if self.auth.current_user else None
 
-        if not content or not comment_id:
+        if not content or not comment_id or not auth_user_id:
             raise HTTP(500)
 
         comment = self.db.comment[comment_id]
+        user = self.db(self.db.users.user == auth_user_id).select().first()
+
+        if comment.user_id != auth_user_id and user.role != "admin":
+            raise HTTP(403)
+
         comment.update_record(content=content)
         return "ok"
 
@@ -99,9 +113,16 @@ class Comment(Fixture):
     # using post for ids simple
     def delete_comment(self):
         comment_id = request.json.get('comment_id')
+        auth_user_id = self.auth.current_user.get('id') if self.auth.current_user else None
 
-        if not comment_id:
+        if not comment_id or not auth_user_id:
             raise HTTP(500)
 
-        print(self.db(self.db.comment.id == comment_id).delete())
+        comment = self.db.comment[comment_id]
+        user = self.db(self.db.users.user == auth_user_id).select().first()
+
+        if comment.user_id != auth_user_id and user.role != "admin":
+            raise HTTP(403)
+
+        comment.delete_record()
         return "ok boomer"
