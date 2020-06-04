@@ -5,7 +5,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
     <!-- <link rel="stylesheet" href="[[=URL('static', 'font-awesome-4.7.0/css/font-awesome.css')]]"> -->
   </head>
-  <body>
+  <body style="background-color:#161833; text-color:white;" class="has-text-white">
     <!-- 
       html_str = '<div class="column is-one-quarter">\n'
         html_str += '   <p class="title has-text-centered">' + member["auth_user"]["first_name"] + " " +\
@@ -14,10 +14,11 @@
         html_str += '</div>\n'
      -->
     <div class="container">
+      <br>
       <!-- Stuff that wraps for layout -->
       <div class="columns">
         <div class="column is-full">
-          <p class="title is-1 has-text-centered">Team Members</p>
+          <p class="title is-1 has-text-centered has-text-white">Team Members</p>
         </div>
       </div>
       <div class="columns is-multiline" id="admins">
@@ -30,10 +31,10 @@
               </div>
             </div>
           </div>
-          <p class="title has-text-centered">
+          <p class="title has-text-centered has-text-white">
             [[=admin.get("auth_user").get("first_name") + admin.get("auth_user").get("last_name")]]
           </p>
-          <p>[[=admin.get("bio")]]</p>
+          <p class="has-text-white">[[=admin.get("bio")]]</p>
         </div>
         [[pass]]
       </div>
@@ -50,10 +51,10 @@
               </div>
             </div>
           </div>
-          <p class="title has-text-centered">
+          <p class="title has-text-centered has-text-white">
             [[=nonAdmin.get("auth_user").get("first_name") + nonAdmin.get("auth_user").get("last_name")]]
           </p>
-          <p>[[=nonAdmin.get("bio")]]</p>
+          <p class="has-text-white">[[=nonAdmin.get("bio")]]</p>
         </div>
         [[pass]]
       </div>
