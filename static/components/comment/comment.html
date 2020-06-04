@@ -29,7 +29,22 @@
                 <img src="https://laughingsquid.com/wp-content/uploads/2014/11/Screenshot-2014-11-19-17.41.33.png">
             </div>
             <div class="column">
-                {{comment.content}}
+                <div v-if="!comment.edit">
+                    {{comment.content}}
+                </div>
+                <textarea v-if="comment.edit" v-model="comment.new_content" class="textarea"></textarea>
+            </div>
+        </div>
+        <div class="level" v-if="comment.edit">
+            <div class="level-left">
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <a @click="cancel_edit(comment._idx)">Cancel</a>
+                </div>
+                <div class="level-item">
+                    <button @click="submit_edit(comment._idx)" class="button is-success">Submit</button>
+                </div>
             </div>
         </div>
     </div>

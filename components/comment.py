@@ -34,7 +34,7 @@ class Comment(Fixture):
         f = action.uses(*args)(self.add_comment)
         action(self.add_url, method=["POST"])(f)
 
-        f = action.uses(*args)(self.edit_url)
+        f = action.uses(*args)(self.edit_comment)
         action(self.edit_url, method=["POST"])(f)
 
         f = action.uses(*args)(self.delete_comment)
@@ -74,7 +74,15 @@ class Comment(Fixture):
     # edit a comment associated with this ticket
     # using post for ids
     def edit_comment(self):
-        pass
+        comment_id = request.json.get('comment_id')
+        content = request.json.get('content')
+
+        if not content or not comment_id:
+            raise HTTP(500)
+
+        comment = self.db.comment[comment_id]
+        comment.update_record(content=content)
+        return "ok"
 
     # delete a comment
     # using post for ids simple

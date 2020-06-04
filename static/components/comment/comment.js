@@ -30,6 +30,7 @@
         for(let c of comments) {
             c._idx = _idx++;
             c.show_settings = false;
+            c.edit = false;
         }
         return comments;
     };
@@ -80,7 +81,30 @@
         // prepare the comment for editing, if necessary
         // gotta set the edit flag for the currently selected ticket, maybe the submit functionality will be separate
         // after all
-        comment.methods.toggle(idx);
+        comment.methods.toggle.call(this,idx);
+        let selected = this.comments[idx];
+        selected.edit = true;
+        selected.new_content = selected.content;
+        this.comments.splice(idx, 1, selected);
+    };
+
+    comment.methods.cancel_edit = function(idx) {
+        let selected = this.comments[idx];
+        selected.edit = false;
+        selected.new_content = "";
+        this.comments.splice(idx, 1, selected);
+    };
+
+    comment.methods.submit_edit = function(idx) {
+        let selected = this.comments[idx];
+        axios(this.edit_url, {
+            comment_id: selected.id,
+            content: selected.new_content
+        }).then((result) => {
+            selected.content = selected.new_content;
+            selected.new_content = "";
+            this.comments.splice(idx, 1, selected);
+        });
     };
 
     comment.methods.delete_comment = function(idx) {
