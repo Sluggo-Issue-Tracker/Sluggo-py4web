@@ -151,5 +151,5 @@ def generate_bios():
 
     return dict(
         admins=sortedAdmins,
-        non_admins_html=None
+        nonAdmins=sortedNonAdmins
     )

@@ -38,11 +38,25 @@
         [[pass]]
       </div>
       <br>
-      <!-- <div class="columns is-multiline" id="nonAdmins">
-        [[=XML(non_admins_html)]]
-      </div> -->
-
-      <!-- Stuff that wraps below for layout -->
+      <hr>
+      <br>
+      <div class="columns is-multiline" id="admins">
+        [[for nonAdmin in nonAdmins:]]
+        <div class="column is-one-third">
+          <div class="columns">
+            <div class="column is-full">
+              <div class="column is-full has-text-centered">
+                <img class="image is-inline-block" style="max-width: 256px;" src="https://slugbotics.com/res/images/team/woahtreesman1920.jpg">
+              </div>
+            </div>
+          </div>
+          <p class="title has-text-centered">
+            [[=nonAdmin.get("auth_user").get("first_name") + nonAdmin.get("auth_user").get("last_name")]]
+          </p>
+          <p>[[=nonAdmin.get("bio")]]</p>
+        </div>
+        [[pass]]
+      </div>
     </div>
   </body>
 </html>
