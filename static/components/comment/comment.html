@@ -24,10 +24,9 @@
         </div>
         <!-- this is where the main comment information is stored -->
         <div class="columns">
-            <div class="column is-one-fifth">
-                <!-- TODO: Samuel Schmidt 6 / 2 / 2020 include user pictures when that becomes available -->
+            <!--div class="column is-one-fifth">
                 <img src="https://laughingsquid.com/wp-content/uploads/2014/11/Screenshot-2014-11-19-17.41.33.png">
-            </div>
+            </div-->
             <div class="column">
                 <div v-if="!comment.edit">
                     {{comment.content}}
@@ -50,9 +49,9 @@
     </div>
     <div class="box" v-if="edit">
         <div class="columns">
-            <div class="column is-one-fifth">
+            <!--div class="column is-one-fifth">
                 <img src="https://laughingsquid.com/wp-content/uploads/2014/11/Screenshot-2014-11-19-17.41.33.png">
-            </div>
+            </div-->
             <div class="column">
                 <textarea v-model="new_comment" class="textarea"></textarea>
 
