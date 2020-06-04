@@ -49,6 +49,8 @@ def admin():
         set_role_url=URL('admin/set_role', signer=signed_url),
         set_tag_url=URL('admin/set_tag', signer=signed_url),
         del_tag_url=URL('admin/del_tag', signer=signed_url),
+        edit_tag_url=URL('admin/edit_tag', signer=signed_url),
+        add_tag_url=URL('admin/add_tag', signer=signed_url),
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
         user=auth.get_user()
@@ -108,6 +110,24 @@ def set_tag():
     tag.update_record(approved=request.json.get('approved'))
     return "ok"
 
+@action('admin/edit_tag', method="POST")
+@action.uses(signed_url.verify(), auth.user, db)
+def edit_tag():
+    tag = db(db.global_tag.id == request.json.get('id')).select().first()
+
+    if tag is None:
+        return
+
+    tag.update_record(tag_name=request.json.get('val'))
+    return "ok"
+
+@action('admin/add_tag', method="POST")
+@action.uses(signed_url.verify(), auth.user, db)
+def add_tag():
+    text = request.json.get('tag_text')
+
+    t_id = db.global_tag.update_or_insert(tag_name=text)
+    return dict(id=t_id)
 
 @action('admin/del_tag', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
