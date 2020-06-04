@@ -18,3 +18,6 @@ settings_private.py
 
 # GCS key folder
 private
+
+# ignore vscode
+*.code-workspace

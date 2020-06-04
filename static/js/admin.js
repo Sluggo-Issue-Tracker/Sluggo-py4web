@@ -14,6 +14,8 @@ let init = (app) => {
         page: "start_view",
         tags: [],
         all_tags: [],
+        add_tag_text: "",
+        length_check: false,
 
 
     };
@@ -23,6 +25,8 @@ let init = (app) => {
         let idx = 0;
         for (p of a) {
             p._idx = idx++;
+            p.edited = false;
+            p.dirty = "";
         }
         return a;
     };
@@ -75,10 +79,82 @@ let init = (app) => {
         });
     };
 
+    app.editTag = (tag_index) => {
+
+        let tag = app.data.all_tags[tag_index];
+        tag.dirty = tag.tag_name; // Store old tag value as a dirty element
+        tag.edited = true;
+
+    };
+
+    app.saveTag = (tag_index) => {
+
+        let tag = app.data.all_tags[tag_index];
+        let value = tag.tag_name;
+        if (value.trim() === tag.dirty.trim()) {
+            tag.dirty = "";
+            tag.edited = false;
+            return;
+        }
+
+        axios.post(edit_tag_url, {
+                                    id: tag.id,
+                                    val: value})
+        .then((response) => {
+            tag.dirty = "";
+            tag.edited = false;
+        });
+
+    };
+
+    app.addTag = () => {
+
+        let val = app.data.add_tag_text;
+        if(val.trim().length === 0) {
+            app.data.length_check = true;
+            return;
+        }
+        app.data.length_check = false;
+
+        app.data.text_check = false;
+
+        axios.post(add_tag_url, {
+            tag_text: val,
+        }).then((result) => {
+            if (result.data.id == null) {
+                app.data.add_tag_text = "";
+                return;
+            }
+            app.data.all_tags.unshift({
+                id: result.data.id,
+                tag_name: val,
+                approved: false,
+            });
+            app.reindex(app.data.all_tags);
+            app.data.add_tag_text = "";
+        }).catch((error) => {
+            console.log(error);
+        });
+
+    };
+
+
+    app.cancelEdit = (tag_index) => {
+
+        let tag = app.data.all_tags[tag_index];
+        tag.tag_name = tag.dirty;
+        tag.edited = false;
+    };
+
 
     app.goto = (page) => {
         app.data.page = page;
     };
+
+    app.gotoBiosExport = () => {
+        console.log(bios_export_url);
+        window.location.href = bios_export_url;
+    }
 
 
     app.getColor = (user_index) => {
@@ -99,7 +175,11 @@ let init = (app) => {
         goto : app.goto,
         getColor : app.getColor,
         deleteTag : app.deleteTag,
-
+        gotoBiosExport: app.gotoBiosExport,
+        editTag : app.editTag,
+        cancelEdit : app.cancelEdit,
+        saveTag : app.saveTag,
+        addTag : app.addTag,
     };
 
 

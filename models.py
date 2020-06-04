@@ -21,9 +21,9 @@ from pydal.validators import *
 
 db.define_table(
     'users',
-    Field('user', 'reference auth_user', default=Helper.get_user()),
-    Field('role'),
-    Field('bio'),
+    Field('user', 'integer', 'reference auth_user', default=Helper.get_user()),
+    Field('role', 'text'),
+    Field('bio', 'text'),
 )
 
 # db.define_table(
@@ -42,7 +42,7 @@ db.define_table(
 db.define_table(
     'tickets',
     Field('user_email', default=Helper.get_user_email),
-    Field('assigned_user', 'reference auth_user'),
+    Field('assigned_user', 'integer', 'reference auth_user'),
     Field('ticket_title', 'text'),
     Field('ticket_text', 'text'),
     Field('created', 'datetime', default=Helper.get_time),
@@ -53,8 +53,8 @@ db.define_table(
 
 db.define_table(  # credit tdimhcsleumas for design
     'sub_tickets',
-    Field('parent_id', 'reference tickets'),
-    Field('child_id', 'reference tickets')
+    Field('parent_id', 'integer', 'reference tickets'),
+    Field('child_id', 'integer', 'reference tickets')
 )
 
 db.define_table(  #
@@ -65,21 +65,29 @@ db.define_table(  #
 
 db.define_table(
     'ticket_tag',
-    Field('ticket_id', 'reference tickets'),
-    Field('tag_id', 'reference global_tag')
+    Field('ticket_id', 'integer', 'reference tickets'),
+    Field('tag_id', 'integer', 'reference global_tag')
 )
 
 db.define_table(
     'user_tag',
-    Field('user_id', 'reference users'),
-    Field('tag_id', 'reference global_tag'),
+    Field('user_id', 'integer', 'reference users'),
+    Field('tag_id', 'integer', 'reference global_tag'),
 )
 
 # MARK: Homepage / pinning tickets
 db.define_table(
     'user_pins',
-    Field('auth_user_id', 'reference auth_user'),  # reference the auth not our custom work
-    Field('ticket_id', 'reference tickets')
+    Field('auth_user_id', 'integer', 'reference auth_user'),  # reference the auth not our custom work
+    Field('ticket_id', 'integer', 'reference tickets')
+)
+
+db.define_table(
+    'comment',
+    Field('ticket_id', 'integer', 'reference tickets'),
+    Field('user_id', 'integer', 'reference auth_user', default=Helper.get_user()),
+    Field('content', 'text'),
+    Field('created', 'datetime', default=Helper.get_time())
 )
 
 # TODO tags, roles, other fun things that require relationships

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+    <!-- <link rel="stylesheet" href="[[=URL('static', 'font-awesome-4.7.0/css/font-awesome.css')]]"> -->
+  </head>
+  <body style="background-color:#161833; text-color:white;" class="has-text-white">
+    <!-- 
+      html_str = '<div class="column is-one-quarter">\n'
+        html_str += '   <p class="title has-text-centered">' + member["auth_user"]["first_name"] + " " +\
+            member["auth_user"]["last_name"] + '</h1>\n'
+        html_str += '   <p>' + gen.paragraph() + '</p>\n'
+        html_str += '</div>\n'
+     -->
+    <div class="container">
+      <br>
+      <!-- Stuff that wraps for layout -->
+      <div class="columns">
+        <div class="column is-full">
+          <p class="title is-1 has-text-centered has-text-white">Team Members</p>
+        </div>
+      </div>
+      <div class="columns is-multiline" id="admins">
+        [[for admin in admins:]]
+        <div class="column is-one-third">
+          <div class="columns">
+            <div class="column is-full">
+              <div class="column is-full has-text-centered">
+                <img class="image is-inline-block" style="max-width: 200px;" src="https://slugbotics.com/res/images/team/woahtreesman1920.jpg">
+              </div>
+            </div>
+          </div>
+          <p class="title has-text-centered has-text-white">
+            [[=admin.get("auth_user").get("first_name") + " " + admin.get("auth_user").get("last_name")]]
+          </p>
+          <p class="has-text-white">[[=admin.get("bio")]]</p>
+        </div>
+        [[pass]]
+      </div>
+      <br>
+      <hr>
+      <br>
+      <div class="columns is-multiline" id="admins">
+        [[for nonAdmin in nonAdmins:]]
+        <div class="column is-one-third">
+          <div class="columns">
+            <div class="column is-full">
+              <div class="column is-full has-text-centered">
+                <img class="image is-inline-block" style="max-width: 256px;" src="https://slugbotics.com/res/images/team/woahtreesman1920.jpg">
+              </div>
+            </div>
+          </div>
+          <p class="title has-text-centered has-text-white">
+            [[=nonAdmin.get("auth_user").get("first_name") + " " + nonAdmin.get("auth_user").get("last_name")]]
+          </p>
+          <p class="has-text-white">[[=nonAdmin.get("bio")]]</p>
+        </div>
+        [[pass]]
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,77 @@
+<div>
+    <div class="box" v-for="comment in comments">
+        <div class="level" style="border-bottom: darkgray 1px solid;">
+            <div class="level-left">
+                <div class="level-item">
+                    <strong>{{comment.first_name}} {{comment.last_name}}</strong>
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <div class="dropdown is-active is-right">
+                        <div class="dropdown-trigger">
+                            <span @click="toggle(comment._idx)"><i class="fa fa-ellipsis-h"></i></span>
+                        </div>
+                        <div v-if="comment.show_settings" class="dropdown-menu">
+                            <div class="dropdown-content">
+                                <div class="dropdown-item" @click="edit_comment(comment._idx)">Edit</div>
+                                <div class="dropdown-item" @click="delete_comment(comment._idx)">Delete</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- this is where the main comment information is stored -->
+        <div class="columns">
+            <!--div class="column is-one-fifth">
+                <img src="https://laughingsquid.com/wp-content/uploads/2014/11/Screenshot-2014-11-19-17.41.33.png">
+            </div-->
+            <div class="column">
+                <div v-if="!comment.edit">
+                    {{comment.content}}
+                </div>
+                <textarea v-if="comment.edit" v-model="comment.new_content" class="textarea"></textarea>
+            </div>
+        </div>
+        <div class="level" v-if="comment.edit">
+            <div class="level-left">
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <a @click="cancel_edit(comment._idx)">Cancel</a>
+                </div>
+                <div class="level-item">
+                    <button @click="submit_edit(comment._idx)" class="button is-success">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box" v-if="edit">
+        <div class="columns">
+            <!--div class="column is-one-fifth">
+                <img src="https://laughingsquid.com/wp-content/uploads/2014/11/Screenshot-2014-11-19-17.41.33.png">
+            </div-->
+            <div class="column">
+                <textarea v-model="new_comment" class="textarea"></textarea>
+
+            </div>
+        </div>
+        <!-- i'm not sure why, but to get a level-right to display correctly, there needs to be a level left -->
+        <div class="level">
+            <div class="level-left">
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <a @click="cancel()">Cancel</a>
+                </div>
+                <div class="level-item">
+                    <button @click="submit" class="button is-success">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <a v-if="!edit" @click="edit = true"><i class="fa fa-plus"></i> Add a comment</a>
+    </div>
+</div>
