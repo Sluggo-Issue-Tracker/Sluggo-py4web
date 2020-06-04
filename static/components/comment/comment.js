@@ -97,12 +97,13 @@
 
     comment.methods.submit_edit = function(idx) {
         let selected = this.comments[idx];
-        axios(this.edit_url, {
+        axios.post(this.edit_url, {
             comment_id: selected.id,
             content: selected.new_content
         }).then((result) => {
             selected.content = selected.new_content;
             selected.new_content = "";
+            selected.edit = false;
             this.comments.splice(idx, 1, selected);
         });
     };
