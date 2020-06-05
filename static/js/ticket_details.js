@@ -36,6 +36,7 @@ let init = (app) => {
         tag_options: [],
         status_strings: [],
         possible_users: [],
+        progress: 0.0,
         // control ------------------------------------------------------------------------------
         edit: false,
         show_modal: false,
@@ -140,6 +141,9 @@ let init = (app) => {
         }).then((response) => {
             app.data.status = response.data.status;
             app.data.current_status = response.data.status;
+            return axios.get(get_ticket_completion_url)
+        }).then((result) => {
+            app.data.progress = result.data.percentage;
         }).catch((error) => {
             console.log(error);
         });
@@ -247,7 +251,7 @@ let init = (app) => {
         });
         app.data.current_user = JSON.parse(current_user.replace(/'/g,'"'));
         axios.get(get_ticket_completion_url).then((result) => {
-           console.log(result.data.percentage);
+           app.data.progress = result.data.percentage;
         });
     };
 
