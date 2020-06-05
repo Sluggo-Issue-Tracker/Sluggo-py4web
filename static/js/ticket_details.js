@@ -246,6 +246,9 @@ let init = (app) => {
            app.data.status_strings = result.data.valid_statuses;
         });
         app.data.current_user = JSON.parse(current_user.replace(/'/g,'"'));
+        axios.get(get_ticket_completion_url).then((result) => {
+           console.log(result.data.percentage);
+        });
     };
 
     // Call to the initializer.
