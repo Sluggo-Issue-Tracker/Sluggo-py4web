@@ -9,6 +9,7 @@ import uuid
 from py4web import action, request, abort, redirect, URL, Field
 from .. common import db, session, T, cache, auth, signed_url
 from .. helper import Helper
+from .. EventLogger import EventLogger
 
 @action('clean')
 @action.uses(auth.user, db)
@@ -36,6 +37,10 @@ def tickets():
 
     # Grab user tags
     user_tags = Helper.get_web_tag_list_for_user_id(Helper.get_user())
+
+    # Grab recent updates
+    recentUpdates = EventLogger.get_recent_updates_for_user(Helper.get_user())
+    print(recentUpdates)
 
     return(dict(
         user_email=Helper.get_user_email(),

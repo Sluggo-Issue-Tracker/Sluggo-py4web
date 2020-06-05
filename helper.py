@@ -170,3 +170,12 @@ class Helper:
         pinnedTicketsQuery = db(db.user_pins.auth_user_id == given_user_id).select().as_list()
         pinnedTickets = list(map(lambda x: x['ticket_id'], pinnedTicketsQuery))
         return pinnedTickets
+
+    # MARK: Assigned
+    @staticmethod
+    def get_assigned_ticket_ids_for_user(given_user_id):
+        # Assuming parameter is the auth.user object
+        # Query for pinned tickets given user ID
+        assignedTicketsQuery = db(db.tickets.assigned_user == given_user_id).select().as_list()
+        assignedTickets = list(map(lambda x: x['id'], assignedTicketsQuery))
+        return assignedTickets
