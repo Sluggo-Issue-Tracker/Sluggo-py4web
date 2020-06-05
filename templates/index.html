@@ -12,39 +12,23 @@
              <p class="subtitle">It's {{formatted_date}}. Here's your overview:</p>
              <div class="level">
                 <div class="level-item level-left">
-                   <p class="is-size-4 has-text-weight-semibold">Priority Tasks (placeholder)</p>
+                   <p class="is-size-4 has-text-weight-semibold">Priority Tasks</p>
                 </div>
              </div>
-             <div @click="placeholder()" class="notification is-danger">
+             <div v-for="t in priority_tickets" @click="goToTicket(t.id)" class="notification is-info">
                 <div class="columns">
-                   <div class="column is-four-fifths">
-                      <p class="is-size-5">Ticket 15 | #admin, #s-lab | Contact Lab Manager about 2300 Delaware</p>
-                      <p>Due April 21, 2020. <span class="has-text-weight-bold">Three days overdue.</span></p>
+                   <div class="column">
+                      <p class="is-size-5">Ticket {{t.id}} | {{t.tag_string}} | {{t.ticket_title}}</p>
+                      <p v-if="typeof(t.web_due) !== 'undefined'">Due {{formatDate(t.web_due)}}</p>
                    </div>
-                   <div class="column"></div>
+                   <!-- <div class="column"></div>
                    <div class="column">
                       <div class="buttons">
                          <div class="button is-inverted is-danger is-outlined">
                             <p>Complete</p>
                          </div>
                       </div>
-                   </div>
-                </div>
-             </div>
-             <div @click="placeholder()" class="notification is-info">
-                <div class="columns">
-                   <div class="column is-four-fifths">
-                      <p class="is-size-5">Ticket 21 | #software | Submit project proposal for issue tracker in CSE183</p>
-                      <p>Due April 24, 2020.</p>
-                   </div>
-                   <div class="column"></div>
-                   <div class="column">
-                      <div class="buttons">
-                         <div class="button is-inverted is-info is-outlined">
-                            <p>Complete</p>
-                         </div>
-                      </div>
-                   </div>
+                   </div> -->
                 </div>
              </div>
     
@@ -148,6 +132,7 @@
     <script>
       let date = "[[=XML(date)]]";
       let pinned_tickets = '[[=XML(pinned_tickets)]]';
+      let priority_tickets = '[[=XML(priority_tickets)]]';
       let ticket_details_url = '[[=XML(ticket_details_url)]]';
       let tickets_url = '[[=XML(tickets_url)]]';
       let user_tags = '[[=XML(user_tags)]]';
