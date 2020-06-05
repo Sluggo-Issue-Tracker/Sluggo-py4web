@@ -30,12 +30,22 @@ app.goToTag = (tag_id) => {
     window.location.href = tickets_url + "?tag_id=" + tag_id
 }
 
+app.formatDate = (date) => {
+    console.log(date);
+    if(typeof(date) !== "undefined" && date !== null) {
+        return sluggo.formatDate(new Date(date));
+    } else {
+        return "";
+    }
+}
+
 app.methods = {
     setFormattedDate: app.setFormattedDate,
     placeholder: app.placeholder,
     goToTicket: app.goToTicket,
     formatTag: app.formatTag,
-    goToTag: app.goToTag
+    goToTag: app.goToTag,
+    formatDate: app.formatDate
 }
 
 app.vm = new Vue({

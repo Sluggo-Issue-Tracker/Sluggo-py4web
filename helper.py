@@ -195,7 +195,8 @@ class Helper:
         def get_overdue(ticket):
             # Get the date
             today_date = datetime.utcnow().date()
-
+            if ticket["due"] is None:
+                return 0 # I think this is a sane default
             return (today_date - ticket["due"]).days
 
         def is_overdue(ticket):
@@ -230,22 +231,22 @@ class Helper:
 
         # Add assignedTickets which are overdue
         overdueAssignedTickets = list(filter(lambda x: is_overdue(x), assignedTickets))
-        overdueAssignedTickets.sort(key=get_overdue)
+        overdueAssignedTickets.sort(key=get_overdue, reverse=True)
         orderedPriorityTickets += overdueAssignedTickets
 
         # Add tag tickets which are overdue
         overdueTagTickets = list(filter(lambda x: is_overdue(x), tagTickets))
-        overdueTagTickets.sort(key=get_overdue)
+        overdueTagTickets.sort(key=get_overdue, reverse=True)
         orderedPriorityTickets += overdueTagTickets
 
         # Add assigned tickets which are not overdue
         assignedNotOverdueTickets = list(filter(lambda x: not is_overdue(x), assignedTickets))
-        assignedNotOverdueTickets.sort(key=get_overdue)
+        assignedNotOverdueTickets.sort(key=get_overdue, reverse=True)
         orderedPriorityTickets += assignedNotOverdueTickets
 
         # Add tag tickets which are not overdue
         tagNotOverdueTickets = list(filter(lambda x: not is_overdue(x), tagTickets))
-        tagNotOverdueTickets.sort(key=get_overdue)
+        tagNotOverdueTickets.sort(key=get_overdue, reverse=True)
         orderedPriorityTickets += tagNotOverdueTickets
 
         orderedPriorityTickets = orderedPriorityTickets[:3]
@@ -255,4 +256,6 @@ class Helper:
     @staticmethod
     def attach_web_due_for_tickets(tickets): # TODO: clean this up and unify it with other dates
         for ticket in tickets:
-            ticket["web_due"] = ticket["due"].isoformat()
+            if ticket.get("due") is not None:
+                ticket["web_due"] = ticket["due"].isoformat()
+            

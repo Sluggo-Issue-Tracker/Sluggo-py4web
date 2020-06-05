@@ -15,11 +15,11 @@
                    <p class="is-size-4 has-text-weight-semibold">Priority Tasks</p>
                 </div>
              </div>
-             <div v-for="t in priority_tickets" @click="placeholder()" class="notification is-info">
+             <div v-for="t in priority_tickets" @click="goToTicket(t.id)" class="notification is-info">
                 <div class="columns">
                    <div class="column">
                       <p class="is-size-5">Ticket {{t.id}} | {{t.tag_string}} | {{t.ticket_title}}</p>
-                      <p>Due {{t.web_due}}</p>
+                      <p v-if="typeof(t.web_due) !== 'undefined'">Due {{formatDate(t.web_due)}}</p>
                    </div>
                    <!-- <div class="column"></div>
                    <div class="column">
