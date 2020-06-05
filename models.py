@@ -24,6 +24,7 @@ db.define_table(
     Field('user', 'integer', 'reference auth_user', default=Helper.get_user()),
     Field('role', 'text'),
     Field('bio', 'text'),
+    Field('icon', 'text')
 )
 
 # db.define_table(

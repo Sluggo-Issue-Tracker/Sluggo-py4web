@@ -12,7 +12,6 @@ let init = (app) => {
         user_email: user_email,
         username: username,
         master: {},
-        download_url: "",
         current_user: {},
         options: [],
         roles: ["Admin", "Approved", "Unapproved"],
@@ -74,7 +73,26 @@ let init = (app) => {
         };
 
     app.download_urlSet = (e) => {
-        app.data.current_user.url = e;
+        let user = app.data.current_user;
+
+        if(user !== false) {
+            axios.post(set_profile_url, { id : user.id,
+                                          url: e, })
+            .then((response) => {
+                axios.get(show_user_url, {params: {"id": id}}).then((result) => {
+                            app.data.current_user = result.data.user;
+                            app.data.options = result.data.tags;
+                            app.data.selected = app.data.current_user.role;
+                            Vue.set(app.data.current_user, 'url', app.data.current_user["icon"]);
+                            app.data.master = {...app.data.current_user};
+                        });
+            }).catch((error) => {
+                console.log(error);
+            });
+        }
+
+
+
     }
 
     app.show_value = (flag) => {
@@ -128,17 +146,8 @@ let init = (app) => {
             app.data.current_user = result.data.user;
             app.data.options = result.data.tags;
             app.data.selected = app.data.current_user.role;
-            axios.get(
-                    get_icon_url,
-                    {params: {"img": app.data.current_user["icon"]}}).then((result) => {
-                    // Puts the image URL.
-                    // See https://vuejs.org/v2/guide/reactivity.html#For-Objects
-                    Vue.set(app.data.current_user, 'url', result.data.imgbytes);
-                }).then((response) => {
-                    app.data.master = {...app.data.current_user};
-                });
-
-
+            Vue.set(app.data.current_user, 'url', app.data.current_user["icon"]);
+            app.data.master = {...app.data.current_user};
         });
     };
 

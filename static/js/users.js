@@ -66,23 +66,10 @@ let init = (app) => {
             app.reindex(users);
             for (let user of users) {
                 let user_el = user;
+                Vue.set(user_el, 'url', user["icon"]);
                 app.data.users.push(user_el);
-                // We create a promise for when the image loads.
-                let p = axios.get(
-                    get_icon_url,
-                    {params: {"img": user["icon"]}}).then((result) => {
-                    // Puts the image URL.
-                    // See https://vuejs.org/v2/guide/reactivity.html#For-Objects
-                    Vue.set(user_el, 'url', result.data.imgbytes);
-                    return "ok";
-                });
-                user_promises.push(p);
             }
             app.data.master = app.data.users;
-            Promise.all(user_promises).then((r) => {
-                    app.data.done = "All done";
-                    console.log(r);
-            });
         });
     };
 

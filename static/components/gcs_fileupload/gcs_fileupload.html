@@ -1,35 +1,26 @@
-<div class="field has-addons">
-  <p class="control">
-    <div class="file is-info">
-      <label class="file-label">
-        <input class="file-input" type="file" @change="upload_file($event)" accept="image/*">
-        <span class="file-cta">
-          <span class="file-icon" :class="!fileerror ? 'has-text-white' : 'has-text-warning'">
-            <i v-if="uploading && !fileerror" class="fa fa-spinner fa-pulse fa-fw"></i>
-            <i v-if="!updating && fileerror" class="fa fa-exclamation-circle fa-fw"></i>
-            <i v-else class="fa fa-upload fa-fw"></i>
-          </span>
-          <span class="file-label">
-            <span v-if="!uploading && !fileerror">Upload new file</span>
-            <span v-if="!uploading && fileerror" class="has-text-warning">Wrong Filetype</span>
-          </span>
-        </span>
-      </label>
+<section class="section">
+  <div class="columns is-centered">
+    <div class="column is-half">
+      <div class="field has-addons">
+        <p class="control">
+          <div class="file" :class="!fileerror ? 'is-info' : 'is-danger'">
+            <label class="file-label">
+              <input class="file-input" type="file" @change="upload_file($event)" accept="image/*">
+              <span class="file-cta">
+                <span class="file-icon" >
+                  <i v-if="uploading && !fileerror" class="fa fa-spinner fa-pulse fa-fw"></i>
+                  <i v-if="!uploading && fileerror" class="fa fa-exclamation-circle fa-fw"></i>
+                  <i v-else class="fa fa-upload fa-fw"></i>
+                </span>
+                <span class="file-label">
+                  <span v-if="!uploading && !fileerror">Change Profile Pic</span>
+                  <span v-if="!uploading && fileerror">Wrong Filetype</span>
+                </span>
+              </span>
+            </label>
+          </div>
+        </p>
+      </div>
     </div>
-  </p>
-  <p class="control">
-    <a v-if="file_id" class="button" :href="download_url" :class="{'is-static': !download_url}">
-      <span class="icon" v-if="download_url">
-        <i class="fa fa-download fa-fw"></i>
-      </span>
-      <span>{{file_info}}</span>
-    </a>
-    <span v-else class="button is-static">No file uploaded</span>
-  </p>
-  <p class="control" v-if='deletable && file_id'>
-    <button class="button is-danger" @click="delete_file" :class="{'is-loading': deleting}">
-      <span v-if="delete_confirmation">Confirm deletion</span>
-      <i v-else class="fa fa-trash"></i>
-    </button>
-  </p>
-</div>
+  </div>
+</section>
