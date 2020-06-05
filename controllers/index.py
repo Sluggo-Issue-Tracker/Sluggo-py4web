@@ -40,6 +40,7 @@ def tickets():
 
     # Grab recent updates
     recentUpdates = EventLogger.get_recent_updates_for_user(Helper.get_user())
+    Helper.attach_web_names_for_events(recentUpdates)
     print(recentUpdates)
 
     return(dict(
@@ -50,6 +51,7 @@ def tickets():
         ticket_details_url = URL('ticket_details'),
         tickets_url = URL('tickets'),
         pinned_tickets = Helper.safe_json_dumps(pinned_tickets),
-        user_tags = Helper.safe_json_dumps(user_tags)
+        user_tags = Helper.safe_json_dumps(user_tags),
+        recent_events = Helper.safe_json_dumps(recentUpdates)
     ))
 

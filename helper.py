@@ -34,6 +34,11 @@ class Helper:
         return auth.current_user.get('id') if auth.current_user else None
 
     @staticmethod
+    def get_username_for_user(user_id):
+        auth = db(db.auth_user.id == user_id).select().first()
+        return auth["first_name"] + " " + auth["last_name"]
+
+    @staticmethod
     def get_role():
         user = db(db.users.user == Helper.get_user()).select().first()
         return user.role.capitalize() if user is not None else "Unapproved"
@@ -179,3 +184,9 @@ class Helper:
         assignedTicketsQuery = db(db.tickets.assigned_user == given_user_id).select().as_list()
         assignedTickets = list(map(lambda x: x['id'], assignedTicketsQuery))
         return assignedTickets
+
+    @staticmethod
+    def attach_web_names_for_events(events):
+        for e in events:
+            e["web_action_user_name"] = Helper.get_username_for_user(e["action_user"])
+        
