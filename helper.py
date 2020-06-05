@@ -1,7 +1,7 @@
 # quick and dirty moving the helper functions to their own class because our imports
 # were getting way too long
 
-from datetime import datetime, date, timezone
+from datetime import datetime, date, timezone, timedelta
 import json
 from . common import db, Field, auth
 
@@ -122,10 +122,33 @@ class Helper:
             workingWebTag = dict()
             workingWebTag["tag_name"] = tag.tag_name
             workingWebTag["tag_id"] = tag.id
+            workingWebTag["overdue_count"] = Helper.get_overdue_count_for_tag_and_user(tag.id, user_id)
 
             webTagPairs.append(workingWebTag)
 
         return webTagPairs
+
+    @staticmethod
+    def get_overdue_count_for_tag_and_user(tag_id, user_id):
+        # MARK: Overdue indicator fetching
+        ticket_tag_rels = db(db.ticket_tag.tag_id == tag_id).select()
+        tickets = []
+        overdueCount = 0
+        for rel in ticket_tag_rels:
+            tickets.append(db(db.tickets.id == rel.ticket_id).select().first())
+        for ticket in tickets:
+            # TODO: Migrate this into its overdue checking function
+            # Get current date and time
+            currentTime = datetime.utcnow().date()
+            # Get datetime of ticket due date
+            dueTime = ticket.due
+            if dueTime is None: # No due date
+                continue
+            # Compare days
+            if(currentTime - dueTime).days > 0:
+                overdueCount += 1
+        
+        return overdueCount
 
 
     @staticmethod
