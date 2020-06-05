@@ -5,7 +5,8 @@ app = {};
 app.data = {
     formatted_date: "a new day",
     pinned_tickets: [], // this is to be replaced by data passed in by py4web
-    user_tags: []
+    user_tags: [],
+    recent_events: []
 }
 
 app.setFormattedDate = () => {
@@ -51,6 +52,8 @@ app.init = () => {
 
     // Add the user tags from the passed user tags
     Vue.set(app.data, "user_tags", JSON.parse(user_tags));
+
+    Vue.set(app.data, "recent_events", JSON.parse(recent_events))
 }
 
 app.init();
