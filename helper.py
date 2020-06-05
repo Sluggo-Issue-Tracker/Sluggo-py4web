@@ -108,16 +108,14 @@ class Helper:
             workingWebTag = dict()
             workingWebTag["tag_name"] = tag.tag_name
             workingWebTag["tag_id"] = tag.id
-            workingWebTag["status_html"] = Helper.get_status_indicator_for_tag_and_user(tag.id, user_id)
+            workingWebTag["overdue_count"] = Helper.get_overdue_count_for_tag_and_user(tag.id, user_id)
 
             webTagPairs.append(workingWebTag)
 
         return webTagPairs
 
     @staticmethod
-    def get_status_indicator_for_tag_and_user(tag_id, user_id):
-        status_indic_html = ""
-        # TODO implement new indicator (hard)
+    def get_overdue_count_for_tag_and_user(tag_id, user_id):
         # MARK: Overdue indicator fetching
         ticket_tag_rels = db(db.ticket_tag.tag_id == tag_id).select()
         tickets = []
@@ -135,14 +133,8 @@ class Helper:
             # Compare days
             if(currentTime - dueTime).days > 0:
                 overdueCount += 1
-
-        if(overdueCount > 0):
-            # We have overdue so add it as an indicator
-            status_indic_html += '<span class=\\"has-text-danger\\">(' + str(overdueCount) + " "\
-                + ('ticket' if overdueCount == 1 else 'tickets') + ' overdue)<\/span>'
-            print(status_indic_html)
         
-        return status_indic_html
+        return overdueCount
 
 
     @staticmethod
