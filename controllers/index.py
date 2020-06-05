@@ -64,7 +64,6 @@ def tickets():
         tickets_url = URL('tickets'),
         pinned_tickets = Helper.safe_json_dumps(pinned_tickets),
         priority_tickets = Helper.safe_json_dumps(priority_tickets),
-        user_tags = Helper.safe_json_dumps(user_tags)
         user_tags = Helper.safe_json_dumps(user_tags),
         recent_events = Helper.safe_json_dumps(recentUpdates)
     ))

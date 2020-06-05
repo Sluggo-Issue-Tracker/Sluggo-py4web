@@ -128,6 +128,7 @@ def get_tickets():
 @action.uses(auth.user)
 def get_ticket_by_id(ticket_id=None):
     ticket = db(db.tickets.id == ticket_id).select().as_list()[0]
+    current = db(db.users.user == auth.current_user.get('id')).select(db.users.role).first()
 
     ticket["ticket_author"] = Helper.get_user_name(ticket)
     ticket["tag_list"] = Helper.get_ticket_tags_by_id(ticket.get('id'))
@@ -153,7 +154,9 @@ def get_ticket_by_id(ticket_id=None):
     else:
         assigned_user = None
 
-    return dict(ticket=ticket, assigned_user=assigned_user)
+    editable = auth.current_user.get('email') == ticket.get('user_email') or current.get('role') == 'admin'
+
+    return dict(ticket=ticket, assigned_user=assigned_user, editable=editable)
 
 
 # MARK: Ticket Pinning

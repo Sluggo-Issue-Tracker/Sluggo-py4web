@@ -39,6 +39,7 @@ let init = (app) => {
         progress: 0.0,
         // control ------------------------------------------------------------------------------
         edit: false,
+        editable: false,
         show_modal: false,
         color_class: {
             0: "is-link",
@@ -227,6 +228,7 @@ let init = (app) => {
     app.init = () => {
         axios.get(get_ticket_by_id_url).then((result) => {
             app.data.ticket = result.data.ticket;
+            app.data.editable = result.data.editable;
 
             app.set_assigned(result.data.assigned_user);
             app.set_fields(result.data.ticket);

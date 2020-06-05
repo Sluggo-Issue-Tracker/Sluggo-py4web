@@ -21,7 +21,7 @@
                    </div>
                </div>
                 <div class="level-right">
-                   <div class="level-item" v-if="!edit && check_user()" >
+                   <div class="level-item" v-if="!edit && editable" >
                        <button class="button is-success" @click="edit = true">Edit</button>
                    </div>
                     <div class="level-item" v-if="edit">
@@ -32,8 +32,6 @@
                     </div>
                 </div>
             </div>
-
-
             <section style="border-bottom: darkgray 1px solid;"></section>
         </div>
     </section>
@@ -62,7 +60,7 @@
                     </div>
                     <br>
                      <div style="border-bottom: darkgray 1px solid">
-                        <div class="level" >
+                        <div class="level">
                             <div class="level-left">
                                 <div class="level-item"><span>Tags</span></div>
                             </div>
@@ -138,7 +136,7 @@
                     <br>
                     <div>
                         <span>
-                       <a class="has-text-danger" v-if="!delete_status && check_user()" @click="delete_status = true">
+                       <a class="has-text-danger" v-if="!delete_status && editable" @click="delete_status = true">
                            Delete Ticket
                        </a>
                         </span>
