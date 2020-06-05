@@ -13,6 +13,7 @@ from dateutil.parser import parse
 from ..common import db, session, T, cache, auth, signed_url
 from ..models import Helper
 from ..components.comment import Comment
+from ..EventLogger import EventLogger
 
 # if only i could mark something const in python : (
 # idx 0 should always be not started
@@ -324,12 +325,15 @@ def update_ticket_progress():
     idx = valid_statuses.index(action)
     print(idx)
     if idx == 0:  # not started
+        EventLogger.log_status_change("Not Started", ticket_id, Helper.get_user())
         ticket.update_record(started=None, completed=None)
 
     elif idx == 1:  # in progress
+        EventLogger.log_status_change("In Progress", ticket_id, Helper.get_user())
         ticket.update_record(started=Helper.get_time(), completed=None)
 
     elif idx == 2:  # completed
+        EventLogger.log_status_change("Completed", ticket_id, Helper.get_user())
         ticket.update_record(
             started=Helper.get_time() if ticket.started is None else ticket.started,
             completed=Helper.get_time()

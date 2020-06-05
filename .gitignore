@@ -18,10 +18,7 @@ settings_private.py
 
 # ignore vscode
 *.code-workspace
-<<<<<<< HEAD
 .vscode
-=======
 
 # private folder for gcs
 private
->>>>>>> agavgavi/local_images
