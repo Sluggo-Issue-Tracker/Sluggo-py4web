@@ -1,0 +1,26 @@
+<section class="section">
+  <div class="columns is-centered">
+    <div class="column is-half">
+      <div class="field has-addons">
+        <p class="control">
+          <div class="file" :class="!fileerror ? 'is-info' : 'is-danger'">
+            <label class="file-label">
+              <input class="file-input" type="file" @change="upload_file($event)" accept="image/*">
+              <span class="file-cta">
+                <span class="file-icon" >
+                  <i v-if="uploading && !fileerror" class="fa fa-spinner fa-pulse fa-fw"></i>
+                  <i v-if="!uploading && fileerror" class="fa fa-exclamation-circle fa-fw"></i>
+                  <i v-else class="fa fa-upload fa-fw"></i>
+                </span>
+                <span class="file-label">
+                  <span v-if="!uploading && !fileerror">Change Profile Pic</span>
+                  <span v-if="!uploading && fileerror">Wrong Filetype</span>
+                </span>
+              </span>
+            </label>
+          </div>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -43,6 +43,7 @@ def specific_user(id=None):
 
         show_user_url = URL('users/show_user', signer=signed_url),
         get_icons_url = URL('users/get_icons', signer=signed_url),
+        set_icons_url=URL('users/set_icons', signer=signed_url),
         edit_user_url = URL('edit_user', signer=signed_url),
         user_email = Helper.get_user_email(),
         username = Helper.get_user_title(),
@@ -76,6 +77,7 @@ def add_user():
         role=role,
         bio=request.json.get('bio'),
         user=Helper.get_user(),
+        icon=URL('static', 'logo.png'),
     )
 
     tags = request.json.get('tags')
@@ -102,9 +104,6 @@ def attach_user_information(users):
 
     for user in users:
         person = db(db.auth_user.id == user.get('user')).select().first()
-
-        user["icon"] = "%s-%s.jpg" % \
-                       (person.get('first_name').lower(), person.get('last_name').lower()) if person else "Unknown"
         user["full_name"] = "%s %s" % \
                             (person.get('first_name'), person.get('last_name')) if person else "Unknown"
         user['tags_list'] = Helper.get_user_tag_by_name(user)
@@ -140,8 +139,6 @@ def get_users_by_tag_list():
     print(tag_users)
 
     for user in tag_users:
-        user["icon"] = "%s-%s.jpg" % \
-                       (user.get('first_name').lower(), user.get('last_name').lower()) if user else "Unknown"
         user["full_name"] = "%s %s" % \
                             (user.get('first_name'), user.get('last_name')) if user else "Unknown"
         user['user_email'] = user.get('email')
@@ -158,8 +155,6 @@ def show_user():
     user = db(db.users.id == id).select().as_list()[0]
     person = db(db.auth_user.id == user.get('user')).select().first()
 
-    user["icon"] = "%s-%s.jpg" % \
-                   (person.get('first_name').lower(), person.get('last_name').lower()) if person else "Unknown"
     user["full_name"] = "%s %s" % \
                         (person.get('first_name'), person.get('last_name')) if person else "Unknown"
     user['tags_list'] = Helper.get_user_tag_by_name(user)
@@ -229,3 +224,21 @@ def get_img():
         b64_image = base64.b64encode(img_bytes).decode('utf-8')
     # Returns the image bytes, base64 encoded, and with the correct prefix.
     return dict(imgbytes="data:image/jpeg;base64," + b64_image)
+
+
+@action('users/set_icons', method="POST")
+@action.uses(signed_url.verify(), auth.user, db)
+def set_img():
+    id = request.forms.get('id')
+    row = db(db.users.id == id).select().first()
+
+    file_name = request.forms.get('name')
+    data = request.files.get('file')
+    if file_name and data and data.file:
+            raw = data.file.read() # This is dangerous for big files
+            img_name = data.filename
+            path = pathlib.Path(__file__).resolve().parent.parent / 'static' / 'images' / img_name
+            path.write_bytes(raw)
+            row.update_record(icon=img_name)
+
+    return "ok"
