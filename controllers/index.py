@@ -38,6 +38,13 @@ def tickets():
     # Grab user tags
     user_tags = Helper.get_web_tag_list_for_user_id(Helper.get_user())
 
+    # Grab priority tickets
+    user_id = Helper.get_our_user_id(Helper.get_user())
+    priority_tickets = Helper.get_priority_ticket_ids_for_user(user_id)
+
+    # Attach data to priority tickets
+    Helper.attach_tags_for_tickets(priority_tickets)
+    Helper.attach_web_due_for_tickets(priority_tickets)
     # Grab recent updates
     recentUpdates = EventLogger.get_recent_updates_for_user(Helper.get_user())
     Helper.attach_web_names_for_events(recentUpdates)
@@ -51,6 +58,8 @@ def tickets():
         ticket_details_url = URL('ticket_details'),
         tickets_url = URL('tickets'),
         pinned_tickets = Helper.safe_json_dumps(pinned_tickets),
+        priority_tickets = Helper.safe_json_dumps(priority_tickets),
+        user_tags = Helper.safe_json_dumps(user_tags)
         user_tags = Helper.safe_json_dumps(user_tags),
         recent_events = Helper.safe_json_dumps(recentUpdates)
     ))
