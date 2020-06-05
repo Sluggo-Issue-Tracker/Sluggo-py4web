@@ -10,7 +10,7 @@ import Crypto.Hash.SHA256 as SHA256
 import Crypto.PublicKey.RSA as RSA
 import Crypto.Signature.PKCS1_v1_5 as PKCS1_v1_5
 
-from py4web import action, URL, request
+from py4web import action, URL, request, abort
 from yatl.helpers import XML
 from py4web.utils.url_signer import URLSigner
 from py4web.core import Fixture
@@ -52,7 +52,7 @@ def sign_url(path, expiration, account_email, keytext,
                                              content_type=content_type,
                                              expiration=expiration,
                                              resource=path)
-    print("string to sign:", string_to_sign)
+    # print("string to sign:", string_to_sign)
     signature_signed = base64sign(string_to_sign, private_key)
     query_params = {'GoogleAccessId': account_email,
                     'Expires': str(expiration),
@@ -157,6 +157,8 @@ class GCSFileUpload(Fixture):
             mimetype = request.json.get("mimetype", "")
             path = self.bucket + str(uuid.uuid4())
             print("Obtain url for", path, mimetype)
+            if not "image/" in mimetype:
+                abort(500, "Whoops, wrong filetype")
             upload_url = gcs_url(self.gcs_keys, path, verb='PUT',
                                  content_type=mimetype)
             return dict(signed_url=upload_url, path=path)
@@ -174,7 +176,7 @@ class GCSFileUpload(Fixture):
         file_type = request.json.get("file_type")
         file_name = request.json.get("file_name")
         file_path = request.json.get("file_path")
-        print("File was uploaded:", file_path, file_name, file_type)
+        # print("File was uploaded:", file_path, file_name, file_type)
         if self.session.get('gcs_fileupload') is None:
             self.session['gcs_fileupload'] = {}
         d = self.session['gcs_fileupload'].get(id, {})
@@ -206,7 +208,7 @@ class GCSFileUpload(Fixture):
             writable=self.writable,
             download_url=download_url,
         )
-        print("Returned:", r)
+        # print("Returned:", r)
         return r
 
 

@@ -23,6 +23,7 @@
             deletable: false,
             // Phases: upload
             uploading: false,
+            fileerror: false,
             // Phases: deletion
             delete_confirmation: false,
             deleting: false,
@@ -78,11 +79,24 @@
                     // TODO: if you like, add a listener for "error" to detect failure.
                     req.open("PUT", upload_url, true);
                     req.send(file);
-                })
+                }).catch((error) => {
+                    self.uploading = false;
+                    self.fileerror = true;
+                    app.sleep(3000)()
+                        .then(() => {
+                            self.fileerror = false;
+                    });
+
+                    console.log(error);
+                });
         }
     };
 
-
+    function sleep(ms) {
+        return function (x) {
+            return new Promise(resolve => setTimeout(() => resolve(x), ms));
+        };
+    };
 
 
     function upload_complete(self, file_name, file_type, file_path) {
@@ -94,7 +108,6 @@
                 self.uploading = false;
                 set_results(self, res);
 
-                console.log(self);
                 self.$emit('download_url', self.download_url);
                 console.log("Uploaded.");
             });

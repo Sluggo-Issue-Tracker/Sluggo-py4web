@@ -2,14 +2,16 @@
   <p class="control">
     <div class="file is-info">
       <label class="file-label">
-        <input class="file-input" type="file" @change="upload_file($event)">
+        <input class="file-input" type="file" @change="upload_file($event)" accept="image/*">
         <span class="file-cta">
-          <span class="file-icon">
-            <i v-if="uploading" class="fa fa-spinner fa-pulse fa-fw"></i>
+          <span class="file-icon" :class="!fileerror ? 'has-text-white' : 'has-text-warning'">
+            <i v-if="uploading && !fileerror" class="fa fa-spinner fa-pulse fa-fw"></i>
+            <i v-if="!updating && fileerror" class="fa fa-exclamation-circle fa-fw"></i>
             <i v-else class="fa fa-upload fa-fw"></i>
           </span>
           <span class="file-label">
-            <span v-if="!uploading">Upload new file</span>
+            <span v-if="!uploading && !fileerror">Upload new file</span>
+            <span v-if="!uploading && fileerror" class="has-text-warning">Wrong Filetype</span>
           </span>
         </span>
       </label>
