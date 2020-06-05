@@ -40,7 +40,9 @@ def tickets():
     # Grab priority tickets
     user_id = Helper.get_our_user_id(Helper.get_user())
     priority_tickets = Helper.get_priority_ticket_ids_for_user(user_id)
-    print(priority_tickets)
+
+    # Attach tags to priority tickets
+    Helper.attach_tags_for_tickets(priority_tickets)
 
     return(dict(
         user_email=Helper.get_user_email(),

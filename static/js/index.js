@@ -5,6 +5,7 @@ app = {};
 app.data = {
     formatted_date: "a new day",
     pinned_tickets: [], // this is to be replaced by data passed in by py4web
+    priority_tickets: [],
     user_tags: []
 }
 
@@ -48,6 +49,9 @@ app.init = () => {
     
     // Add the pinned tickets from the passed date
     Vue.set(app.data, "pinned_tickets", JSON.parse(pinned_tickets));
+
+    // Add the priority tickets from the passed data
+    Vue.set(app.data, "priority_tickets", JSON.parse(priority_tickets));
 
     // Add the user tags from the passed user tags
     Vue.set(app.data, "user_tags", JSON.parse(user_tags));
