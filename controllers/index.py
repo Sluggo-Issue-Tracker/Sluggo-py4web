@@ -16,6 +16,11 @@ def clean():
     db(db.users).delete()
     db(db.tickets).delete()
     db(db.global_tag).delete()
+    db(db.sub_tickets).delete()
+    db(db.ticket_tag).delete()
+    db(db.user_tag).delete()
+    db(db.user_pins).delete()
+    db(db.comment).delete()
     return "ok"
 
 
@@ -27,10 +32,10 @@ def tickets():
     if user == None:
         redirect(URL('create_profile'))
         # TODO: is this ^ a comprehensive enough redirect?
-    
+
     # Grab pinned tickets
     pinned_tickets = Helper.get_tickets_for_ids(Helper.get_pinned_ticket_ids_for_user(Helper.get_user()))
-    
+
     # Attach tag list to tickets
     Helper.attach_tags_for_tickets(pinned_tickets)
 
