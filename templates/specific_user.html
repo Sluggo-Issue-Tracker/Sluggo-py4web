@@ -11,6 +11,7 @@
         <figure class="image is-square">
           <img v-bind:src="current_user.url">
         </figure>
+        <profile_uploader v-bind:url="icon_url" file_type="image/" v-bind:user="current_user.id" @submit="upload_image"></profile_uploader>
       </div>
       <!-- Text Fields -->
       <div class="tile is-parent is-vertical">
@@ -91,6 +92,7 @@
   let get_icon_url = "[[=XML(get_icons_url)]]";
   let show_user_url = "[[=XML(show_user_url)]]";
   let edit_user_url = "[[=XML(edit_user_url)]]";
+  let set_icon_url = "[[=XML(set_icons_url)]]";
   // Complete with other URLs you need.
   let user_email = "[[=XML(user_email)]]";
   let username = "[[=XML(username)]]";
@@ -98,5 +100,6 @@
   let admin = "[[=XML(admin)]]";
 </script>
 <script src="js/vue-select.min.js"></script>
+<script src="components/profile_uploader/profile.js"></script>
 <script src="js/specific-user.js"></script>
 [[end]]

@@ -11,6 +11,7 @@ let init = (app) => {
     app.data = {
         user_email: user_email,
         username: username,
+        icon_url: set_icon_url,
         master: {},
         current_user: {},
         options: [],
@@ -99,6 +100,9 @@ let init = (app) => {
         return app.data.isAdmin;
     };
 
+    app.upload_image = () => {
+        app.init();
+    };
 
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
@@ -108,6 +112,7 @@ let init = (app) => {
         resetCurrent: app.resetCurrent,
         checkUser: app.checkUser,
         checkAdmin: app.checkAdmin,
+        upload_image: app.upload_image,
     };
 
     // This creates the Vue instance.
