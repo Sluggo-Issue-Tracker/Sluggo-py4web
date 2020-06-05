@@ -7,11 +7,13 @@ import pathlib
 import uuid
 
 from py4web import action, request, abort, redirect, URL, Field
+from py4web.core import HTTP
 from datetime import datetime
 from dateutil.parser import parse
 from ..common import db, session, T, cache, auth, signed_url
 from ..models import Helper
 from ..components.comment import Comment
+from ..EventLogger import EventLogger
 
 # if only i could mark something const in python : (
 # idx 0 should always be not started
@@ -90,7 +92,8 @@ def ticket_details(ticket_id=None):
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
         user=user,
-        comments=comments(id=ticket_id)
+        comments=comments(id=ticket_id),
+        get_ticket_completion_url=URL('get_ticket_completion', ticket_id),
     )
 
 
@@ -172,6 +175,37 @@ def get_pinned_tickets():  # grabs pinned tickets for logged in user
     )
 
 
+# recursively count the number of complete subtickets before counting the root ticket
+def _get_ticket_completion(ticket_id):
+    completed = discovered = 0
+    sub_tickets = db(db.sub_tickets.parent_id == ticket_id).select()
+
+    for sub_ticket in sub_tickets:
+        sub_completed, sub_discovered = _get_ticket_completion(sub_ticket.child_id)
+        completed += sub_completed
+        discovered += sub_discovered
+
+    ticket = db(db.tickets.id == ticket_id).select(db.tickets.completed).first()
+    if ticket.completed is not None:
+        completed += 1
+    discovered += 1
+
+    return completed, discovered
+
+
+@action('get_ticket_completion/<ticket_id>', method="GET")
+@action.uses(auth.user, db)
+def get_ticket_completion(ticket_id=None):
+    if not ticket_id:
+        raise HTTP(500)
+
+    completed, discovered = _get_ticket_completion(ticket_id)
+
+    return dict(percentage=completed / discovered if discovered != 0 else 0)
+
+
+# create ----------------------------------------------------------------------------------------------------
+
 # helper for adding tags
 def register_tag(tag_list, ticket_id):
     for tag in tag_list:
@@ -180,7 +214,6 @@ def register_tag(tag_list, ticket_id):
         db.ticket_tag.insert(ticket_id=ticket_id, tag_id=tag_id)
 
 
-# create ----------------------------------------------------------------------------------------------------
 @action('add_tickets', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def add_tickets():
@@ -292,12 +325,15 @@ def update_ticket_progress():
     idx = valid_statuses.index(action)
     print(idx)
     if idx == 0:  # not started
+        EventLogger.log_status_change("Not Started", ticket_id, Helper.get_user())
         ticket.update_record(started=None, completed=None)
 
     elif idx == 1:  # in progress
+        EventLogger.log_status_change("In Progress", ticket_id, Helper.get_user())
         ticket.update_record(started=Helper.get_time(), completed=None)
 
     elif idx == 2:  # completed
+        EventLogger.log_status_change("Completed", ticket_id, Helper.get_user())
         ticket.update_record(
             started=Helper.get_time() if ticket.started is None else ticket.started,
             completed=Helper.get_time()

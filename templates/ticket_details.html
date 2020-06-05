@@ -51,6 +51,16 @@
                    [[=comments]]
                 </div>
                 <div class="column">
+                    <div style="border-bottom: darkgray 1px solid">
+                        <div class="level" >
+                            <div class="level-left">
+                                <div class="level-item"><span>Progress</span></div>
+                            </div>
+                        </div>
+                        <progress class="progress" :value="progress" max="1"></progress>
+                        <br>
+                    </div>
+                    <br>
                      <div style="border-bottom: darkgray 1px solid">
                         <div class="level" >
                             <div class="level-left">
@@ -164,6 +174,7 @@
    let get_users_by_tag_list_url="[[=XML(get_users_by_tag_list_url)]]";
    let assign_user_url = "[[=XML(assign_user_url)]]";
    let current_user = "[[=XML(user)]]";
+   let get_ticket_completion_url = "[[=XML(get_ticket_completion_url)]]";
 </script>
 
 <script src="js/vue-select.min.js"></script>

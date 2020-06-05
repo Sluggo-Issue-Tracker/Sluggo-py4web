@@ -9,6 +9,7 @@ import uuid
 from py4web import action, request, abort, redirect, URL, Field
 from .. common import db, session, T, cache, auth, signed_url
 from .. helper import Helper
+from .. EventLogger import EventLogger
 
 @action('clean')
 @action.uses(auth.user, db)
@@ -44,6 +45,10 @@ def tickets():
     # Attach data to priority tickets
     Helper.attach_tags_for_tickets(priority_tickets)
     Helper.attach_web_due_for_tickets(priority_tickets)
+    # Grab recent updates
+    recentUpdates = EventLogger.get_recent_updates_for_user(Helper.get_user())
+    Helper.attach_web_names_for_events(recentUpdates)
+    print(recentUpdates)
 
     return(dict(
         user_email=Helper.get_user_email(),
@@ -55,5 +60,7 @@ def tickets():
         pinned_tickets = Helper.safe_json_dumps(pinned_tickets),
         priority_tickets = Helper.safe_json_dumps(priority_tickets),
         user_tags = Helper.safe_json_dumps(user_tags)
+        user_tags = Helper.safe_json_dumps(user_tags),
+        recent_events = Helper.safe_json_dumps(recentUpdates)
     ))
 
