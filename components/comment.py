@@ -6,6 +6,7 @@ from py4web import action, URL, request
 from yatl.helpers import XML
 from py4web.utils.url_signer import URLSigner
 from py4web.core import Fixture, HTTP
+from ..EventLogger import EventLogger
 
 
 class Comment(Fixture):
@@ -86,6 +87,8 @@ class Comment(Fixture):
         user_id = self.auth.current_user.get('id') if self.auth.current_user else None
         first_name = self.auth.current_user.get('first_name') if self.auth.current_user else None
         last_name = self.auth.current_user.get('last_name') if self.auth.current_user else None
+
+        EventLogger.log_comment(content, ticket_id, user_id)
 
         return dict(id=self.db.comment.insert(ticket_id=ticket_id, content=content, user_id=user_id),
                     first_name=first_name, last_name=last_name)
