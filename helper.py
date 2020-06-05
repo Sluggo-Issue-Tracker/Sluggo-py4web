@@ -251,3 +251,8 @@ class Helper:
         orderedPriorityTickets = orderedPriorityTickets[:3]
 
         return orderedPriorityTickets
+    
+    @staticmethod
+    def attach_web_due_for_tickets(tickets): # TODO: clean this up and unify it with other dates
+        for ticket in tickets:
+            ticket["web_due"] = ticket["due"].isoformat()

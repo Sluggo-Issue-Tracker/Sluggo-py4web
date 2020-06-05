@@ -12,23 +12,23 @@
              <p class="subtitle">It's {{formatted_date}}. Here's your overview:</p>
              <div class="level">
                 <div class="level-item level-left">
-                   <p class="is-size-4 has-text-weight-semibold">Priority Tasks (placeholder)</p>
+                   <p class="is-size-4 has-text-weight-semibold">Priority Tasks</p>
                 </div>
              </div>
-             <div v-for="t in priority_tickets" @click="placeholder()" class="notification is-danger">
+             <div v-for="t in priority_tickets" @click="placeholder()" class="notification is-info">
                 <div class="columns">
-                   <div class="column is-four-fifths">
+                   <div class="column">
                       <p class="is-size-5">Ticket {{t.id}} | {{t.tag_string}} | {{t.ticket_title}}</p>
-                      <p>Due {{t.due}}</p>
+                      <p>Due {{t.web_due}}</p>
                    </div>
-                   <div class="column"></div>
+                   <!-- <div class="column"></div>
                    <div class="column">
                       <div class="buttons">
                          <div class="button is-inverted is-danger is-outlined">
                             <p>Complete</p>
                          </div>
                       </div>
-                   </div>
+                   </div> -->
                 </div>
              </div>
     
