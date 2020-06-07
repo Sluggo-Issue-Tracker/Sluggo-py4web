@@ -11,6 +11,9 @@
         return {
             fileerror: false,
             uploading: false,
+            success: false,
+            sizeerror: false,
+            servererror: false
         };
     };
 
@@ -31,12 +34,24 @@
             let file_type = file.type;
             let file_name = file.name;
 
+            // If wrong filetype, tell the user and return
             if(!file_type.includes(self.file_type)) {
                 self.uploading = false;
                 self.fileerror = true;
                 app.sleep(3000)()
                     .then(() => {
                         self.fileerror = false;
+                });
+                return;
+            }
+
+            // If the file is too large, tell the user and return
+            if(file.size > 1000000) {
+                self.uploading = false;
+                self.sizeerror = true;
+                app.sleep(3000)()
+                    .then(() => {
+                        self.sizeerror = false;
                 });
                 return;
             }
@@ -55,13 +70,20 @@
             axios.post(self.url, data, config)
             .then((response) => {
                 self.uploading = false;
+                self.success = true;
+                app.sleep(2000)()
+                        .then(() => {
+                            self.success = false;
+
+                    });
                 self.submit();
+
             }).catch((error) => {
                 self.uploading = false;
-                self.fileerror = true;
-                app.sleep(3000)()
+                self.servererror = true;
+                app.sleep(2000)()
                         .then(() => {
-                            self.fileerror = false;
+                            self.servererror = false;
                     });
             });
 

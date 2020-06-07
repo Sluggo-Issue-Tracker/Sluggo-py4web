@@ -128,7 +128,7 @@ def edit_tag():
 def add_tag():
     text = request.json.get('tag_text')
 
-    t_id = db.global_tag.update_or_insert(tag_name=text)
+    t_id = db.global_tag.update_or_insert(tag_name=text, approved=True)
     return dict(id=t_id)
 
 @action('admin/del_tag', method="POST")
@@ -165,7 +165,7 @@ def generate_bios():
     # Sort these each alphabetically based on last / first name
     def auth_user_name_key(x):
         return (x["auth_user"]["last_name"], x["auth_user"]["first_name"])
-    
+
     sortedAdmins = sorted(newAdmins, key=auth_user_name_key)
     sortedNonAdmins = sorted(newNonAdmins, key=auth_user_name_key)
 

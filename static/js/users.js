@@ -70,7 +70,7 @@ let init = (app) => {
                 // We create a promise for when the image loads.
                 let p = axios.get(
                     get_icon_url,
-                    {params: {"img": user["icon"]}}).then((result) => {
+                    {params: {"id": user["id"]}}).then((result) => {
                     // Puts the image URL.
                     // See https://vuejs.org/v2/guide/reactivity.html#For-Objects
                     Vue.set(user_el, 'url', result.data.imgbytes);

@@ -4,6 +4,7 @@
 from datetime import datetime, timezone
 import json
 from . common import db, Field, auth
+import pathlib
 
 class Helper:
 
@@ -170,3 +171,18 @@ class Helper:
         pinnedTicketsQuery = db(db.user_pins.auth_user_id == given_user_id).select().as_list()
         pinnedTickets = list(map(lambda x: x['ticket_id'], pinnedTicketsQuery))
         return pinnedTickets
+
+    @staticmethod
+    def cleanup_icon(row_id):
+        ''' When adding new images, it will delete
+            the old profile picture to not take up
+            too much space on the filesystem.'''
+        row = db(db.users.id == row_id).select().first()
+        if row == None or row['icon'] == 'default.jpg':
+            return
+
+        img_name = row['icon']
+        path = pathlib.Path(__file__).resolve().parent / 'static' / 'images' / 'profile_pics' / img_name
+        if path.exists():
+            path.unlink()
+
