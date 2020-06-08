@@ -21,3 +21,9 @@ settings_private.py
 .vscode
 # private folder for gcs
 private
+
+
+
+# ignore all user profile pics besides the required default one
+static/images/profile_pics/*
+!static/images/profile_pics/default.jpg
