@@ -5,6 +5,7 @@ possibly should be in the controller as users idk tho
 import base64
 import pathlib
 import uuid
+import os
 
 from py4web import action, request, abort, redirect, URL, Field
 from py4web.utils.form import Form, FormStyleBulma
@@ -77,7 +78,7 @@ def add_user():
         role=role,
         bio=request.json.get('bio'),
         user=Helper.get_user(),
-        icon=URL('static', 'logo.png'),
+        icon='default.jpg',
     )
 
     tags = request.json.get('tags')
@@ -111,7 +112,7 @@ def attach_user_information(users):
 
 
 @action('users/get_users')
-@action.uses(signed_url.verify(), auth.user)
+@action.uses(signed_url.verify(), auth.user, db)
 def get_users():
     users = db(db.users).select().as_list()
 
@@ -120,7 +121,7 @@ def get_users():
 
 
 @action('get_users_by_tag_list', method="POST")
-@action.uses(auth.user)
+@action.uses(auth.user, db)
 def get_users_by_tag_list():
     tag_list = request.json.get('tag_list')
 
@@ -149,7 +150,7 @@ def get_users_by_tag_list():
 
 
 @action('users/show_user')
-@action.uses(auth.user)
+@action.uses(auth.user, db)
 def show_user():
     id = request.params.id
     user = db(db.users.id == id).select().as_list()[0]
@@ -211,14 +212,19 @@ def edit_user():
 
 
 @action('users/get_icons')
-@action.uses()
-def get_img():
+@action.uses(auth.user, db)
+def get_usr_icons():
     """Returns a single image, URL encoded."""
     # Reads the image.
-    img_name = request.params.img
-    img_file = pathlib.Path(__file__).resolve().parent.parent / 'static' / 'images' / img_name
+    u_id = request.params.id
+    row = db(db.users.id == u_id).select().first()
+    img_name = "default.jpg"
+    if row != None:
+        img_name = row["icon"]
+
+    img_file = pathlib.Path(__file__).resolve().parent.parent / 'static' / 'images' / 'profile_pics' / img_name
     if not img_file.exists():
-        img_file = pathlib.Path(__file__).resolve().parent.parent / 'static' / 'images' / "default.jpg"
+        img_file = pathlib.Path(__file__).resolve().parent.parent / 'static' / 'images' / 'profile_pics' /  "default.jpg"
     with img_file.open(mode='rb') as f:
         img_bytes = f.read()
         b64_image = base64.b64encode(img_bytes).decode('utf-8')
@@ -228,17 +234,24 @@ def get_img():
 
 @action('users/set_icons', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
-def set_img():
+def set_usr_icons():
     id = request.forms.get('id')
     row = db(db.users.id == id).select().first()
+
+    if row == None:
+        return
+
+    Helper.cleanup_icon(id)
 
     file_name = request.forms.get('name')
     data = request.files.get('file')
     if file_name and data and data.file:
             raw = data.file.read() # This is dangerous for big files
-            img_name = data.filename
-            path = pathlib.Path(__file__).resolve().parent.parent / 'static' / 'images' / img_name
+            _, ext = os.path.splitext(data.filename)
+            img_name = uuid.uuid4().hex + ext
+            path = pathlib.Path(__file__).resolve().parent.parent / 'static' / 'images' / 'profile_pics' / img_name
             path.write_bytes(raw)
             row.update_record(icon=img_name)
-
+    else:
+        row.update_record(icon='default.jpg')
     return "ok"

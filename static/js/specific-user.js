@@ -58,10 +58,10 @@ let init = (app) => {
                 app.data.current_user.role = app.data.selected;
                 app.data.master = {...app.data.current_user};
                 app.data.is_pending = false;
-                app.show_value(false);
+                app.show_value(1);
             }).catch((error) => {
                 console.log(error);
-                app.show_value(true);
+                app.show_value(0);
             });
         }
     };
@@ -76,13 +76,16 @@ let init = (app) => {
     app.show_value = (flag) => {
         // Flashes an error if an error occurred.
 
-        if(flag === true) {
+        if(flag === 0) {
             app.data.error = true;
             app.data.success = false;
         }
-        else {
+        else if(flag == 1) {
             app.data.error = false;
             app.data.success = true;
+        }
+        else {
+            app.data.error = false;
         }
         app.data.is_pending = false;
         app.sleep(1000)()
@@ -101,7 +104,13 @@ let init = (app) => {
     };
 
     app.upload_image = () => {
-        app.init();
+        axios.get(get_icon_url, {params: {"id": app.data.current_user.id}})
+            .then((result) => {
+                // Puts the image URL.
+                // See https://vuejs.org/v2/guide/reactivity.html#For-Objects
+                Vue.set(app.data.current_user, 'url', result.data.imgbytes);
+                app.data.master = {...app.data.current_user};
+        });
     };
 
     // We form the dictionary of all methods, so we can assign them
@@ -127,15 +136,13 @@ let init = (app) => {
             app.data.current_user = result.data.user;
             app.data.options = result.data.tags;
             app.data.selected = app.data.current_user.role;
-            axios.get(
-                    get_icon_url,
-                    {params: {"img": app.data.current_user["icon"]}}).then((result) => {
+            axios.get(get_icon_url, {params: {"id": app.data.current_user.id}})
+                .then((result) => {
                     // Puts the image URL.
                     // See https://vuejs.org/v2/guide/reactivity.html#For-Objects
                     Vue.set(app.data.current_user, 'url', result.data.imgbytes);
-                }).then((response) => {
                     app.data.master = {...app.data.current_user};
-                });
+            });
 
 
         });

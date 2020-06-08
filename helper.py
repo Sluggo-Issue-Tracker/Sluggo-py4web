@@ -4,6 +4,7 @@
 from datetime import datetime, date, timezone, timedelta
 import json
 from . common import db, Field, auth
+import pathlib
 
 class Helper:
 
@@ -300,4 +301,19 @@ class Helper:
     def attach_web_names_for_events(events):
         for e in events:
             e["web_action_user_name"] = Helper.get_username_for_user(e["action_user"])
-        
+            
+            
+          
+    @staticmethod
+    def cleanup_icon(row_id):
+        ''' When adding new images, it will delete
+            the old profile picture to not take up
+            too much space on the filesystem.'''
+        row = db(db.users.id == row_id).select().first()
+        if row == None or row['icon'] == 'default.jpg':
+            return
+
+        img_name = row['icon']
+        path = pathlib.Path(__file__).resolve().parent / 'static' / 'images' / 'profile_pics' / img_name
+        if path.exists():
+            path.unlink()

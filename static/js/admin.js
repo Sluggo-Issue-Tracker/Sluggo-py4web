@@ -128,7 +128,7 @@ let init = (app) => {
             app.data.all_tags.unshift({
                 id: result.data.id,
                 tag_name: val,
-                approved: false,
+                approved: true,
             });
             app.reindex(app.data.all_tags);
             app.data.add_tag_text = "";

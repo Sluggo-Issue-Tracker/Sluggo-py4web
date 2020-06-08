@@ -11,7 +11,7 @@
         <figure class="image is-square">
           <img v-bind:src="current_user.url">
         </figure>
-        <profile_uploader v-bind:url="icon_url" file_type="image/" v-bind:user="current_user.id" @submit="upload_image"></profile_uploader>
+        <profile_uploader v-if="checkUser()" v-bind:url="icon_url" file_type="image/" v-bind:user="current_user.id" @submit="upload_image"></profile_uploader>
       </div>
       <!-- Text Fields -->
       <div class="tile is-parent is-vertical">
