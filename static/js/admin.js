@@ -16,7 +16,7 @@ let init = (app) => {
         all_tags: [],
         add_tag_text: "",
         length_check: false,
-
+        user_email : user_email,
 
     };
 
@@ -42,7 +42,18 @@ let init = (app) => {
                                 id: user.id,
                                 role: user.role })
         .then((response) => {
-            app.init();
+            axios.get(get_unapproved_users_url).then((result) => {
+                let users = result.data.users;
+                app.reindex(users);
+                app.data.users = users;
+            });
+
+            axios.get(get_users_url).then((result) => {
+                let users = result.data.users;
+                users.sort((a,b) => (a.role > b.role) ? 1 : ((b.role > a.role) ? -1 : 0));
+                app.reindex(users);
+                app.data.all_users = users;
+            });
         }).catch((error) => {
             console.log(error);
         });
@@ -60,7 +71,18 @@ let init = (app) => {
                                 id: tag.id,
                                 approved: tag.approved })
         .then((response) => {
-            app.init();
+            axios.get(get_unapproved_tags_url).then((result) => {
+                let tags = result.data.tags;
+                app.reindex(tags);
+                app.data.tags = tags;
+            });
+
+            axios.get(get_tags_url).then((result) => {
+                let tags = result.data.tags;
+                tags.sort((a,b) => (a.approved > b.approved) ? 1 : ((b.approved > a.approved) ? -1 : 0));
+                app.reindex(tags);
+                app.data.all_tags = tags;
+            });
         }).catch((error) => {
             console.log(error);
         });
@@ -73,7 +95,18 @@ let init = (app) => {
         axios.post(del_tag_url, {
                                 id: tag.id })
         .then((response) => {
-            app.init();
+            axios.get(get_unapproved_tags_url).then((result) => {
+                let tags = result.data.tags;
+                app.reindex(tags);
+                app.data.tags = tags;
+            });
+
+            axios.get(get_tags_url).then((result) => {
+                let tags = result.data.tags;
+                tags.sort((a,b) => (a.approved > b.approved) ? 1 : ((b.approved > a.approved) ? -1 : 0));
+                app.reindex(tags);
+                app.data.all_tags = tags;
+            });
         }).catch((error) => {
             console.log(error);
         });
