@@ -148,7 +148,7 @@ class Helper:
             # Compare days
             if(currentTime - dueTime).days > 0:
                 overdueCount += 1
-        
+
         return overdueCount
 
 
@@ -236,7 +236,7 @@ class Helper:
         if authUserID is None:
             print("Error fetching priority tickets - no user ID")
             return None
-        
+
         assignedTickets = []
 
         # Fetch assigned tickets
@@ -247,7 +247,7 @@ class Helper:
         user_tags = Helper.get_user_tags_ids_for_user_id(given_user_id)
         for tag_id in user_tags:
             allTagTickets += db(db.tickets.id == tag_id).select().as_list()
-        
+
         # Deduplicate tagTickets
         # stupid and O(n^2)
         tagTickets = []
@@ -281,13 +281,13 @@ class Helper:
         orderedPriorityTickets = orderedPriorityTickets[:3]
 
         return orderedPriorityTickets
-    
+
     @staticmethod
     def attach_web_due_for_tickets(tickets): # TODO: clean this up and unify it with other dates
         for ticket in tickets:
             if ticket.get("due") is not None:
                 ticket["web_due"] = ticket["due"].isoformat()
-            
+
     # MARK: Assigned
     @staticmethod
     def get_assigned_ticket_ids_for_user(given_user_id):
@@ -301,9 +301,9 @@ class Helper:
     def attach_web_names_for_events(events):
         for e in events:
             e["web_action_user_name"] = Helper.get_username_for_user(e["action_user"])
-            
-            
-          
+
+
+
     @staticmethod
     def cleanup_icon(row_id):
         ''' When adding new images, it will delete
