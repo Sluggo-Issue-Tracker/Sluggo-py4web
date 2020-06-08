@@ -12,7 +12,7 @@ from datetime import datetime
 from dateutil.parser import parse
 from ..common import db, session, T, cache, auth, signed_url
 from ..models import Helper
-from ..components.comment import Comment
+from ..components import userValidator, comments
 from ..EventLogger import EventLogger
 
 # if only i could mark something const in python : (
@@ -37,7 +37,7 @@ def generate_ticket_status(ticket):
 
 # Read -----------------------------------------------------------------------
 @action('tickets')
-@action.uses('tickets.html', signed_url, auth.user)
+@action.uses('tickets.html', signed_url, auth.user, userValidator)
 def tickets():
     tag_id = request.query.get("tag_id")
     return dict(
@@ -61,11 +61,10 @@ def tickets():
 
 
 # another floater, perhaps this should be a class
-comments = Comment("comment", session, signer=signed_url, db=db, auth=auth)
 
 
 @action('ticket_details/<ticket_id>', method=['GET'])
-@action.uses('ticket_details.html', signed_url, auth.user, comments)
+@action.uses('ticket_details.html', signed_url, auth.user, comments, userValidator)
 def ticket_details(ticket_id=None):
     # return all the links that the front end will use of requests
     full_user = db(db.users.user == Helper.get_user()).select().first()
