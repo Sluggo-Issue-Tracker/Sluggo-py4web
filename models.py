@@ -91,14 +91,25 @@ db.define_table(
     Field('created', 'datetime', default=Helper.get_time())
 )
 
+db.define_table(
+    'events',
+    Field('created', 'datetime', default=Helper.get_time()),
+    Field('type', 'string'),
+    Field('description', 'string'),
+    Field('related_ticket', 'reference tickets'),
+    Field('action_user', 'reference auth_user', default=Helper.get_user())
+)
+
 # TODO tags, roles, other fun things that require relationships
 
 # TODO readables vs not readables (relevant? can we even use default forms?)
 # TODO requirements for forms (again, is this even relevant?)
 
+# TODO: We need deletes to cascade for things like events
 db.sub_tickets.ondelete = 'NO ACTION'  # We don't want relationships to affect tickets
 db.tickets.ondelete = 'NO ACTION'
 db.ticket_tag.ondelete = 'NO ACTION'
 db.user_tag.ondelete = 'NO ACTION'
 db.user_pins.ondelete = 'NO ACTION'
+db.comment.ondelete = 'NO ACTION'
 db.commit()

@@ -36,8 +36,10 @@ let init = (app) => {
         tag_options: [],
         status_strings: [],
         possible_users: [],
+        progress: 0.0,
         // control ------------------------------------------------------------------------------
         edit: false,
+        editable: false,
         show_modal: false,
         color_class: {
             0: "is-link",
@@ -140,6 +142,9 @@ let init = (app) => {
         }).then((response) => {
             app.data.status = response.data.status;
             app.data.current_status = response.data.status;
+            return axios.get(get_ticket_completion_url)
+        }).then((result) => {
+            app.data.progress = result.data.percentage;
         }).catch((error) => {
             console.log(error);
         });
@@ -223,6 +228,7 @@ let init = (app) => {
     app.init = () => {
         axios.get(get_ticket_by_id_url).then((result) => {
             app.data.ticket = result.data.ticket;
+            app.data.editable = result.data.editable;
 
             app.set_assigned(result.data.assigned_user);
             app.set_fields(result.data.ticket);
@@ -246,6 +252,9 @@ let init = (app) => {
            app.data.status_strings = result.data.valid_statuses;
         });
         app.data.current_user = JSON.parse(current_user.replace(/'/g,'"'));
+        axios.get(get_ticket_completion_url).then((result) => {
+           app.data.progress = result.data.percentage;
+        });
     };
 
     // Call to the initializer.

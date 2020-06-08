@@ -1,7 +1,7 @@
 # quick and dirty moving the helper functions to their own class because our imports
 # were getting way too long
 
-from datetime import datetime, timezone
+from datetime import datetime, date, timezone, timedelta
 import json
 from . common import db, Field, auth
 import pathlib
@@ -33,6 +33,16 @@ class Helper:
     @staticmethod
     def get_user():
         return auth.current_user.get('id') if auth.current_user else None
+
+    def get_our_user_id(auth_user_id):
+        # We need to get usage of users and auth users more consistently named
+        # This is utterly stupid
+        return db(db.users.user == auth_user_id).select().first() or None
+
+    @staticmethod
+    def get_username_for_user(user_id):
+        auth = db(db.auth_user.id == user_id).select().first()
+        return auth["first_name"] + " " + auth["last_name"]
 
     @staticmethod
     def get_role():
@@ -94,6 +104,10 @@ class Helper:
         return list
 
     @staticmethod
+    def get_user_tags_ids_for_user_id(user_id):
+        return list(map(lambda x: x["tag_id"], db(db.user_tag.user_id == user_id).select().as_list()))
+
+    @staticmethod
     def get_web_tag_list_for_user_id(user_id):
         tagRels = db(db.user_tag.user_id == user_id).select().as_list()
         tags = []
@@ -109,10 +123,33 @@ class Helper:
             workingWebTag = dict()
             workingWebTag["tag_name"] = tag.tag_name
             workingWebTag["tag_id"] = tag.id
+            workingWebTag["overdue_count"] = Helper.get_overdue_count_for_tag_and_user(tag.id, user_id)
 
             webTagPairs.append(workingWebTag)
 
         return webTagPairs
+
+    @staticmethod
+    def get_overdue_count_for_tag_and_user(tag_id, user_id):
+        # MARK: Overdue indicator fetching
+        ticket_tag_rels = db(db.ticket_tag.tag_id == tag_id).select()
+        tickets = []
+        overdueCount = 0
+        for rel in ticket_tag_rels:
+            tickets.append(db(db.tickets.id == rel.ticket_id).select().first())
+        for ticket in tickets:
+            # TODO: Migrate this into its overdue checking function
+            # Get current date and time
+            currentTime = datetime.utcnow().date()
+            # Get datetime of ticket due date
+            dueTime = ticket.due
+            if dueTime is None: # No due date
+                continue
+            # Compare days
+            if(currentTime - dueTime).days > 0:
+                overdueCount += 1
+        
+        return overdueCount
 
 
     @staticmethod
@@ -172,6 +209,101 @@ class Helper:
         pinnedTickets = list(map(lambda x: x['ticket_id'], pinnedTicketsQuery))
         return pinnedTickets
 
+    # MARK: Priority Tickets
+    @staticmethod
+    def get_priority_ticket_ids_for_user(given_user_id):
+        # TODO optimize all queries; these are terrible
+        # Priority Ticket Ordering:
+        # 1. Assigned to you and overdue
+        # 2. In your tags and overdue
+        # 3. Assigned to you, not overdue
+        # 4. Your Tags
+        # TODO: We need a better way to track what you're assigned to and also add this to homepage
+
+        # Overdue methods
+        def get_overdue(ticket):
+            # Get the date
+            today_date = datetime.utcnow().date()
+            if ticket["due"] is None:
+                return 0 # I think this is a sane default
+            return (today_date - ticket["due"]).days
+
+        def is_overdue(ticket):
+            return get_overdue(ticket) > 0
+
+        # Get auth user ID
+        authUserID = db(db.users.id == given_user_id).select().first().user
+        if authUserID is None:
+            print("Error fetching priority tickets - no user ID")
+            return None
+        
+        assignedTickets = []
+
+        # Fetch assigned tickets
+        assignedTickets += db(db.tickets.assigned_user == given_user_id).select().as_list()
+
+        # Fetch your tags' tickets
+        allTagTickets = []
+        user_tags = Helper.get_user_tags_ids_for_user_id(given_user_id)
+        for tag_id in user_tags:
+            allTagTickets += db(db.tickets.id == tag_id).select().as_list()
+        
+        # Deduplicate tagTickets
+        # stupid and O(n^2)
+        tagTickets = []
+        for ticket in allTagTickets:
+            if ticket not in tagTickets and ticket not in assignedTickets:
+                tagTickets.append(ticket)
+
+        # Now we filter and return in the desired order
+        orderedPriorityTickets = []
+
+        # Add assignedTickets which are overdue
+        overdueAssignedTickets = list(filter(lambda x: is_overdue(x), assignedTickets))
+        overdueAssignedTickets.sort(key=get_overdue, reverse=True)
+        orderedPriorityTickets += overdueAssignedTickets
+
+        # Add tag tickets which are overdue
+        overdueTagTickets = list(filter(lambda x: is_overdue(x), tagTickets))
+        overdueTagTickets.sort(key=get_overdue, reverse=True)
+        orderedPriorityTickets += overdueTagTickets
+
+        # Add assigned tickets which are not overdue
+        assignedNotOverdueTickets = list(filter(lambda x: not is_overdue(x), assignedTickets))
+        assignedNotOverdueTickets.sort(key=get_overdue, reverse=True)
+        orderedPriorityTickets += assignedNotOverdueTickets
+
+        # Add tag tickets which are not overdue
+        tagNotOverdueTickets = list(filter(lambda x: not is_overdue(x), tagTickets))
+        tagNotOverdueTickets.sort(key=get_overdue, reverse=True)
+        orderedPriorityTickets += tagNotOverdueTickets
+
+        orderedPriorityTickets = orderedPriorityTickets[:3]
+
+        return orderedPriorityTickets
+    
+    @staticmethod
+    def attach_web_due_for_tickets(tickets): # TODO: clean this up and unify it with other dates
+        for ticket in tickets:
+            if ticket.get("due") is not None:
+                ticket["web_due"] = ticket["due"].isoformat()
+            
+    # MARK: Assigned
+    @staticmethod
+    def get_assigned_ticket_ids_for_user(given_user_id):
+        # Assuming parameter is the auth.user object
+        # Query for pinned tickets given user ID
+        assignedTicketsQuery = db(db.tickets.assigned_user == given_user_id).select().as_list()
+        assignedTickets = list(map(lambda x: x['id'], assignedTicketsQuery))
+        return assignedTickets
+
+    @staticmethod
+    def attach_web_names_for_events(events):
+        for e in events:
+            e["web_action_user_name"] = Helper.get_username_for_user(e["action_user"])
+            
+            
+          
     @staticmethod
     def cleanup_icon(row_id):
         ''' When adding new images, it will delete
@@ -185,4 +317,3 @@ class Helper:
         path = pathlib.Path(__file__).resolve().parent / 'static' / 'images' / 'profile_pics' / img_name
         if path.exists():
             path.unlink()
-

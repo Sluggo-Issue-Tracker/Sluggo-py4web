@@ -21,7 +21,7 @@
                    </div>
                </div>
                 <div class="level-right">
-                   <div class="level-item" v-if="!edit && check_user()" >
+                   <div class="level-item" v-if="!edit && editable" >
                        <button class="button is-success" @click="edit = true">Edit</button>
                    </div>
                     <div class="level-item" v-if="edit">
@@ -32,8 +32,6 @@
                     </div>
                 </div>
             </div>
-
-
             <section style="border-bottom: darkgray 1px solid;"></section>
         </div>
     </section>
@@ -51,8 +49,18 @@
                    [[=comments]]
                 </div>
                 <div class="column">
-                     <div style="border-bottom: darkgray 1px solid">
+                    <div style="border-bottom: darkgray 1px solid">
                         <div class="level" >
+                            <div class="level-left">
+                                <div class="level-item"><span>Progress</span></div>
+                            </div>
+                        </div>
+                        <progress class="progress" :value="progress" max="1"></progress>
+                        <br>
+                    </div>
+                    <br>
+                     <div style="border-bottom: darkgray 1px solid">
+                        <div class="level">
                             <div class="level-left">
                                 <div class="level-item"><span>Tags</span></div>
                             </div>
@@ -128,7 +136,7 @@
                     <br>
                     <div>
                         <span>
-                       <a class="has-text-danger" v-if="!delete_status && check_user()" @click="delete_status = true">
+                       <a class="has-text-danger" v-if="!delete_status && editable" @click="delete_status = true">
                            Delete Ticket
                        </a>
                         </span>
@@ -164,6 +172,7 @@
    let get_users_by_tag_list_url="[[=XML(get_users_by_tag_list_url)]]";
    let assign_user_url = "[[=XML(assign_user_url)]]";
    let current_user = "[[=XML(user)]]";
+   let get_ticket_completion_url = "[[=XML(get_ticket_completion_url)]]";
 </script>
 
 <script src="js/vue-select.min.js"></script>
