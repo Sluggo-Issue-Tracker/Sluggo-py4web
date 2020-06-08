@@ -130,10 +130,7 @@ let init = (app) => {
     };
 
     app.check_ticket_text = (ticket) => {
-      return (ticket.ticket_text.trim().length > 0 &&
-              ticket.ticket_title.trim().length > 0 &&
-              ticket.ticket_status.trim().length > 0 &&
-              ticket.ticket_priority.trim().length > 0);
+      return ticket.ticket_title.trim().length > 0;
     };
 
     app.delete_ticket = (ticket_idx) => {
