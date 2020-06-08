@@ -13,7 +13,7 @@ from yatl.helpers import A
 from pydal.validators import *
 from ..common import db, session, T, cache, auth, signed_url
 from ..models import Helper
-
+from ..components import userValidator
 
 
 def get_info(users):
@@ -31,16 +31,12 @@ def get_info(users):
         user['user_email'] = person.get('email')
 
 
-
-
 @action('admin')
-@action.uses('admin.html', signed_url, auth.user)
+@action.uses('admin.html', signed_url, auth.user, userValidator)
 def admin():
     user = db(db.users.user == Helper.get_user()).select().first()
     if user == None or user['role'] != "admin":
         redirect(URL('index'))
-
-
 
     return dict(
         get_users_url=URL('admin/get_users'),
@@ -58,12 +54,14 @@ def admin():
         user=auth.get_user()
     )
 
+
 @action('admin/get_unapproved_tags')
 @action.uses(auth.user)
 def get_unapproved_tags():
     tags = db(db.global_tag.approved == False).select().as_list()
 
     return dict(tags=tags)
+
 
 @action('admin/get_unapproved_users')
 @action.uses(auth.user)
@@ -72,6 +70,7 @@ def get_unapproved_users():
 
     get_info(users)
     return dict(users=users)
+
 
 @action('admin/get_users')
 @action.uses(auth.user)
@@ -112,6 +111,7 @@ def set_tag():
     tag.update_record(approved=request.json.get('approved'))
     return "ok"
 
+
 @action('admin/edit_tag', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def edit_tag():
@@ -123,6 +123,7 @@ def edit_tag():
     tag.update_record(tag_name=request.json.get('val'))
     return "ok"
 
+
 @action('admin/add_tag', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def add_tag():
@@ -131,22 +132,24 @@ def add_tag():
     t_id = db.global_tag.update_or_insert(tag_name=text)
     return dict(id=t_id)
 
+
 @action('admin/del_tag', method="POST")
 @action.uses(signed_url.verify(), auth.user, db)
 def del_tag():
-
     id = request.json.get('id')
     if id is not None:
         db(db.global_tag.id == id).delete()
         return "ok"
 
+
 # MARK: Bios HTML Generation
 # Ported from Isaac's old Swift script
 @action('admin/generate_bios', method="GET")
-@action.uses("bios_template.html", signed_url.verify(), auth.user, db) # this has to be manually triggered - long term automate this
+@action.uses("bios_template.html", signed_url.verify(), auth.user,
+             userValidator, db)  # this has to be manually triggered - long term automate this
 def generate_bios():
     # TODO: Migrate to proper image resource
-    IMGSRC = "https://slugbotics.com/res/images/team/woahtreesman1920.jpg" # Tree pic SB web
+    IMGSRC = "https://slugbotics.com/res/images/team/woahtreesman1920.jpg"  # Tree pic SB web
     # Grab users, separated from users and nonusers
     admins = db(db.users.role == "admin").select().as_list()
     nonAdmins = db(db.users.role == "approved").select().as_list()
@@ -155,7 +158,8 @@ def generate_bios():
     def attach_auth_users(users):
         newUsers = list()
         for user in users:
-            newDict = dict(user, img_url="https://slugbotics.com/res/images/team/woahtreesman1920.jpg",auth_user=db(db.auth_user.id == user["user"]).select().as_list()[0])
+            newDict = dict(user, img_url="https://slugbotics.com/res/images/team/woahtreesman1920.jpg",
+                           auth_user=db(db.auth_user.id == user["user"]).select().as_list()[0])
             newUsers.append(newDict)
         return newUsers
 
@@ -165,7 +169,7 @@ def generate_bios():
     # Sort these each alphabetically based on last / first name
     def auth_user_name_key(x):
         return (x["auth_user"]["last_name"], x["auth_user"]["first_name"])
-    
+
     sortedAdmins = sorted(newAdmins, key=auth_user_name_key)
     sortedNonAdmins = sorted(newNonAdmins, key=auth_user_name_key)
 

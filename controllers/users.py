@@ -11,11 +11,12 @@ from py4web.utils.form import Form, FormStyleBulma
 from yatl.helpers import A
 from pydal.validators import *
 from ..common import db, session, T, cache, auth, signed_url
-from ..models import Helper
+from ..helper import Helper
+from ..components import userValidator
 
 
 @action('users')
-@action.uses('users.html', signed_url, auth.user)
+@action.uses('users.html', signed_url, auth.user, userValidator)
 def users():
 
     user = db(db.users.user == Helper.get_user()).select().first()
@@ -33,12 +34,9 @@ def users():
 
 
 @action('users/<id>')
-@action.uses('specific_user.html', signed_url, auth.user)
+@action.uses('specific_user.html', signed_url, auth.user, userValidator)
 def specific_user(id=None):
 
-    user = db(db.users.user == Helper.get_user()).select().first()
-    if user == None:
-        redirect(URL('create_profile'))
     return dict(
 
         show_user_url = URL('users/show_user', signer=signed_url),
