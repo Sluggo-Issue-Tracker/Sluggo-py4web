@@ -32,7 +32,7 @@ def get_info(users):
 
 
 @action('admin')
-@action.uses('admin.html', signed_url, auth.user, userValidator)
+@action.uses(userValidator, 'admin.html', signed_url, auth.user)
 def admin():
     user = db(db.users.user == Helper.get_user()).select().first()
     if user == None or user['role'] != "admin":
@@ -145,8 +145,8 @@ def del_tag():
 # MARK: Bios HTML Generation
 # Ported from Isaac's old Swift script
 @action('admin/generate_bios', method="GET")
-@action.uses("bios_template.html", signed_url.verify(), auth.user,
-             userValidator, db)  # this has to be manually triggered - long term automate this
+@action.uses(userValidator, "bios_template.html", signed_url.verify(), auth.user,
+             db)  # this has to be manually triggered - long term automate this
 def generate_bios():
     # TODO: Migrate to proper image resource
     IMGSRC = "https://slugbotics.com/res/images/team/woahtreesman1920.jpg"  # Tree pic SB web
