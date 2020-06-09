@@ -24,14 +24,10 @@
                         </p>
                     </div>
                     <div v-if="page === 'usage'">
-                        <p class="title">
-                            Usage Instructions
-                        </p>
+                        <div class="content" v-html="pageData['usage']"></div>
                     </div>
                     <div v-if="page === 'attribution'">
-                        <p class="title">
-                            Attribution
-                        </p>
+                        <div class="content" v-html="pageData['attribution']"></div>
                     </div>
                 </div>
             </div>
@@ -43,6 +39,11 @@
 <!-- Loads the index-specific js for Vue -->
 <script src="js/vue-select.min.js"></script>
 <script src="js/marked.min.js"></script>
+
+<script>
+    let base_url = '[[=XML(base_url)]]';
+</script>
+
 <script src="js/help.js"></script>
 
 [[end]]
