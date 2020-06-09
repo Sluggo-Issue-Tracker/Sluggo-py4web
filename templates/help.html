@@ -1,0 +1,48 @@
+[[extend 'layout.html']]
+<div id="help-target">
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-one-fifth">
+                    <aside class="menu">
+                        <p class="menu-label">
+                        Documentation
+                        </p>
+                        <ul class="menu-list">
+                        <li>
+                            <a :class="page === 'start_view' ? 'is-active' :'' " @click="goto('start_view')">
+                            Help
+                            </a>
+                            <a :class="page === 'usage' ? 'is-active' :'' " @click="goto('usage')">Usage Instructions</a>
+                            <a :class="page === 'attribution' ? 'is-active' :'' " @click="goto('attribution')">Attribution (Open Source Licenses)</a>
+                    </aside>
+                </div>
+                <div class="column is-four-fifths">
+                    <div v-if="page === 'start_view'">
+                        <p class="title">
+                            Welcome to the Sluggo documentation!
+                        </p>
+                    </div>
+                    <div v-if="page === 'usage'">
+                        <p class="title">
+                            Usage Instructions
+                        </p>
+                    </div>
+                    <div v-if="page === 'attribution'">
+                        <p class="title">
+                            Attribution
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script src="js/vue-select.min.js"></script>
+<script src="js/marked.min.js"></script>
+<script src="js/help.js"></script>
+
+[[end]]
