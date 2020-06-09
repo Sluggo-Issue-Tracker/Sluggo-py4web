@@ -4,7 +4,7 @@ This file defines the actions related to help
 import base64
 import pathlib
 import uuid
-import os.path 
+import os.path
 from os import path
 
 from py4web import action, request, abort, redirect, URL, Field
@@ -17,7 +17,10 @@ from .. EventLogger import EventLogger
 def help():
     return(
         dict(
-            base_url = URL('')
+            base_url = URL(''),
+            user=auth.get_user(),
+            username=Helper.get_user_title(),
+            admin=Helper.get_role() == 'Admin'
         )
     )
 
@@ -31,7 +34,7 @@ def get_helppage(pagename: str):
     }
     if pagename not in VALID_PAGENAMES:
         abort(403, "Not a valid help page.")
-    
+
     help_file_path = settings.APP_FOLDER + "/" + VALID_PAGENAMES[pagename]
 
     if not path.exists(help_file_path):

@@ -21,7 +21,7 @@ let init = (app) => {
         success: false,
         id: id,
         selected: "",
-        isAdmin: admin,
+        isAdmin: admin == "True",
 
         // Complete.
     };

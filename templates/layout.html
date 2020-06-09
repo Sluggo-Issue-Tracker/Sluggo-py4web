@@ -33,7 +33,7 @@
           <a class="navbar-item" href="[[=URL('users')]]">
             <span class="navbar-item-name is-size-4" >Users</span>
           </a>
-          [[if globals().get('admin'):]]
+          [[if globals().get('admin') == True:]]
           <a class="navbar-item" href="[[=URL('admin')]]">
             <span class="navbar-item-name is-size-4" >Admin</span>
           </a>
