@@ -16,7 +16,7 @@
     <nav class="navbar is-link" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="[[=URL('index')]]">
-            <h1 class="has-text-white is-size-3 has-text-weight-bold">Sluggo</h1>
+            <h1 class=" is-size-3 has-text-weight-bold">Sluggo</h1>
         </a>
         <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="left-navbar"
            onclick="this.classList.toggle('is-active');document.getElementById(this.dataset.target).classList.toggle('is-active');">
@@ -42,15 +42,12 @@
           <div class="navbar-item">
             [[if globals().get('user'):]]
               <div class="navbar-item has-dropdown is-hoverable is-size-4">
-                <a class="navbar-link has-text-white">
+                <a class="navbar-link">
                    Welcome, [[=username]]
                    <img src="">
                 </a>
                 <div class="navbar-dropdown is-boxed is-size-4">
                    <a class="navbar-item" href="[[=URL('auth/logout')]]">Logout</a>
-                   <a class="navbar-item">Profile</a>
-                   <hr class="navbar-divider">
-                   <a class="navbar-item">Report an issue</a>
                 </div>
              </div>
            [[else:]]
