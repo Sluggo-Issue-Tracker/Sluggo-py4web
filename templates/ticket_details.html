@@ -45,6 +45,25 @@
             <div class="columns has-background-light">
                 <div class="column is-three-quarters">
                    <div class="box">
+                       <div class="columns">
+                           <div class="column is-half">
+                               <span class="subtitle">Tags</span>
+                               <v-select class="has-background-white" v-if="!edit" multiple placeholder="Tags"
+                                         disabled
+                                         v-model="selected_tags"
+                                         :options="tag_options"></v-select>
+                               <v-select class="has-background-white" v-if="edit" multiple placeholder="Tags"
+                                         v-model="selected_tags"
+                                         :options="tag_options"></v-select>
+                           </div>
+                           <div class="column">
+                               <span class="subtitle">Due Date</span>
+                               <div class="field">
+                                   <input class="input" type="date" placeholder="mm / dd / yyyy" :disabled = "!edit"
+                                          :value="due_date" @input="due_date = $event.target.value">
+                               </div>
+                           </div>
+                       </div>
                        <span class="subtitle">Description</span>
                        <div v-if="!edit" style="padding-bottom: 10px; word-wrap: break-word;">
                            {{description}}
@@ -61,35 +80,6 @@
                             </div>
                         </div>
                         <progress class="progress" :value="progress" max="1"></progress>
-                        <br>
-                    </div>
-                    <br>
-                     <div style="border-bottom: darkgray 1px solid">
-                        <div class="level">
-                            <div class="level-left">
-                                <div class="level-item"><span>Tags</span></div>
-                            </div>
-                        </div>
-                        <v-select class="has-background-white" v-if="!edit" multiple placeholder="Tags"
-                                  disabled
-                                  v-model="selected_tags"
-                                  :options="tag_options"></v-select>
-                         <v-select class="has-background-white" v-if="edit" multiple placeholder="Tags"
-                                  v-model="selected_tags"
-                                  :options="tag_options"></v-select>
-                        <br>
-                    </div>
-                    <br>
-                    <div style="border-bottom: darkgray 1px solid">
-                        <div class="level" >
-                            <div class="level-left">
-                                <div class="level-item"><span>Due Date</span></div>
-                            </div>
-                        </div>
-                        <div class="field">
-                            <input class="input" type="date" placeholder="mm / dd / yyyy" :disabled = "!edit"
-                                   :value="due_date" @input="due_date = $event.target.value">
-                        </div>
                         <br>
                     </div>
                     <br>
@@ -131,29 +121,29 @@
                                 </div>
                             </div>
                         </div>
-                        <div v-for="t in ticket.sub_tickets">
-                            <span class="button has-background-white is-size-6 is-fullwidth has-text-left" @click="redirect_ticket(t.id)">
-                                {{t.id}} | {{t.ticket_title}} | {{t.ticket_status}}
-                            </span>
+                        <div v-for="t in ticket.sub_tickets" style="padding-bottom: 10px;">
+                            <div class="box has-background-white is-size-6 is-fullwidth has-text-left" @click="redirect_ticket(t.id)">
+                                 {{t.ticket_title}} #{{t.id}}
+                            </div>
                         </div>
                         <br>
                     </div>
                     <br>
-                    <div>
-                        <span>
-                       <a class="has-text-danger" v-if="!delete_status && editable" @click="delete_status = true">
-                           Delete Ticket
-                       </a>
-                        </span>
-                        <span>
-                       <a class="has-text-danger" v-if="delete_status" @click="delete_ticket">
-                          Confirm
-                       </a>
-                        </span>
-                        <span>
-                       <a v-if="delete_status" @click="delete_status = false">
-                           Cancel
-                       </a>
+                    <div class="level">
+                        <span class="level-left">
+                            <span class="level-item">
+                               <a class="has-text-danger" v-if="!delete_status && editable" @click="delete_status = true">
+                                   Delete Ticket
+                               </a>
+                               <button class="button is-danger" v-if="delete_status" @click="delete_ticket">
+                                  Confirm
+                               </button>
+                            </span>
+                            <span class="level-item">
+                               <a v-if="delete_status" @click="delete_status = false">
+                                   Cancel
+                               </a>
+                            </span>
                         </span>
                     </div>
                 </div>
