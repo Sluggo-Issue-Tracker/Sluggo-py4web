@@ -37,7 +37,7 @@ def generate_ticket_status(ticket):
 
 # Read -----------------------------------------------------------------------
 @action('tickets')
-@action.uses('tickets.html', signed_url, auth.user, userValidator)
+@action.uses(userValidator, 'tickets.html', signed_url, auth.user)
 def tickets():
     tag_id = request.query.get("tag_id")
     return dict(
@@ -64,7 +64,7 @@ def tickets():
 
 
 @action('ticket_details/<ticket_id>', method=['GET'])
-@action.uses('ticket_details.html', signed_url, auth.user, comments, userValidator)
+@action.uses(userValidator, 'ticket_details.html', signed_url, auth.user, comments)
 def ticket_details(ticket_id=None):
     # return all the links that the front end will use of requests
     full_user = db(db.users.user == Helper.get_user()).select().first()

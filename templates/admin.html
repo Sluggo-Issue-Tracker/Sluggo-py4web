@@ -26,28 +26,28 @@
               </a>
               <ul>
                 <li>
-                  <a :class="page === 'approve_tags' ? 'is-active' :'' " @click="goto('approve_tags')">
-                    Approve Tags
+                  <a :class="page === 'manage_tags' ? 'is-active' :'' " @click="goto('manage_tags')">
+                    Tags
                   </a>
                 </li>
                 <li>
-                  <a :class="page === 'manage_tags' ? 'is-active' :'' " @click="goto('manage_tags')">
-                    Tags
+                  <a :class="page === 'approve_tags' ? 'is-active' :'' " @click="goto('approve_tags')">
+                    Approve Tags
                   </a>
                 </li>
               </ul>
             </li>
             <li>
-              <a @click="goto('approve_users')">Manage Your Team</a>
+              <a @click="goto('manage_members')">Manage Your Team</a>
               <ul>
-                <li>
-                  <a :class="page === 'approve_users' ? 'is-active' :'' " @click="goto('approve_users')">
-                    Approve a member
-                  </a>
-                </li>
                 <li>
                   <a :class="page === 'manage_members' ? 'is-active' :'' " @click="goto('manage_members')">
                     Members
+                  </a>
+                </li>
+                <li>
+                  <a :class="page === 'approve_users' ? 'is-active' :'' " @click="goto('approve_users')">
+                    Approve a member
                   </a>
                 </li>
               </ul>
@@ -88,7 +88,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="tag in tags">
+                <tr v-if="!tags || !tags.length">
+                  <th>No tags to approve</th>
+                </tr>
+                <tr v-else v-for="tag in tags">
                   <th>{{tag.tag_name}}</th>
                   <td>
                     <button class="button is-success" @click="approveTags(tag._idx, true, 0)">
@@ -125,7 +128,7 @@
           </div>
 
 
-
+          <!-- Table to show tags -->
           <div class="section" style="height:60vh;overflow:auto;">
             <table class="table is-striped is-fullwidth table-container" >
               <thead>
@@ -177,7 +180,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="user in users">
+              <tr v-if="!users || !users.length">
+                <th>No users to approve</th>
+              </tr>
+              <tr v-else v-for="user in users">
                 <th>{{user.full_name}}</th>
                 <td>{{user.tags_list}}</td>
                 <td>{{user.bio}}</td>
@@ -212,12 +218,15 @@
                 <td>{{user.tags_list}}</td>
                 <td>{{user.bio}}</td>
                 <td>
-                  <div class="buttons">
+                  <div class="buttons" v-if="user.user_email != user_email">
                     <button v-if="user.role != 'Admin'" class="button is-success" @click="updateRoles(user._idx, 'Admin', 'all')">Make Admin</button>
                     <button v-else class="button is-success" @click="updateRoles(user._idx, 'Approved', 'all')">Revoke Admin</button>
 
                     <button v-if="user.role != 'Unapproved'" class="button is-danger" @click="updateRoles(user._idx, 'Unapproved', 'all')">Unapprove</button>
                     <button v-else class="button is-info" @click="updateRoles(user._idx, 'Approved', 'all')">Approve</button>
+                  </div>
+                  <div class="buttons" v-else>
+                    <button class="button is-info" disabled>Unable to change your own Status</button>
                   </div>
                 </td>
               </tr>
@@ -229,7 +238,7 @@
           <p class="title">
             Export Bios
           </p>
-          <p>Click here to view your exported bios. The page source is portable and 
+          <p>Click here to view your exported bios. The page source is portable and
             may be brought to a webpage of your choosing.
           </p>
           <br>

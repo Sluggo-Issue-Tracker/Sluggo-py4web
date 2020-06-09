@@ -17,3 +17,11 @@ class UserValidator(Fixture):
         user = db(db.users.user == Helper.get_user()).select().first()
         if user == None:
             redirect(URL('create_profile'))
+
+    def transform(self, output, shared_data=None):
+        if not isinstance(output, dict):
+            return output
+
+        output['admin'] = Helper.get_role() == 'Admin'
+
+        return output
