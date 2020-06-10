@@ -12,10 +12,10 @@
              <p class="subtitle">It's {{formatted_date}}. Here's your overview:</p>
              <div class="level">
                 <div class="level-item level-left">
-                   <p class="is-size-4 has-text-weight-semibold">Priority Tasks</p>
+                   <p class="is-size-4 has-text-weight-semibold">Assigned to You</p>
                 </div>
              </div>
-             <div v-for="t in priority_tickets" @click="goToTicket(t.id)" class="notification is-info">
+             <div v-for="t in priority_tickets" @click="goToTicket(t.id)" class="notification is-info sluggo_clickable">
                 <div class="columns">
                    <div class="column">
                       <p class="is-size-5">Ticket {{t.id}} | {{t.tag_string}} | {{t.ticket_title}}</p>
