@@ -289,3 +289,8 @@ class Helper:
         path = pathlib.Path(__file__).resolve().parent / 'static' / 'images' / 'profile_pics' / img_name
         if path.exists():
             path.unlink()
+
+    @staticmethod 
+    def fetch_assigned_count_for_user(auth_user_id):
+        return len(db((db.tickets.assigned_user == auth_user_id) & \
+            (db.tickets.completed == None)).select().as_list())

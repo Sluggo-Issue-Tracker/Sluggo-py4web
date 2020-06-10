@@ -275,6 +275,11 @@ let init = (app) => {
                 app.data.selected_tags.push(foundTag);
                 app.filter_list();
             }
+            if(assignee_id != "None") {
+                foundAssignee = app.data.project_users.find(user => user.id == assignee_id);
+                app.data.selected_users.push(foundAssignee);
+                app.filter_list();
+            }
         });
         axios.get(get_users_url).then((result) => {
             app.data.project_users = result.data.users.map((user) => {
