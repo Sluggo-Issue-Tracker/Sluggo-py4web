@@ -21,7 +21,7 @@ from pydal.validators import *
 
 db.define_table(
     'users',
-    Field('user', 'integer', 'reference auth_user', default=Helper.get_user()),
+    Field('user', 'reference auth_user', default=Helper.get_user()),
     Field('role', 'text'),
     Field('bio', 'text'),
     Field('icon')
