@@ -6,7 +6,7 @@
     <!-- <link rel="stylesheet" href="[[=URL('static', 'font-awesome-4.7.0/css/font-awesome.css')]]"> -->
   </head>
   <body style="background-color:#161833; text-color:white;" class="has-text-white">
-    <!-- 
+    <!--
       html_str = '<div class="column is-one-quarter">\n'
         html_str += '   <p class="title has-text-centered">' + member["auth_user"]["first_name"] + " " +\
             member["auth_user"]["last_name"] + '</h1>\n'
@@ -27,7 +27,7 @@
           <div class="columns">
             <div class="column is-full">
               <div class="column is-full has-text-centered">
-                <img class="image is-inline-block" style="max-width: 200px;" src="https://slugbotics.com/res/images/team/woahtreesman1920.jpg">
+                <img class="image is-inline-block" style="max-width: 200px;" src="[[=admin.get('img_url')]]">
               </div>
             </div>
           </div>
@@ -47,7 +47,7 @@
           <div class="columns">
             <div class="column is-full">
               <div class="column is-full has-text-centered">
-                <img class="image is-inline-block" style="max-width: 256px;" src="https://slugbotics.com/res/images/team/woahtreesman1920.jpg">
+                <img class="image is-inline-block" style="max-width: 256;" src="[[=nonAdmin.get('img_url')]]">
               </div>
             </div>
           </div>

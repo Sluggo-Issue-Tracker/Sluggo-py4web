@@ -11,16 +11,16 @@ from py4web import action, request, abort, redirect, URL, Field
 from .. common import db, session, T, cache, auth, signed_url, settings
 from .. helper import Helper
 from .. EventLogger import EventLogger
+from ..components import userValidator
 
 @action('help')
-@action.uses('help.html')
+@action.uses(userValidator, 'help.html')
 def help():
     return(
         dict(
             base_url = URL(''),
             user=auth.get_user(),
             username=Helper.get_user_title(),
-            admin=Helper.get_role() == 'Admin'
         )
     )
 
