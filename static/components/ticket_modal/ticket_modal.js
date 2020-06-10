@@ -36,7 +36,7 @@ Vue.component('v-select', VueSelect.VueSelect);
 
         this.ticket.due_date = this.due_date;
         this.ticket.assigned_user = this.assigned_user;
-        if(!this.ticket.title) {
+        if(!this.ticket.ticket_title|| this.ticket.ticket_title.length === 0) {
             this.error = true;
             this.sleep(2000)().then(() => {
                 this.error = false;
