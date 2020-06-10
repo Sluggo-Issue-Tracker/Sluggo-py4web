@@ -52,6 +52,10 @@ app.checkOverdue = (webTicket) => {
     return sluggo.isOverdue(webTicketDue);
 }
 
+app.checkStarted = (webTicket) => {
+    return !(webTicket.started === null);
+}
+
 app.goToSelfAssignee = () => {
     window.location.href = tickets_url + "?assignee_id=" + user_id;
 }
@@ -64,7 +68,8 @@ app.methods = {
     goToTag: app.goToTag,
     formatDate: app.formatDate,
     checkOverdue: app.checkOverdue,
-    goToSelfAssignee: app.goToSelfAssignee
+    goToSelfAssignee: app.goToSelfAssignee,
+    checkStarted: app.checkStarted
 }
 
 app.vm = new Vue({

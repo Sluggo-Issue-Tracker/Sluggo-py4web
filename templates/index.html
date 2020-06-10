@@ -23,7 +23,7 @@
                 </div>
              </div>
              <div v-for="t in priority_tickets" @click="goToTicket(t.id)" class="notification sluggo_clickable"
-               v-bind:class = "{'is-info': !checkOverdue(t), 'is-danger': checkOverdue(t)}">
+               v-bind:class = "{'is-info': !checkOverdue(t), 'is-warning': !checkOverdue(t) && checkStarted(t), 'is-danger': checkOverdue(t)}">
                 <div class="columns">
                    <div class="column">
                       <p class="is-size-5">Ticket {{t.id}} | {{t.tag_string}} | {{t.ticket_title}}</p>
