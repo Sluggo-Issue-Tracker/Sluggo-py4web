@@ -251,7 +251,7 @@ let init = (app) => {
                 e.label = e.tag_name;
                 return e;
             });
-            return axios.post(get_users_by_tag_list_url, {tag_list: app.data.selected_tags})
+            return axios.get(get_users_url)
         }).then((result) => {
             app.data.possible_users = app.reindex(result.data.users);
         });
