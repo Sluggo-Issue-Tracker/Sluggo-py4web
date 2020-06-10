@@ -168,31 +168,29 @@ let init = (app) => {
     };
 
     app.filter_list = () => {
+        console.log("this gets called");
         app.data.tickets = app.data.master.filter((ticket) => {
-
             // check if the tag lists match the currently selected tags
             if(!app.data.selected_tags.map(e => e.tag_name).filter(x => ticket.tag_list.map(e => e.tag_name).includes(x)).length > 0 &&
-                app.data.selected_tags.length > 0) return false;
+                app.data.selected_tags.length > 0){
+                return false;
+            }
 
             // check if the ticket is completed
             let status = app.data.selected_progress.map(x => app.data.status_map[x]);
             if(!status.includes(ticket.status) &&
-                app.data.selected_progress.length > 0) return false;
+                app.data.selected_progress.length > 0) {
+                return false;
+            }
 
             // check if the assigned user is correct
             if(!app.data.selected_users.map(e => e.id).includes(ticket.assigned_user) &&
                 app.data.selected_users.length > 0) return false;
 
-            if(ticket.ticket_text.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
-               ticket.ticket_title.toLowerCase().includes(app.data.searchText.trim().toLowerCase())) {
+            if((ticket.ticket_text && // see if the ticket_text is null before comparing it to the search text
+                ticket.ticket_text.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ) ||
+               ticket.ticket_title.toLowerCase().includes(app.data.searchText.trim().toLowerCase()))
                 return true;
-            }
-
-            for(tag of ticket.tag_list) {
-                if(tag.tag_name.toLowerCase().includes(app.data.searchText.trim().toLowerCase())) {
-                    return true;
-                }
-            }
 
             return false;
 
