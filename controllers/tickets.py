@@ -284,12 +284,12 @@ def edit_ticket():
         print("wrong type for tag_list")
         abort(500, "wrong type for tag_list")
 
-    if type(title) is not str or type(text) is not str:
+    if type(title) is not str:
         print("wrong values for title or text")
         abort(500, "wrong values for title and text")
 
     ticket.update_record(ticket_title=title.strip(),
-                         ticket_text=text.strip(),
+                         ticket_text=text.strip() if text else "",
                          due=due_date)
 
     current_tickets = Helper.get_ticket_tags_by_id(ticket_id)
