@@ -41,13 +41,24 @@ app.formatDate = (date) => {
     }
 }
 
+app.checkOverdue = (webTicket) => {
+    if(webTicket.due === null) {
+        return false;
+    }
+    // else we parse the web due
+    let webTicketDue = new Date(webTicket.web_due);
+
+    return sluggo.isOverdue(webTicketDue);
+}
+
 app.methods = {
     setFormattedDate: app.setFormattedDate,
     placeholder: app.placeholder,
     goToTicket: app.goToTicket,
     formatTag: app.formatTag,
     goToTag: app.goToTag,
-    formatDate: app.formatDate
+    formatDate: app.formatDate,
+    checkOverdue: app.checkOverdue
 }
 
 app.vm = new Vue({
