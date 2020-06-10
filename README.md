@@ -6,9 +6,9 @@ Sluggo uses a mostly standard py4web environment as defined by the conda environ
 the packages added partway through the quarter (click & watchgod).
 However, some additional prerequisites are required.
 
-In addition to the standard environment, Sluggo relies on the python-dateutil library. Install this by running:
+In addition to the standard environment, Sluggo relies on libraries specified in our requirements.txt file:
 
-`conda install python-dateutil`
+`pip install -r requirements.txt`
 
 You should then have all necessary prerequisites to run Sluggo.
 
