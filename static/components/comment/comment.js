@@ -19,6 +19,7 @@
             add_url: this.add_url,
             edit_url: this.edit_url,
             delete_url: this.delete_url,
+            error: false
         };
 
         data = comment.methods.load(data);
@@ -31,6 +32,7 @@
             c._idx = _idx++;
             c.show_settings = false;
             c.edit = false;
+            c.error = false;
         }
         return comments;
     };
@@ -57,11 +59,21 @@
         this.comments.splice(idx, 1, selected);
     };
 
+    comment.methods.sleep = function(ms) {
+        return function (x) {
+            return new Promise(resolve => setTimeout(() => resolve(x), ms));
+        };
+    };
+
     comment.methods.submit = function() {
         // submit the newly added comment to the backend, then add to the comments list
-        if (!this.new_comment || this.new_comment.length === 0)
-            // TODO: switch control to an error view
+        if (!this.new_comment || this.new_comment.length === 0) {
+            this.error = true;
+            this.sleep(2000)().then(() => {
+                this.error = false;
+            });
             return;
+        }
 
         axios.post(this.add_url, {
             content: this.new_comment,
@@ -79,6 +91,8 @@
         });
         this.edit = false;
     };
+
+
 
     comment.methods.edit_comment = function(idx) {
         // prepare the comment for editing, if necessary
@@ -100,6 +114,17 @@
 
     comment.methods.submit_edit = function(idx) {
         let selected = this.comments[idx];
+
+        if(!selected.new_content || selected.new_content.length === 0) {
+            selected.error = true;
+            this.comments.splice(idx, 1, selected);
+            this.sleep(2000)().then(() => {
+                selected.error = false;
+                this.comments.splice(idx, 1, selected);
+            });
+            return;
+        }
+
         axios.post(this.edit_url, {
             comment_id: selected.id,
             content: selected.new_content

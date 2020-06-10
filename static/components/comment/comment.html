@@ -31,7 +31,9 @@
                 <div v-if="!comment.edit">
                     {{comment.content}}
                 </div>
-                <textarea v-if="comment.edit" v-model="comment.new_content" class="textarea"></textarea>
+                <textarea v-if="comment.edit" :class="{'is-danger' : comment.error}"
+                          v-model="comment.new_content" class="textarea"></textarea>
+                <span class="has-text-danger" v-if="comment.error">Required Field</span>
             </div>
         </div>
         <div class="level" v-if="comment.edit">
@@ -53,8 +55,8 @@
                 <img src="https://laughingsquid.com/wp-content/uploads/2014/11/Screenshot-2014-11-19-17.41.33.png">
             </div-->
             <div class="column">
-                <textarea v-model="new_comment" class="textarea"></textarea>
-
+                <textarea :class="{'is-danger' : error}" v-model="new_comment" class="textarea"></textarea>
+                <span v-if="error" class="has-text-danger">Required Field</span>
             </div>
         </div>
         <!-- i'm not sure why, but to get a level-right to display correctly, there needs to be a level left -->
