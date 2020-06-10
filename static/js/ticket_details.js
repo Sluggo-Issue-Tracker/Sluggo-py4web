@@ -102,6 +102,7 @@ let init = (app) => {
      * resets the fields to their previous value kept track in ticket object
      */
     app.cancel_edit = () => {
+        app.set_fields(app.data.ticket);
         app.data.edit = false;
     };
 
