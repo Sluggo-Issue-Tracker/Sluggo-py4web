@@ -17,7 +17,14 @@ Vue.component('v-select', VueSelect.VueSelect);
             date: "",
             due_date: "",
             assigned_user: "",
+            error: false,
             time_zone: luxon.DateTime.local().zoneName
+        };
+    };
+
+    ticket_modal.methods.sleep = function(ms) {
+        return function (x) {
+            return new Promise(resolve => setTimeout(() => resolve(x), ms));
         };
     };
 
@@ -29,6 +36,14 @@ Vue.component('v-select', VueSelect.VueSelect);
 
         this.ticket.due_date = this.due_date;
         this.ticket.assigned_user = this.assigned_user;
+        if(!this.ticket.title) {
+            this.error = true;
+            this.sleep(2000)().then(() => {
+                this.error = false;
+            });
+            return;
+        }
+
         this.$emit('submit');
     };
 
