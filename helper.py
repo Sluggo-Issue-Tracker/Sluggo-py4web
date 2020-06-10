@@ -232,7 +232,8 @@ class Helper:
         assignedTickets = []
 
         # Fetch assigned tickets
-        assignedTickets += db(db.tickets.assigned_user == given_user_id).select().as_list()
+        assignedTickets += db((db.tickets.assigned_user == given_user_id) & \
+            (db.tickets.completed == None)).select().as_list()
 
         # Now we filter and return in the desired order
         orderedPriorityTickets = []
