@@ -324,7 +324,6 @@ class Helper:
         """Returns a single image, URL encoded."""
         # Reads the image.
         img_name = icon_name
-        print(img_name)
         img_file = pathlib.Path(__file__).resolve().parent / 'static' / 'images' / 'profile_pics' / img_name
         if not img_file.exists():
             img_file = pathlib.Path(__file__).resolve().parent.parent / 'static' / 'images' / 'profile_pics' /  "default.jpg"

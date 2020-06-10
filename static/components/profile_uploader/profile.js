@@ -69,7 +69,7 @@
 			}
 
 
-			// If the file is too large, tell the user and return
+			// If the file is too large or small, tell the user and return
 			if(file.size > 1000000 || file.size <= 0) {
 				self.uploading = false;
 				self.success = false;
