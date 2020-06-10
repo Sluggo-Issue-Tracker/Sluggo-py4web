@@ -15,6 +15,13 @@
                    <p class="is-size-4 has-text-weight-semibold">Assigned to You</p>
                 </div>
              </div>
+             <div v-if="priority_tickets.length === 0">
+                <div class="columns">
+                   <div class="column">
+                     <p>You don't have any incomplete tickets assigned to you.</p>
+                   </div>
+                </div>
+             </div>
              <div v-for="t in priority_tickets" @click="goToTicket(t.id)" class="notification is-info sluggo_clickable">
                 <div class="columns">
                    <div class="column">
@@ -31,7 +38,7 @@
                    </div> -->
                 </div>
              </div>
-    
+            <br v-if="priority_tickets.length === 0">
              <div>
                 <p class="is-size-4 has-text-weight-semibold">Recent Updates</p>
                 <article v-for="e in recent_events" @click="placeholder()" class="notification">
