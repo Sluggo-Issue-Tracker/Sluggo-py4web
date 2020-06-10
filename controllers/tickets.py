@@ -225,10 +225,12 @@ def add_tickets():
     ticket_due_date = request.json.get('due_date')
     assigned_user = request.json.get('assigned_user')
 
+    print("the due date is " + ticket_due_date)
+
     ticket_id = db.tickets.insert(
         ticket_title=ticket_title,
         ticket_text=ticket_text,
-        due=ticket_due_date,
+        due=parse(ticket_due_date) if ticket_due_date else None,
         assigned_user=assigned_user.get('id') if type(assigned_user) is dict else None
     )
 
@@ -290,7 +292,7 @@ def edit_ticket():
 
     ticket.update_record(ticket_title=title.strip(),
                          ticket_text=text.strip() if text else "",
-                         due=due_date)
+                         due=parse(due_date) if due_date else None)
 
     current_tickets = Helper.get_ticket_tags_by_id(ticket_id)
 

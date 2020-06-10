@@ -34,19 +34,18 @@ Vue.component('v-select', VueSelect.VueSelect);
             this.ticket.tag_list.unshift(a);
         }
 
-        this.ticket.due_date = this.due_date;
-        this.ticket.assigned_user = this.assigned_user;
-
-        let date = luxon.DateTime.fromSQL(this.due_date);
-
-        if(!this.ticket.ticket_title || this.ticket.ticket_title.length === 0 ||
-            !date) {
+        let date = this.due_date ? luxon.DateTime.fromSQL(this.due_date) : this.due_date;
+        if(!this.ticket.ticket_title || this.ticket.ticket_title.length === 0 || date.invalid) {
             this.error = true;
             this.sleep(2000)().then(() => {
                 this.error = false;
             });
             return;
         }
+
+        // TODO: convert the timestamp
+        this.ticket.due_date = date ? date.setZone("utc").toString() : date;
+        this.ticket.assigned_user = this.assigned_user;
 
         this.$emit('submit');
     };
