@@ -36,6 +36,8 @@ def tickets():
 
     # Attach tag list to tickets
     Helper.attach_tags_for_tickets(pinned_tickets)
+    # And attach other needed things
+    Helper.attach_web_due_for_tickets(pinned_tickets)
 
     # Grab user tags
     user_tags = Helper.get_web_tag_list_for_user_id(Helper.get_user())
@@ -60,6 +62,7 @@ def tickets():
         ticket_details_url = URL('ticket_details'),
         tickets_url = URL('tickets'),
         get_icons_url = URL('users', 'get_icons'),
+        pin_ticket_url = URL('pin_ticket', signer=signed_url),
         pinned_tickets = Helper.safe_json_dumps(pinned_tickets),
         priority_tickets = Helper.safe_json_dumps(priority_tickets),
         assigned_tickets_count = Helper.fetch_assigned_count_for_user(Helper.get_user()),

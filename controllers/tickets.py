@@ -81,6 +81,8 @@ def ticket_details(ticket_id=None):
 
     return dict(
         get_ticket_by_id_url=URL('get_ticket_by_id', ticket_id),
+        get_pinned_tickets_url=URL('get_pinned_tickets', signer=signed_url),
+        pin_ticket_url=URL('pin_ticket', signer=signed_url),
         add_tickets_url=URL('add_tickets', signer=signed_url),
         edit_ticket_url=URL('edit_ticket', signer=signed_url),
         tickets_details_url=URL('ticket_details'),
