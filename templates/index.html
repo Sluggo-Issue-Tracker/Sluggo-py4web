@@ -26,7 +26,7 @@
                 </div>
              </div>
              <div v-for="t in priority_tickets" @click="goToTicket(t.id)" class="notification sluggo_clickable"
-               v-bind:class = "{'is-info': !checkOverdue(t), 'is-warning': !checkOverdue(t) && checkStarted(t), 'is-danger': checkOverdue(t)}">
+             v-bind:class="{'is-info': !checkOverdue(t) && !checkStarted(t) && !checkCompleted(t), 'is-warning': !checkOverdue(t) && checkStarted(t) && !checkCompleted(t), 'is-danger': checkOverdue(t) && !checkCompleted(t), 'is-success': checkCompleted(t)}">
                 <div class="columns">
                    <div class="column">
                       <p class="is-size-5">Ticket {{t.id}} | {{t.tag_string}} | {{t.ticket_title}}</p>
@@ -97,11 +97,21 @@
                       </div>
                    </div> -->
                 </div>
-               <div class="sluggo_pinned_ticket notification is-info" v-for="pt in pinned_tickets" @click="goToTicket(pt.id)">
-                  <div class="columns">
-                     <div class="column">
-                        <p class="is-size-5">Ticket {{pt.id}} | {{pt.tag_string}} | {{pt.ticket_title}} </p>
+                <div class="columns" v-if="pinned_tickets.length == 0">
+                  <div class="column">
+                     <p>You don't have any starred tickets.</p>
+                  </div>
+               </div>
+               <div class="sluggo_pinned_ticket notification" v-for="pt in pinned_tickets" 
+               v-bind:class="{'is-info': !checkOverdue(pt) && !checkStarted(pt) && !checkCompleted(pt), 'is-warning': !checkOverdue(pt) && checkStarted(pt) && !checkCompleted(pt), 'is-danger': checkOverdue(pt) && !checkCompleted(pt), 'is-success': checkCompleted(pt)}">
+                  <div class="columns is-mobile">
+                     <div class="column is-10" @click="goToTicket(pt.id)">
+                        <p class="is-size-5">Ticket {{pt.id}} | {{pt.tag_string}} | {{pt.ticket_title}} 
+                        </p>
                         <!-- <p>Due May 25, 2020.</p> -->
+                     </div>
+                     <div class="column is-2">
+                        <span @click="unpinTicket(pt)"><i class="fa fa-star"></i></span>
                      </div>
                      <!-- TODO: Determine how to expose ticket completion
                      endpoints on the homepage -->
@@ -153,6 +163,7 @@
       let ticket_details_url = '[[=XML(ticket_details_url)]]';
       let get_icons_url = '[[=XML(get_icons_url)]]';
       let tickets_url = '[[=XML(tickets_url)]]';
+      let pin_ticket_url = '[[=XML(pin_ticket_url)]]';
       let user_tags = '[[=XML(user_tags)]]';
       let recent_events ='[[=XML(recent_events)]]';
       let approved = '[[=XML(approved)]]';

@@ -26,6 +26,12 @@
                    </div>
                </div>
                 <div class="level-right">
+                    <div class="level-item">
+                        <span @click="togglePinStatus(t)" v-bind:class="{'has-text-warning': pinned}">
+                            <i v-if="pinned"class="fa fa-star"></i>
+                            <i v-else class="fa fa-star-o"></i>
+                        </span>
+                    </div>
                    <div class="level-item" v-if="!edit && editable" >
                        <button class="button is-success" @click="edit = true">Edit</button>
                    </div>
@@ -158,6 +164,8 @@
 [[block page_scripts]]
 <script>
    let get_ticket_by_id_url="[[=XML(get_ticket_by_id_url)]]";
+   let get_pinned_tickets_url = "[[=XML(get_pinned_tickets_url)]]";
+   let pin_ticket_url = "[[=XML(pin_ticket_url)]]";
    let add_tickets_url="[[=XML(add_tickets_url)]]";
    let edit_ticket_url="[[=XML(edit_ticket_url)]]";
    let delete_tickets_url="[[=XML(delete_tickets_url)]]";
