@@ -38,7 +38,7 @@ class EventLogger:
         
         # Get events pertaining to any assigned tickets
         assigned_tickets_ids = Helper.get_assigned_ticket_ids_for_user(user_id)
-        print(assigned_tickets_ids)
+        
         for atid in assigned_tickets_ids:
             # Grab events
             atevents = db(db.events.related_ticket == atid).select().as_list()
@@ -46,8 +46,9 @@ class EventLogger:
                 if atevent not in events:
                     events.append(atevent) # does this code confuse you? GOOD
         
-        # Chop to 3
+        # Sort and limit
+        # TODO: This won't work well as the number of events gets very large
+        events.sort(key=lambda x: x["id"], reverse=True)
         events = events[:3]
-        events.sort(key=lambda x: x["created"], reverse=True)
 
         return events

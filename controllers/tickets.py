@@ -82,6 +82,8 @@ def ticket_details(ticket_id=None):
     return dict(
         get_ticket_by_id_url=URL('get_ticket_by_id', ticket_id),
         get_tickets_url=URL('get_possible_subtickets', ticket_id),
+        get_pinned_tickets_url=URL('get_pinned_tickets', signer=signed_url),
+        pin_ticket_url=URL('pin_ticket', signer=signed_url),
         add_tickets_url=URL('add_tickets', signer=signed_url),
         edit_ticket_url=URL('edit_ticket', signer=signed_url),
         tickets_details_url=URL('ticket_details'),
@@ -148,8 +150,6 @@ def get_ticket_by_id(ticket_id=None):
     assigned_user = list(map(lambda x: {**x["users"], **x["auth_user"]}, assigned_user))
 
     for user in assigned_user:
-        user["icon"] = "%s-%s.jpg" % \
-                       (user.get('first_name').lower(), user.get('last_name').lower()) if user else "Unknown"
         user["full_name"] = "%s %s" % \
                             (user.get('first_name'), user.get('last_name')) if user else "Unknown"
         user['user_email'] = user.get('email')

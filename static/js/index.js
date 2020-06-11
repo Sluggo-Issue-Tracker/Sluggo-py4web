@@ -43,6 +43,25 @@ app.formatDate = (date) => {
     }
 }
 
+app.formatBadDate = (badDate) => {
+    // this is for formatting non whole dates
+    // i hate javascript and dates with a burning passion
+    // the likes of which will never be satiated
+    // it carves away at my very being 
+    // for all time
+
+    console.log(date);
+    if(typeof(date) !== "undefined" && date !== null) {
+        return sluggo.formatDate(new Date(new Date(badDate).getTime() + (new Date()).getTimezoneOffset()*60*1000));
+    } else {
+        return "";
+    }
+}
+
+app.fixDate = (date) => {
+    return date + new Date().getTimezoneOffset();
+}
+
 app.checkOverdue = (webTicket) => {
     if(webTicket.due === null) {
         return false;
@@ -57,8 +76,26 @@ app.checkStarted = (webTicket) => {
     return !(webTicket.started === null);
 }
 
+app.checkCompleted = (webTicket) => {
+    return (webTicket.completed !== null);
+}
+
 app.goToSelfAssignee = () => {
     window.location.href = tickets_url + "?assignee_id=" + user_id;
+}
+
+app.fetchEventIconForEvent = (event) => {
+    return axios.get(get_icons_url + '?id=' + event.web_profile_user).then((response) => {
+        console.log(response);
+        Vue.set(event, "image", response.data.imgbytes);
+    })
+}
+
+app.unpinTicket = (pinnedTicket) => {
+    Vue.set(app.data, "pinned_tickets", app.data.pinned_tickets.filter(pt => pt.id !== pinnedTicket.id));
+    axios.post(pin_ticket_url, {
+        ticket_id: pinnedTicket.id
+    });
 }
 
 app.methods = {
@@ -70,7 +107,10 @@ app.methods = {
     formatDate: app.formatDate,
     checkOverdue: app.checkOverdue,
     goToSelfAssignee: app.goToSelfAssignee,
-    checkStarted: app.checkStarted
+    checkStarted: app.checkStarted,
+    checkCompleted: app.checkCompleted,
+    unpinTicket: app.unpinTicket,
+    formatBadDate: app.formatBadDate
 }
 
 app.vm = new Vue({
@@ -91,7 +131,11 @@ app.init = () => {
     // Add the user tags from the passed user tags
     Vue.set(app.data, "user_tags", JSON.parse(user_tags));
 
-    Vue.set(app.data, "recent_events", JSON.parse(recent_events))
+    Vue.set(app.data, "recent_events", JSON.parse(recent_events));
+    for(event of app.data.recent_events) {
+        // make a request
+        app.fetchEventIconForEvent(event);
+    }
 }
 
 app.init();

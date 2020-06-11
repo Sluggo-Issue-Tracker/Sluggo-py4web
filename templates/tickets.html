@@ -66,7 +66,7 @@
            <div class="level-left">
                <div class="level-item" style="max-width: 500px; word-wrap: break-word">
                    <a class="title" @click="redirect(t.id)">
-                       <span>{{t.ticket_title}} #{{t.id}}</span>
+                       <span>#{{t.id}} | {{t.ticket_title}} </span>
                    </a>
                </div>
                <div class="level-item">
@@ -88,9 +88,10 @@
             </div>
            <div class="level-right">
                <div class="level-item">
-                   <div v-if="approved" @click="togglePinStatus(t)" class="button" v-bind:class="{'is-success': t.pinned, 'is-danger': !t.pinned}">
-                       <i class="fa fa-thumb-tack"></i>
-                   </div>
+                   <span v-if="approved" @click="togglePinStatus(t)" v-bind:class="{'has-text-warning': t.pinned}">
+                       <i v-if="t.pinned"class="fa fa-star"></i>
+                       <i v-else class="fa fa-star-o"></i>
+                   </span>
                </div>
            </div>
         </div>

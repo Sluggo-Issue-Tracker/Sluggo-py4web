@@ -76,7 +76,7 @@ class Helper:
         # Attempt to run dumps and replace any non-compatible types
         # (probably not needed in JS)
         default = lambda obj: f"<<non-serializable: {type(obj).__qualname__}>>"
-        return json.dumps(obj, default=default, skipkeys=True)
+        return json.dumps(obj, default=default, skipkeys=True).replace("'", "\\'")
 
     @staticmethod
     def get_tags_list():
@@ -139,6 +139,8 @@ class Helper:
         for rel in ticket_tag_rels:
             tickets.append(db(db.tickets.id == rel.ticket_id).select().first())
         for ticket in tickets:
+            if ticket.completed is not None:
+                continue
             # TODO: Migrate this into its overdue checking function
             # Get current date and time
             currentTime = datetime.utcnow().date()
@@ -304,3 +306,9 @@ class Helper:
     def fetch_assigned_count_for_user(auth_user_id):
         return len(db((db.tickets.assigned_user == auth_user_id) & \
             (db.tickets.completed == None)).select().as_list())
+
+    @staticmethod
+    def attach_web_profile_user_id_to_events(events):
+        for event in events:
+            # God help us if this doesn't exist
+            event["web_profile_user"] = db(db.users.user == event["action_user"]).select().first().id

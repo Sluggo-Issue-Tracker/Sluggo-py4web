@@ -6,8 +6,9 @@ import base64
 import pathlib
 import uuid
 import os
+import json
 
-from py4web import action, request, abort, redirect, URL, Field
+from py4web import action, request, abort, redirect, URL, Field, response
 from py4web.utils.form import Form, FormStyleBulma
 from yatl.helpers import A
 from pydal.validators import *
@@ -106,6 +107,7 @@ def attach_user_information(users):
                             (person.get('first_name'), person.get('last_name')) if person else "Unknown"
         user['tags_list'] = Helper.get_user_tag_by_name(user)
         user['user_email'] = person.get('email')
+        user['role'] = user['role'].capitalize()
 
 
 @action('users/get_users')
@@ -172,6 +174,9 @@ def edit_user():
 
     names = request.json.get('full_name').split()
 
+    first_name = names[0]
+    last_name = " ".join(names[1:])
+
     tags = request.json.get('tags_list')
     old_tags = Helper.get_user_tag_by_name(row)
 
@@ -196,7 +201,7 @@ def edit_user():
 
         if (t_id == None):
             # if tag isn't stored in database, create new tags
-            t_id = db.global_tag.insert(tag_name=tag.lower())
+            t_id = db.global_tag.insert(tag_name=tag.lower(),approved=(True if row["role"] == "admin" else False))
 
         # now we insert tags in this many to many relationship
         db.user_tag.update_or_insert((db.user_tag.user_id == request.json.get('id')) & (db.user_tag.tag_id == t_id),
@@ -204,7 +209,7 @@ def edit_user():
                                      tag_id=t_id
                                      )
 
-    user.update_record(first_name=names[0], last_name=names[1])
+    user.update_record(first_name=first_name, last_name=last_name)
     return "ok"
 
 

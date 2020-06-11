@@ -84,7 +84,8 @@
                 id: result.data.id,
                 first_name: result.data.first_name,
                 last_name: result.data.last_name,
-                editable: true
+                editable: true,
+                img_url: result.data.img_url
             });
             this.comments = comment.methods.reindex(this.comments);
             this.new_comment = "";

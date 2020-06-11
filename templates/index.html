@@ -26,11 +26,11 @@
                 </div>
              </div>
              <div v-for="t in priority_tickets" @click="goToTicket(t.id)" class="notification sluggo_clickable"
-               v-bind:class = "{'is-info': !checkOverdue(t), 'is-warning': !checkOverdue(t) && checkStarted(t), 'is-danger': checkOverdue(t)}">
+             v-bind:class="{'is-info': !checkOverdue(t) && !checkStarted(t) && !checkCompleted(t), 'is-warning': !checkOverdue(t) && checkStarted(t) && !checkCompleted(t), 'is-danger': checkOverdue(t) && !checkCompleted(t), 'is-success': checkCompleted(t)}">
                 <div class="columns">
                    <div class="column">
                       <p class="is-size-5">Ticket {{t.id}} | {{t.tag_string}} | {{t.ticket_title}}</p>
-                      <p v-if="typeof(t.web_due) !== 'undefined'">Due {{formatDate(t.web_due)}}</p>
+                      <p v-if="typeof(t.web_due) !== 'undefined'">Due {{formatBadDate(t.web_due)}}</p>
                    </div>
                    <!-- <div class="column"></div>
                    <div class="column">
@@ -50,7 +50,11 @@
             <br v-if="priority_tickets.length === 0 || priority_tickets.length === 3">
              <div>
                 <p class="is-size-4 has-text-weight-semibold">Recent Updates</p>
-                <article v-for="e in recent_events" @click="placeholder()" class="notification">
+                <br>
+                <p v-if="recent_events.length === 0">
+                   You don't have any events. Star a ticket or get assigned to a ticket to see updates here.
+                </p>
+                <article v-for="e in recent_events" @click="goToTicket(e.related_ticket)" class="notification">
                    <div class="columns">
                       <!-- <div class="column">
                          <div class="">
@@ -60,9 +64,20 @@
 
                          </div> -->
                       <!-- </div> -->
+                      <div class="column is-2">
+                         <img v-bind:src="e.image">
+                      </div>
                       <div class="column">
-                         <p>User {{e.web_action_user_name}} performed action {{e.type}} with content {{e.description}}
+                         <!-- generic debug -->
+                         <!-- <p>User {{e.web_action_user_name}} performed action {{e.type}} with content {{e.description}}
                             on ticket {{e.related_ticket}}
+                         </p> --> 
+                         <p v-if="e.type === 'post-comment'">{{e.web_action_user_name}} posted on Ticket
+                            {{e.related_ticket}}: "{{e.description}}"
+                         </p>
+                         <p v-if="e.type === 'ticket-status-change'">
+                           {{e.web_action_user_name}} just marked Ticket {{e.related_ticket}} "{{e.description}}."
+                           <span v-if="e.description == 'Completed'"> Awesome!</span>
                          </p>
                          <!-- <p><span class="has-text-weight-bold">Andrew Gavgavian posted on Ticket 21 "Submitting software proposal for...": </span>
                          </p><p>"Great work! I think we can start moving this proposal forward. I cleaned up some of the wording
@@ -77,7 +92,7 @@
              <div class="box">
                 <div class="level">
                    <div class="level-item level-left">
-                      <p class="is-size-4 has-text-weight-semibold">Pinned Tickets</p>
+                      <p class="is-size-4 has-text-weight-semibold">Starred Tickets</p>
                    </div>
                    <!-- TODO: Implement easy pinned ticket modification -->
                    <!-- <div class="level-item level-right buttons">
@@ -86,11 +101,22 @@
                       </div>
                    </div> -->
                 </div>
-               <div class="sluggo_pinned_ticket notification is-info" v-for="pt in pinned_tickets" @click="goToTicket(pt.id)">
-                  <div class="columns">
-                     <div class="column">
-                        <p class="is-size-5">Ticket {{pt.id}} | {{pt.tag_string}} | {{pt.ticket_title}} </p>
+                <div class="columns" v-if="pinned_tickets.length == 0">
+                  <div class="column">
+                     <p>You don't have any starred tickets.</p>
+                  </div>
+               </div>
+               <div class="sluggo_pinned_ticket notification" v-for="pt in pinned_tickets" 
+               v-bind:class="{'is-info': !checkOverdue(pt) && !checkStarted(pt) && !checkCompleted(pt), 'is-warning': !checkOverdue(pt) && checkStarted(pt) && !checkCompleted(pt), 'is-danger': checkOverdue(pt) && !checkCompleted(pt), 'is-success': checkCompleted(pt)}">
+                  <div class="columns is-mobile">
+                     <div class="column is-10" @click="goToTicket(pt.id)">
+                        <p class="is-size-5">Ticket {{pt.id}} | {{pt.tag_string}} | {{pt.ticket_title}} 
+                        </p>
+                        <p v-if="typeof(pt.web_due) !== 'undefined'">Due {{formatBadDate(pt.web_due)}}</p>
                         <!-- <p>Due May 25, 2020.</p> -->
+                     </div>
+                     <div class="column is-2">
+                        <span @click="unpinTicket(pt)"><i class="fa fa-star"></i></span>
                      </div>
                      <!-- TODO: Determine how to expose ticket completion
                      endpoints on the homepage -->
@@ -117,6 +143,9 @@
                       <p class="is-size-4 has-text-weight-semibold">Your Tags</p>
                    </div>
                 </div>
+                <div class="" v-if="user_tags.length === 0">
+                   You don't have any tags
+                </div>
                 <div class="tile is-ancestor">
                    <div class="tile is-parent is-vertical">
                       <article class="sluggo_hp_tag tile is-child notification is-grey-lighter" v-for="tag in user_tags" @click="goToTag(tag.tag_id)">
@@ -140,7 +169,9 @@
       let priority_tickets = '[[=XML(priority_tickets)]]';
       let assigned_tickets_count = '[[=XML(assigned_tickets_count)]]';
       let ticket_details_url = '[[=XML(ticket_details_url)]]';
+      let get_icons_url = '[[=XML(get_icons_url)]]';
       let tickets_url = '[[=XML(tickets_url)]]';
+      let pin_ticket_url = '[[=XML(pin_ticket_url)]]';
       let user_tags = '[[=XML(user_tags)]]';
       let recent_events ='[[=XML(recent_events)]]';
       let approved = '[[=XML(approved)]]';

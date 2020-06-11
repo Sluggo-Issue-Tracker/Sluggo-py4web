@@ -75,7 +75,7 @@
           </div>
           <!-- Update and Cancel button -->
           <div class="buttons is-right" v-if="checkAdmin() || checkUser()">
-            <button class="button" v-bind:class="{'is-danger': error, 'is-success': success, 'is-loading': is_pending, 'is-info': !pending }" @click="updateCurrent">
+            <button class="button" v-bind:class="{'is-danger': error, 'is-success': success, 'is-loading': is_pending, 'is-info': !is_pending }" @click="updateCurrent">
               <span class="icon is-small">
                 <i class="fa fa-check"></i>
               </span>
