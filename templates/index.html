@@ -26,7 +26,7 @@
                 </div>
              </div>
              <div v-for="t in priority_tickets" @click="goToTicket(t.id)" class="notification sluggo_clickable"
-               v-bind:class = "{'is-info': !checkOverdue(t), 'is-warning': !checkOverdue(t) && checkStarted(t), 'is-danger': checkOverdue(t)}">
+             v-bind:class="{'is-info': !checkOverdue(t) && !checkStarted(t) && !checkCompleted(t), 'is-warning': !checkOverdue(t) && checkStarted(t) && !checkCompleted(t), 'is-danger': checkOverdue(t) && !checkCompleted(t), 'is-success': checkCompleted(t)}">
                 <div class="columns">
                    <div class="column">
                       <p class="is-size-5">Ticket {{t.id}} | {{t.tag_string}} | {{t.ticket_title}}</p>
@@ -91,7 +91,8 @@
                      <p>You don't have any starred tickets.</p>
                   </div>
                </div>
-               <div class="sluggo_pinned_ticket notification is-info" v-for="pt in pinned_tickets">
+               <div class="sluggo_pinned_ticket notification" v-for="pt in pinned_tickets" 
+               v-bind:class="{'is-info': !checkOverdue(pt) && !checkStarted(pt) && !checkCompleted(pt), 'is-warning': !checkOverdue(pt) && checkStarted(pt) && !checkCompleted(pt), 'is-danger': checkOverdue(pt) && !checkCompleted(pt), 'is-success': checkCompleted(pt)}">
                   <div class="columns is-mobile">
                      <div class="column is-10" @click="goToTicket(pt.id)">
                         <p class="is-size-5">Ticket {{pt.id}} | {{pt.tag_string}} | {{pt.ticket_title}} 

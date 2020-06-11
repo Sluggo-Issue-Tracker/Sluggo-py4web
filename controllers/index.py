@@ -36,6 +36,8 @@ def tickets():
 
     # Attach tag list to tickets
     Helper.attach_tags_for_tickets(pinned_tickets)
+    # And attach other needed things
+    Helper.attach_web_due_for_tickets(pinned_tickets)
 
     # Grab user tags
     user_tags = Helper.get_web_tag_list_for_user_id(Helper.get_user())

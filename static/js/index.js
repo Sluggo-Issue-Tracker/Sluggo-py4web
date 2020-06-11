@@ -57,6 +57,10 @@ app.checkStarted = (webTicket) => {
     return !(webTicket.started === null);
 }
 
+app.checkCompleted = (webTicket) => {
+    return (webTicket.completed !== null);
+}
+
 app.goToSelfAssignee = () => {
     window.location.href = tickets_url + "?assignee_id=" + user_id;
 }
@@ -78,6 +82,7 @@ app.methods = {
     checkOverdue: app.checkOverdue,
     goToSelfAssignee: app.goToSelfAssignee,
     checkStarted: app.checkStarted,
+    checkCompleted: app.checkCompleted,
     unpinTicket: app.unpinTicket
 }
 
