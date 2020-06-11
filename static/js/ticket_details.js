@@ -194,7 +194,7 @@ let init = (app) => {
         app.data.status = ticket_object.status;
         app.data.current_status = app.data.status;
 
-        let utc_t = luxon.DateTime.fromSQL(ticket_object.due);
+        let utc_t = luxon.DateTime.fromISO(ticket_object.due);
         app.data.due_date = !utc_t.invalid ? utc_t.setZone(app.data.time_zone).toFormat("y-MM-dd") : null;
     };
 

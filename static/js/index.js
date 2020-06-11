@@ -43,6 +43,25 @@ app.formatDate = (date) => {
     }
 }
 
+app.formatBadDate = (badDate) => {
+    // this is for formatting non whole dates
+    // i hate javascript and dates with a burning passion
+    // the likes of which will never be satiated
+    // it carves away at my very being 
+    // for all time
+
+    console.log(date);
+    if(typeof(date) !== "undefined" && date !== null) {
+        return sluggo.formatDate(new Date(new Date(badDate).getTime() + (new Date()).getTimezoneOffset()*60*1000));
+    } else {
+        return "";
+    }
+}
+
+app.fixDate = (date) => {
+    return date + new Date().getTimezoneOffset();
+}
+
 app.checkOverdue = (webTicket) => {
     if(webTicket.due === null) {
         return false;
@@ -90,7 +109,8 @@ app.methods = {
     goToSelfAssignee: app.goToSelfAssignee,
     checkStarted: app.checkStarted,
     checkCompleted: app.checkCompleted,
-    unpinTicket: app.unpinTicket
+    unpinTicket: app.unpinTicket,
+    formatBadDate: app.formatBadDate
 }
 
 app.vm = new Vue({
