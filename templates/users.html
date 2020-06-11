@@ -5,8 +5,8 @@
 [[extend 'layout.html']]
 <div class="section" id="vue-users">
    <div class="container">
-      <div class="columns">
-         <div class="column is-4">
+      <div class="section columns">
+         <div class="column is-one-third ">
             <p class="title">Team Members</p>
          </div>
          <div class="column">
@@ -20,9 +20,9 @@
             </div>
         </div>
       </div>
-     <div class="columns is-multiline is-mobile">
+      <br>
+     <div class="columns is-multiline">
          <!-- Member Selection Panel -->
-
          <div class="column is-one-third" v-for="user in users" >
             <!-- User Selection loop -->
             <article @click="show_user(user._idx)" class="level notification has-background-grey-lighter" >
@@ -37,7 +37,6 @@
             </article>
          </div>
        </div>
-
    </div>
 </div>
 

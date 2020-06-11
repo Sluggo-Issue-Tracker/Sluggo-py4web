@@ -6,8 +6,9 @@ import base64
 import pathlib
 import uuid
 import os
+import json
 
-from py4web import action, request, abort, redirect, URL, Field
+from py4web import action, request, abort, redirect, URL, Field, response
 from py4web.utils.form import Form, FormStyleBulma
 from yatl.helpers import A
 from pydal.validators import *
@@ -172,6 +173,9 @@ def edit_user():
 
     names = request.json.get('full_name').split()
 
+    first_name = names[0]
+    last_name = " ".join(names[1:])
+
     tags = request.json.get('tags_list')
     old_tags = Helper.get_user_tag_by_name(row)
 
@@ -204,7 +208,7 @@ def edit_user():
                                      tag_id=t_id
                                      )
 
-    user.update_record(first_name=names[0], last_name=names[1])
+    user.update_record(first_name=first_name, last_name=last_name)
     return "ok"
 
 
