@@ -8,7 +8,8 @@ app.data = {
     priority_tickets: [],
     user_tags: [],
     user_tags: [],
-    recent_events: []
+    recent_events: [],
+    assigned_tickets_count: assigned_tickets_count
 }
 
 app.setFormattedDate = () => {
@@ -41,13 +42,34 @@ app.formatDate = (date) => {
     }
 }
 
+app.checkOverdue = (webTicket) => {
+    if(webTicket.due === null) {
+        return false;
+    }
+    // else we parse the web due
+    let webTicketDue = new Date(webTicket.web_due);
+
+    return sluggo.isOverdue(webTicketDue);
+}
+
+app.checkStarted = (webTicket) => {
+    return !(webTicket.started === null);
+}
+
+app.goToSelfAssignee = () => {
+    window.location.href = tickets_url + "?assignee_id=" + user_id;
+}
+
 app.methods = {
     setFormattedDate: app.setFormattedDate,
     placeholder: app.placeholder,
     goToTicket: app.goToTicket,
     formatTag: app.formatTag,
     goToTag: app.goToTag,
-    formatDate: app.formatDate
+    formatDate: app.formatDate,
+    checkOverdue: app.checkOverdue,
+    goToSelfAssignee: app.goToSelfAssignee,
+    checkStarted: app.checkStarted
 }
 
 app.vm = new Vue({

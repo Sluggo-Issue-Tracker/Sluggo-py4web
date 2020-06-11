@@ -12,3 +12,17 @@ sluggo.placeholder = () => {
 sluggo.capitalizeString = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+sluggo.isOverdue = (dueDate) => {
+    // get current date
+    let currDateTime = new Date(new Date().toDateString());
+    // round due date 
+    let roundedDueDate = new Date(dueDate.toDateString());
+
+    // compare to due date (in UTC already)
+    let difference = currDateTime - dueDate;
+    
+    console.log(difference);
+
+    return (difference > 0);
+}

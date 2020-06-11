@@ -40,6 +40,7 @@ def generate_ticket_status(ticket):
 @action.uses(userValidator, 'tickets.html', signed_url, auth.user)
 def tickets():
     tag_id = request.query.get("tag_id")
+    assignee_id = request.query.get("assignee_id")
     return dict(
         get_tickets_url=URL('get_tickets', signer=signed_url),
         add_tickets_url=URL('add_tickets', signer=signed_url),
@@ -56,7 +57,8 @@ def tickets():
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
         user=auth.get_user(),
-        tag_id=tag_id
+        tag_id=tag_id,
+        assignee_id = assignee_id
     )
 
 
