@@ -58,7 +58,8 @@ let init = (app) => {
         },
         project_users: [],
         current_status: "",
-        pinned_tickets: []
+        pinned_tickets: [],
+        approved: approved == "True"
         // Complete.
     };
 
@@ -140,6 +141,12 @@ let init = (app) => {
     };
 
     app.redirect = (id) => {
+
+        // Only allow approved users to see ticket details.
+        if(app.data.approved === false) {
+            return;
+        }
+
         window.location.href = ticket_details_url + '/' + id;
     };
 
@@ -222,7 +229,7 @@ let init = (app) => {
             app.data.project_users = result.data.users.map((user) => {
                 user.label = user.full_name;
                 return user;
-            });
+            }).filter((user) => { return user.role != "unapproved"});
         });
 
     };

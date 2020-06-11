@@ -253,7 +253,7 @@ let init = (app) => {
             });
             return axios.get(get_users_url)
         }).then((result) => {
-            app.data.possible_users = app.reindex(result.data.users);
+            app.data.possible_users = app.reindex(result.data.users).filter((user) => { return user.role != "unapproved"});
         });
 
         axios.get(get_all_progress).then((result) => {

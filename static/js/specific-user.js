@@ -21,7 +21,8 @@ let init = (app) => {
         success: false,
         id: id,
         selected: "",
-        isAdmin: admin == "True",
+        isAdmin: admin === "True",
+        approved: approved === "True"
 
         // Complete.
     };
@@ -99,8 +100,12 @@ let init = (app) => {
         return app.data.user_email === app.data.current_user.user_email;
     };
 
+    app.checkUnapproved = () => {
+        return (!app.data.approved) && app.checkUser();
+    };
+
     app.checkAdmin = () => {
-        return app.data.isAdmin;
+        return app.data.isAdmin === true;
     };
 
     app.upload_image = () => {
@@ -121,6 +126,7 @@ let init = (app) => {
         resetCurrent: app.resetCurrent,
         checkUser: app.checkUser,
         checkAdmin: app.checkAdmin,
+        checkUnapproved: app.checkUnapproved,
         upload_image: app.upload_image,
     };
 

@@ -23,5 +23,6 @@ class UserValidator(Fixture):
             return output
 
         output['admin'] = Helper.get_role() == 'Admin'
+        output['approved'] = Helper.get_role() == 'Approved' or Helper.get_role() == 'Admin'
 
         return output
