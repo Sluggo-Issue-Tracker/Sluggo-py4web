@@ -30,7 +30,7 @@
                 <div class="columns">
                    <div class="column">
                       <p class="is-size-5">Ticket {{t.id}} | {{t.tag_string}} | {{t.ticket_title}}</p>
-                      <p v-if="typeof(t.web_due) !== 'undefined'">Due {{formatDate(t.web_due)}}</p>
+                      <p v-if="typeof(t.web_due) !== 'undefined'">Due {{formatBadDate(t.web_due)}}</p>
                    </div>
                    <!-- <div class="column"></div>
                    <div class="column">
@@ -50,6 +50,10 @@
             <br v-if="priority_tickets.length === 0 || priority_tickets.length === 3">
              <div>
                 <p class="is-size-4 has-text-weight-semibold">Recent Updates</p>
+                <br>
+                <p v-if="recent_events.length === 0">
+                   You don't have any events. Star a ticket or get assigned to a ticket to see updates here.
+                </p>
                 <article v-for="e in recent_events" @click="goToTicket(e.related_ticket)" class="notification">
                    <div class="columns">
                       <!-- <div class="column">
@@ -137,6 +141,9 @@
                    <div class="level-item level-left">
                       <p class="is-size-4 has-text-weight-semibold">Your Tags</p>
                    </div>
+                </div>
+                <div class="" v-if="user_tags.length === 0">
+                   You don't have any tags
                 </div>
                 <div class="tile is-ancestor">
                    <div class="tile is-parent is-vertical">

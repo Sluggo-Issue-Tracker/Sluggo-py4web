@@ -139,6 +139,8 @@ class Helper:
         for rel in ticket_tag_rels:
             tickets.append(db(db.tickets.id == rel.ticket_id).select().first())
         for ticket in tickets:
+            if ticket.completed is not None:
+                continue
             # TODO: Migrate this into its overdue checking function
             # Get current date and time
             currentTime = datetime.utcnow().date()
