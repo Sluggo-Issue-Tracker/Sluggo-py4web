@@ -106,6 +106,29 @@ let init = (app) => {
         app.data.edit = false;
     };
 
+    app.check_date = (date) => {
+        let month, day, year;
+        month = day = year = null;
+
+        format = date.match(/[\/-]/g);
+
+        if(format && format.length === 2 && format[0] === format[1]) {
+            date_array = date.split(format[0]);
+
+            if(date_array.length === 3) {
+                if(format[0] === "/")
+                    date_array.unshift(date_array.pop());
+
+                year = parseInt(date_array[0]);
+                month = parseInt(date_array[1]);
+                day = parseInt(date_array[2]);
+
+            }
+        }
+
+        return luxon.DateTime.local(year, month, day);
+    }
+
     /**
      * submits the modified values to the backend
      * on success, updates the displayed values
@@ -115,7 +138,7 @@ let init = (app) => {
         if(app.data.ticket === null)
             return;
 
-        let date = app.data.due_date ? luxon.DateTime.fromSQL(app.data.due_date) : app.data.due_date;
+        let date = app.data.due_date ? app.check_date(app.data.due_date) : app.data.due_date;
         axios.post(edit_ticket_url, {
             id: app.data.ticket_id,
             title: app.data.title,
