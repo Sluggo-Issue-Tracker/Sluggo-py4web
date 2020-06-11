@@ -50,7 +50,7 @@
             <br v-if="priority_tickets.length === 0 || priority_tickets.length === 3">
              <div>
                 <p class="is-size-4 has-text-weight-semibold">Recent Updates</p>
-                <article v-for="e in recent_events" @click="placeholder()" class="notification">
+                <article v-for="e in recent_events" @click="goToTicket(e.related_ticket)" class="notification">
                    <div class="columns">
                       <!-- <div class="column">
                          <div class="">
@@ -60,9 +60,20 @@
 
                          </div> -->
                       <!-- </div> -->
+                      <div class="column is-2">
+                         <img v-bind:src="e.image">
+                      </div>
                       <div class="column">
-                         <p>User {{e.web_action_user_name}} performed action {{e.type}} with content {{e.description}}
+                         <!-- generic debug -->
+                         <!-- <p>User {{e.web_action_user_name}} performed action {{e.type}} with content {{e.description}}
                             on ticket {{e.related_ticket}}
+                         </p> --> 
+                         <p v-if="e.type === 'post-comment'">{{e.web_action_user_name}} posted on Ticket
+                            {{e.related_ticket}}: "{{e.description}}"
+                         </p>
+                         <p v-if="e.type === 'ticket-status-change'">
+                           {{e.web_action_user_name}} just marked Ticket {{e.related_ticket}} "{{e.description}}."
+                           <span v-if="e.description == 'Completed'"> Awesome!</span>
                          </p>
                          <!-- <p><span class="has-text-weight-bold">Andrew Gavgavian posted on Ticket 21 "Submitting software proposal for...": </span>
                          </p><p>"Great work! I think we can start moving this proposal forward. I cleaned up some of the wording
@@ -150,6 +161,7 @@
       let priority_tickets = '[[=XML(priority_tickets)]]';
       let assigned_tickets_count = '[[=XML(assigned_tickets_count)]]';
       let ticket_details_url = '[[=XML(ticket_details_url)]]';
+      let get_icons_url = '[[=XML(get_icons_url)]]';
       let tickets_url = '[[=XML(tickets_url)]]';
       let pin_ticket_url = '[[=XML(pin_ticket_url)]]';
       let user_tags = '[[=XML(user_tags)]]';

@@ -76,7 +76,7 @@ class Helper:
         # Attempt to run dumps and replace any non-compatible types
         # (probably not needed in JS)
         default = lambda obj: f"<<non-serializable: {type(obj).__qualname__}>>"
-        return json.dumps(obj, default=default, skipkeys=True)
+        return json.dumps(obj, default=default, skipkeys=True).replace("'", "\\'")
 
     @staticmethod
     def get_tags_list():
