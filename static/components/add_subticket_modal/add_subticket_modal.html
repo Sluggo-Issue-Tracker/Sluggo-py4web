@@ -7,7 +7,9 @@
                     <v-select class="ticket_chooser" placeholder=""
                               v-model="ticket" :options="options"></v-select>
                     <span v-if="error" class="has-text-danger">Field Required</span>
+                    <div>Select an existing ticket</div>
                 </div>
+                <br>
                 <br>
             <button class="button is-success" @click="submit">Save changes</button>
             <button class="button" @click="close">Cancel</button>
