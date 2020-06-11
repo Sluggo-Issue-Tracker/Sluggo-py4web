@@ -176,7 +176,7 @@ let init = (app) => {
     };
 
     app.select_user = () => {
-        let post_object = app.data.assigned ? {user_id : app.data.assigned.id, ticket_id: app.data.ticket_id}
+        let post_object = app.data.assigned ? {user_id : app.data.assigned.user, ticket_id: app.data.ticket_id}
                                             : {user_id : null, ticket_id: app.data.ticket_id};
         axios.post(assign_user_url,post_object).then((response) => {
            console.log(response);

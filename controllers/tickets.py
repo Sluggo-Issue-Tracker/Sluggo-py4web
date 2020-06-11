@@ -230,7 +230,7 @@ def add_tickets():
         ticket_title=ticket_title,
         ticket_text=ticket_text,
         due=parse(ticket_due_date) if ticket_due_date else None,
-        assigned_user=assigned_user.get('id') if type(assigned_user) is dict else None
+        assigned_user=assigned_user.get('user') if type(assigned_user) is dict else None
     )
 
     # apply tags
