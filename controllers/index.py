@@ -28,7 +28,7 @@ def clean():
 # MARK: Index
 @action('index')
 @action.uses('index.html', signed_url, auth.user)
-def tickets():
+def index():
     user = db(db.users.user == Helper.get_user()).select().first()
     if user == None:
         redirect(URL('create_profile'))
@@ -63,6 +63,7 @@ def tickets():
         date=str(Helper.get_time().isoformat()),
         ticket_details_url = URL('ticket_details'),
         tickets_url = URL('tickets'),
+        get_icons_url = URL('users', 'get_icons'),
         pinned_tickets = Helper.safe_json_dumps(pinned_tickets),
         priority_tickets = Helper.safe_json_dumps(priority_tickets),
         assigned_tickets_count = Helper.fetch_assigned_count_for_user(Helper.get_user()),
