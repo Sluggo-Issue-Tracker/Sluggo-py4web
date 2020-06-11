@@ -17,7 +17,7 @@ You can find thorough documentation on how to use Sluggo in USAGE.md. This is re
 graders to read through before giving our application a try.
 
 ## Attribution
-You can find attribution for some of the open source licenses in ATTRIBUTION.md
+You can find attribution for third party libraries in ATTRIBUTION.md
 
 ## License
 Currently, Sluggo's rights are reserved to the Sluggo team, and of course to the CSE 183 course staff for testing.

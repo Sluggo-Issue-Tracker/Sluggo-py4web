@@ -1,0 +1,26 @@
+# Mark doc folder as documentation for Linguist
+doc/* linguist-documentation
+
+# And other misc files
+static/testing linguist-documentation
+
+# Mark third party dependencies to fix language stats
+
+# JS
+static/js/axios.min.js linguist-vendored
+static/js/axios.min.map linguist-vendored
+static/js/luxon.min.js linguist-vendored
+static/js/marked.min.js linguist-vendored
+static/js/sugar.min.js linguist-vendored
+static/js/utils.js linguist-vendored
+static/js/vue.js linguist-vendored
+static/js/vue-select.min.js linguist-vendored
+static/js/vue.min.js linguist-vendored
+
+# CSS
+
+static/css/bulma.css linguist-vendored
+static/css/elements.css linguist-vendored 
+static/css/vue-select.css linguist-vendored 
+
+# We count internal py4web files as part of the project since ostensibly we need to maintain those files
