@@ -19,6 +19,8 @@ let init = (app) => {
         is_pending: false,
         error: false,
         success: false,
+        tag_wrong: false,
+        name_wrong: false,
         id: id,
         selected: "",
         isAdmin: admin == "True",
@@ -52,6 +54,8 @@ let init = (app) => {
     };
 
 
+
+
     app.updateCurrent = () => {
         let user = app.data.current_user;
 
@@ -63,6 +67,20 @@ let init = (app) => {
                 return;
             }
 
+            if(sluggo.checkTagsList(user.tags_list) == false) {
+                app.data.tag_wrong = true;
+                app.show_value(0);
+                return;
+            }
+
+            if(sluggo.checkNameString(user.full_name) == false) {
+                app.data.name_wrong = true;
+                app.show_value(0);
+                return;
+            }
+
+            app.data.tag_wrong = false;
+            app.data.name_wrong = false;
 
             axios.post(edit_user_url, { bio : user.bio,
                                         role : app.data.selected,

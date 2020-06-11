@@ -16,10 +16,10 @@ let init = (app) => {
         all_tags: [],
         add_tag_text: "",
         length_check: false,
+        tag_wrong: false,
         user_email : user_email,
 
     };
-
 
     app.reindex = (a) => {
         let idx = 0;
@@ -120,6 +120,13 @@ let init = (app) => {
 
     };
 
+
+    app.sleep = (ms) => {
+            return function (x) {
+                return new Promise(resolve => setTimeout(() => resolve(x), ms));
+            };
+        };
+
     app.saveTag = (tag_index) => {
 
         let tag = app.data.all_tags[tag_index];
@@ -143,10 +150,20 @@ let init = (app) => {
     app.addTag = () => {
 
         let val = app.data.add_tag_text;
+
         if(val.trim().length === 0) {
             app.data.length_check = true;
             return;
         }
+
+         if(sluggo.checkTagsString(val) == false) {
+                app.data.tag_wrong = true;
+                app.sleep(3000)()
+                    .then(() => {
+                        app.data.tag_wrong = false;
+                    });
+                return;
+            }
         app.data.length_check = false;
 
         app.data.text_check = false;

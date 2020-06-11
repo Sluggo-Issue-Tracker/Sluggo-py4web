@@ -22,6 +22,7 @@
           <div class="control">
             <input v-if="checkUser()" v-model="current_user.full_name" class="input is-hovered" type="text">
             <input v-else disabled v-model="current_user.full_name" class="input is-hovered" type="text">
+            <p v-if="name_wrong" class="has-text-danger">No special characters allowed</p>
           </div>
         </div>
 
@@ -32,6 +33,7 @@
           <v-select v-if="checkUnapproved()" multiple v-model="current_user.tags_list" :options="options"> </v-select>
           <v-select v-else-if="checkUser() || checkAdmin()" taggable multiple push-tags v-model="current_user.tags_list" :options="options"> </v-select>
           <v-select v-else disabled multiple v-model="current_user.tags_list"> </v-select>
+          <p v-if="tag_wrong" class="has-text-danger">Tags must be one word and alphanumeric.</p>
         </div>
 
         <!-- Role Field -->
