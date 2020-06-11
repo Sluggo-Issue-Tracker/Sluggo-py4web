@@ -58,7 +58,7 @@ def tickets():
         username=Helper.get_user_title(),
         user=auth.get_user(),
         tag_id=tag_id,
-        assignee_id = assignee_id
+        assignee_id=assignee_id
     )
 
 
@@ -81,6 +81,7 @@ def ticket_details(ticket_id=None):
 
     return dict(
         get_ticket_by_id_url=URL('get_ticket_by_id', ticket_id),
+        get_tickets_url=URL('get_possible_subtickets', ticket_id),
         add_tickets_url=URL('add_tickets', signer=signed_url),
         edit_ticket_url=URL('edit_ticket', signer=signed_url),
         tickets_details_url=URL('ticket_details'),
@@ -96,6 +97,7 @@ def ticket_details(ticket_id=None):
         username=Helper.get_user_title(),
         user=user,
         comments=comments(id=ticket_id),
+        add_subticket_url=URL('add_subticket', signer=signed_url),
         get_ticket_completion_url=URL('get_ticket_completion', ticket_id),
     )
 
@@ -210,6 +212,42 @@ def get_ticket_completion(ticket_id=None):
     return dict(percentage=completed / discovered if discovered != 0 else 0)
 
 
+def _get_ancestor_list(ticket_id, ancestors):
+    parents = db(db.sub_tickets.child_id == ticket_id).select(db.sub_tickets.parent_id).as_list()
+    for parent in parents:
+        _get_ancestor_list(parent.get('parent_id'), ancestors)
+        ancestors.append(parent.get('parent_id'))
+
+
+def _get_descendants_list(ticket_id, descendants):
+    children = db(db.sub_tickets.parent_id == ticket_id).select(db.sub_tickets.child_id).as_list()
+    for child in children:
+        _get_ancestor_list(child.get('child_id'), descendants)
+        descendants.append(child.get('child_id'))
+
+
+@action('get_possible_subtickets/<ticket_id>', method="GET")
+@action.uses(auth.user, db)
+def get_possible_subtickets(ticket_id=None):
+    if not ticket_id:
+        raise HTTP(500)
+
+    tickets = db(db.tickets).select().as_list()
+    ancestors = []
+    _get_ancestor_list(ticket_id, ancestors)
+    descendants = []
+    _get_descendants_list(ticket_id, descendants)
+    invalid_list = ancestors + descendants + [int(ticket_id)]
+    print(invalid_list)
+
+    valid_tickets = []
+    for ticket in tickets:
+        if ticket.get("id") not in invalid_list:
+            valid_tickets.append(ticket)
+
+    return dict(tickets=valid_tickets)
+
+
 # create ----------------------------------------------------------------------------------------------------
 
 # helper for adding tags
@@ -248,6 +286,21 @@ def add_tickets():
         db.sub_tickets.insert(parent_id=parent_id, child_id=ticket_id)
 
     return dict(ticket=ticket[0])  # return the record
+
+
+@action('add_subticket', method="POST")
+@action.uses(signed_url.verify(), auth.user, db)
+def add_subticket():
+    parent_id = request.json.get('parent_id')
+    child_id = request.json.get('child_id')
+
+    if not parent_id or not child_id:
+        raise HTTP(500)
+
+    db.sub_tickets.update_or_insert(parent_id=parent_id, child_id=child_id)
+    ticket = db(db.tickets.id == child_id).select().as_list()[0]
+
+    return dict(ticket=ticket)
 
 
 @action('pin_ticket', method="POST")

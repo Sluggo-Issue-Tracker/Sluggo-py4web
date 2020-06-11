@@ -1,6 +1,8 @@
 [[extend 'layout.html']]
 
 [[block page_head]]
+
+<link rel="stylesheet" href="[[=URL('static/components/add_subticket_modal/add_subticket_modal.css')]]">
 <link rel="stylesheet" href="[[=URL('static/components/ticket_modal/ticket_modal.css')]]">
 [[end]]
 
@@ -10,6 +12,9 @@
                   v-bind:options="tag_options" v-bind:users="possible_users"
                   @submit="add_ticket" @cancel="close_modal">
     </ticket-modal>
+    <add-subticket-modal v-if="show_subticket_modal" v-bind:selected="new_ticket"
+                         v-bind:options="ticket_list" @submit="add_existing_subticket" @cancel="close_subticket_modal">
+    </add-subticket-modal>
     <section class="section">
         <div class="container">
             <div class="level">
@@ -119,7 +124,18 @@
                             </div>
                             <div class="level-right">
                                 <div class="level-item">
-                                <a @click.stop="pre_add"><i class="fa fa-plus"></i></a>
+                                    <div class="dropdown is-active is-right">
+                                        <div class="dropdown-trigger">
+                                            <span @click="show_settings = !show_settings"><i class="fa fa-ellipsis-h"></i></span>
+                                        </div>
+                                        <div v-if="show_settings" class="dropdown-menu">
+                                            <div class="dropdown-content">
+                                                <div class="dropdown-item" @click="add_existing()">Add existing</div>
+                                                <div class="dropdown-item" @click="pre_add()">Add new</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -169,6 +185,8 @@
    let get_users_url="[[=XML(get_users_url)]]";
    let assign_user_url = "[[=XML(assign_user_url)]]";
    let current_user = "[[=XML(user)]]";
+   let get_all_tickets_url = "[[=XML(get_tickets_url)]]";
+   let add_subticket_url = "[[=XML(add_subticket_url)]]";
    let get_ticket_completion_url = "[[=XML(get_ticket_completion_url)]]";
 </script>
 
@@ -177,4 +195,5 @@
 <script src="js/ticket_details.js"></script>
 <script src="components/ticket_modal/ticket_modal.js"></script>
 <script src="components/comment/comment.js"></script>
+<script src="components/add_subticket_modal/add_subticket_modal.js"></script>
 [[end]]

@@ -19,6 +19,7 @@ let init = (app) => {
         author: {},
         status: "",
         current_user: {},
+        ticket_list: [],
         // data used by input
         new_ticket: {},
         selected_tags: [],
@@ -35,7 +36,9 @@ let init = (app) => {
         edit: false,
         editable: false,
         show_modal: false,
+        show_subticket_modal: false,
         date_error: false,
+        show_settings: false,
         color_class: {
             0: "is-link",
             1: "is-warning",
@@ -49,6 +52,7 @@ let init = (app) => {
      *
      */
     app.pre_add = () => {
+        app.data.show_settings = false;
         app.data.new_ticket = { // object that the modal uses
             id: "",
             ticket_title: "",
@@ -122,7 +126,7 @@ let init = (app) => {
         }
 
         return luxon.DateTime.local(year, month, day);
-    }
+    };
 
     app.sleep = (ms) => {
         return function (x) {
@@ -140,7 +144,7 @@ let init = (app) => {
             return;
 
         let date = app.data.due_date ? app.check_date(app.data.due_date) : app.data.due_date;
-        if (date.invalid) {
+        if (date !== null && date.invalid) {
             app.data.date_error = true;
             app.sleep(2000)().then(() => {
                 app.data.date_error = false;
@@ -193,7 +197,7 @@ let init = (app) => {
         app.data.status = ticket_object.status;
         app.data.current_status = app.data.status;
 
-        let utc_t = luxon.DateTime.fromSQL(ticket_object.due);
+        let utc_t = luxon.DateTime.fromISO(ticket_object.due);
         app.data.due_date = !utc_t.invalid ? utc_t.setZone(app.data.time_zone).toFormat("y-MM-dd") : null;
     };
 
@@ -227,6 +231,35 @@ let init = (app) => {
         return app.data.current_user.email === app.data.ticket.user_email || current_user.role === "Admin";
     };
 
+    app.add_existing = () => {
+        app.data.new_ticket = {};
+        axios.get(get_all_tickets_url).then((result) => {
+            app.data.ticket_list= result.data.tickets;
+            app.data.ticket_list.map((x) => {
+                x.label = x.ticket_title + " #" + x.id;
+                return x;
+            });
+            app.data.ticket_list = app.data.ticket_list.filter(x => x.id !== app.data.ticket.id);
+            app.data.show_subticket_modal = true;
+        });
+    };
+
+    app.add_existing_subticket = () => {
+        let ticket = app.data.new_ticket;
+        axios.post(add_subticket_url, {
+            parent_id: app.data.ticket.id,
+            child_id: ticket.id
+        }).then((result) => {
+           app.data.ticket.sub_tickets.unshift(result.data.ticket);
+           app.data.show_subticket_modal = false;
+        });
+    };
+
+    app.close_subticket_modal = () => {
+        app.data.show_subticket_modal= false;
+        app.data.new_ticket = {};
+    };
+
     /**
      * reindexes the user list
      */
@@ -251,7 +284,10 @@ let init = (app) => {
         cancel_edit: app.cancel_edit,
         select_user: app.select_user,
         delete_ticket: app.delete_ticket,
-        check_user: app.check_user
+        check_user: app.check_user,
+        add_existing: app.add_existing,
+        add_existing_subticket: app.add_existing_subticket,
+        close_subticket_modal: app.close_subticket_modal,
     };
 
     // This creates the Vue instance.
@@ -284,7 +320,7 @@ let init = (app) => {
             });
             return axios.get(get_users_url)
         }).then((result) => {
-            app.data.possible_users = app.reindex(result.data.users).filter((user) => { return user.role != "unapproved"});
+            app.data.possible_users = app.reindex(result.data.users).filter((user) => { return user.role !== "unapproved"});
         });
 
         axios.get(get_all_progress).then((result) => {
