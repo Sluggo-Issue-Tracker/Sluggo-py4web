@@ -138,6 +138,9 @@
                       <p class="is-size-4 has-text-weight-semibold">Your Tags</p>
                    </div>
                 </div>
+                <div class="" v-if="user_tags.length === 0">
+                   You don't have any tags
+                </div>
                 <div class="tile is-ancestor">
                    <div class="tile is-parent is-vertical">
                       <article class="sluggo_hp_tag tile is-child notification is-grey-lighter" v-for="tag in user_tags" @click="goToTag(tag.tag_id)">
