@@ -44,8 +44,7 @@ def tickets():
     user_tags = Helper.get_web_tag_list_for_user_id(Helper.get_user())
 
     # Grab priority tickets
-    user_id = Helper.get_our_user_id(Helper.get_user())
-    priority_tickets = Helper.get_priority_ticket_ids_for_user(user_id)
+    priority_tickets = Helper.get_priority_ticket_ids_for_user(Helper.get_user())
 
     # Attach data to priority tickets
     Helper.attach_tags_for_tickets(priority_tickets)
