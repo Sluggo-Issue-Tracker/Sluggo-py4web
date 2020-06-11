@@ -4,7 +4,7 @@ The following is a tutorial on how to use Sluggo.
 ## What is Sluggo?
 Sluggo is a simple issue tracker aiming to bring the core features of issue trackers such as GitHub Issues, JIRA,
 and Trello to smaller teams. Compared to these other issue trackers, however, Sluggo aims to be more flexible and also
-much simpler to understand. 
+much simpler to understand.
 
 ### Basic Concepts
 Sluggo revolves around several different items of interest, namely:
@@ -34,14 +34,14 @@ New tickets default to "Not Started" and have no subtickets; these can be change
 Tags are how a user may group different tasks together in Sluggo. This is useful for categorizing different tasks to
 different groups of members on a project.
 
-For example, consider a robotics team. There may be a Mechanical team in charge of designing the robot in CAD and 
+For example, consider a robotics team. There may be a Mechanical team in charge of designing the robot in CAD and
 fabricating different pieces for the device. There may also be an Electronics team in charge of designing and ordering
-relevant PCBs. Finally, there could be a Software team in charge of programming the robot. These fit neatly into the 
+relevant PCBs. Finally, there could be a Software team in charge of programming the robot. These fit neatly into the
 notion of tags - where different concerns can be grouped together.
 
 Each tag is a simple string. Many tickets can be associated to a tag, and multiple tags can be associated to a ticket.
 
-Tags can be created by anyone, but admins will need to approve a tag before it can be used in a ticket. More on tag 
+Tags can be created by anyone, but admins will need to approve a tag before it can be used in a ticket. More on tag
 addition and approval can be found below on the section on the Admin dashboard.
 
 ### Users
@@ -54,17 +54,22 @@ You can manage Users from the Admin dashboard, which will be seen below on the s
 When you first start Sluggo, authenticate using py4web's authentication system. You will then see the following
 screen:
 
-TODO SCREENSHOT
+![Admin User Creation Screen][creation]
+
+[creation]: UsageImages/CreateUserFilled.png "An admin user creation screen"
 
 This screen will appear for all new accounts added to Sluggo, and enables you to choose your interests from what's
 in Sluggo. If you are an Admin, it will also enable you to create new interests. These interests are stored as
 tags in the database.
 
 ## Homepage
-TODO homepage screenshot
+
+![The Default Homepage][blankhome]
+
+[blankhome]: UsageImages/HomePageEmpty.png "The Default Homepage"
 
 After creating your profile, you'll be redirected to the homepage, which acts as a summary of information relevant
-to you. The homepage holds five different sections:
+to you. The homepage holds four different sections:
 
 ### Your Tickets
 This shows currently active tickets that are assigned to you. You can click on a ticket to view its details.
@@ -73,10 +78,10 @@ This shows currently active tickets that are assigned to you. You can click on a
 This shows recent updates to tickets that are relevant to you, such as status changes, added comments, and more. You can
 click to be taken to the relevant ticket.
 
-### Pinned Tickets
-This is a section where you can pin tickets of interest to you. You can click on any ticket to view its details.
+### Starred Tickets
+This is a section where you can star tickets of interest to you. You can click on any ticket to view its details.
 
-To pin a ticket, go to any ticket's details and click the pin button. This will add the pinned ticket to your homepage,
+To star a ticket, go to any ticket's details and click the star button. This will add the starred ticket to your homepage,
 and subscribe you to comments and status changes in the Recent Updates section.
 
 ### Your Tags
@@ -86,21 +91,27 @@ that tag.
 You can modify your tags from your page in the Users tab, which will be described below.
 
 ## Tickets
-TODO Tickets screenshot
+![Default Ticket Screen][tickets1]
+
+[tickets1]: UsageImages/TicketsBlank.png "Default Ticket Screen"
 
 The tickets screen shows you all of your tickets, sorted in order of oldest to newest. You can search for tickets using
 the search box at the top of the screen.
 
 To add a ticket, click the add ticket button at the top of the screen.
 
-TODO ADD TICKET MODAL SCREENSHOT
+![Adding Ticket Modal][modal]
+
+[modal]: UsageImages/AddTicketModal.png "Adding Ticket Modal"
 
 Here, you can set some initial properties of the ticket. Click "Save Changes" to save the ticket. It will appear in
 your Tickets list.
 
 Clicking on the ticket will bring you to the details screen.
 
-TODO ADD TICKET DETAILS SCREENSHOT
+![Ticket Details][ticketdetails]
+
+[ticketdetails]: UsageImages/TicketDetailsFilled.png "Ticket Details"
 
 Here, you can modify various aspects of the ticket, such as its current status, description, due date, tags,
 assignees, and subtickets. You can also leave comments on the ticket to discuss the ticket status with
@@ -109,11 +120,14 @@ others, or leave important information. If you are the creator of a ticket or an
 To modify the tags or description, you must click the "Edit" button on the ticket.
 
 You can also add subtickets to act as subtasks or dependencies on a ticket. Subticket completion will be reflected in
-the progress bar at the top of the ticket. To do this, click the "+" button under Subtickets. This will add a 
+the progress bar at the top of the ticket. To do this, click the "+" button under Subtickets. This will add a
 subticket
 
 ## Users
-TODO USERS SCREENSHOT
+
+![User Details][userdetails]
+
+[userdetails]: UsageImages/UserProfile.png "A User Profile"
 
 To access your profile, and information about others on the team, click the "Users" tab on the top of the screen.
 You will be taken to the Users screen.
@@ -124,43 +138,64 @@ role, and bio. You can modify these by changing the fields, and clicking the "Up
 Your project tags on this page are synchronized with your homepage, so any tags you add here will be added to your
 homepage under the "Your Tags" section. You are also able to suggest new tags here for an Admin to approve.
 
-To modify your profile picture, click the "Change Profile Picture" button, and choose a picture from your system.
-The picture must be less than 1MB.
+To modify your profile picture, click the "Change Profile Picture" button, and choose an exact square picture from your system.
+The picture must be less than 10MB.
 
 You can also view other users' information, although you will not be able to modify the contents of their profile.
 
 ## Admin
-TODO ADMIN PAGE DEFAULT SCREENSHOT
+
+![Admin Dashboard][admindetails]
+
+[admindetails]: UsageImages/AdminDefault.png "The Admin Dashboard"
 
 If you are an Admin, you will be able to use the Admin dashboard. The Admin dashboard gives you the ability to modify
 various characteristics about your team.
 
 Firstly, a user may approve tags. This can be seen under the Approve Tags screen:
 
+![Approve Tags][tagApproval]
+
+[tagApproval]: UsageImages/ApproveTags.png "The Tag Approval Process"
+
 If a non-Admin tries to add a custom tag through their user, it will show up in the Approve screen. An Admin may
 approve the tag here.
 
 Next is the Tags screen, shown here:
 
-TODO TAGS PAGE SCREENSHOT
+![Manage Tags][tagManage]
+
+[tagManage]: UsageImages/ManageTags.png "Managing Tags Page"
 
 This page allows you to modify what tags are on your Sluggo instance, including renaming or deleting them, as well
-as modifying their approval status.
+as modifying their approval status. You can also create new tags from this page.
 
 Next is the Members approval screen, shown here:
 
-TODO APPROVE A MEMBER SCREENSHOT
+![Approve Members][memberApproval]
+
+[memberApproval]: UsageImages/ApproveMember.png "The Member Approval Process"
 
 New members will need to be approved before they can begin using Sluggo. Simply click the Approve button in order to
 approve the member onto the team.
 
+There is also a members overview page, where users can be promoted to the Admin role or be unapproved as need be.
+
+![Manage Members][memberManage]
+
+[memberManage]: UsageImages/ManageMembers.png "Managing Members Page"
+
 Finally, the team's bios can be exported, shown here:
 
-TODO EXPORT BIOS SCREEN
+![Export Bios][exportBios]
+
+[exportBios]: UsageImages/ExportBios.png "Exporting Bios Page"
 
 This will export a screen of bios, shown here:
 
-TODO BIOS EXPORT EXAMPLE
+![Export Bios Example][exportBiosEx]
+
+[exportBiosEx]: UsageImages/ExampleExportBios.png "Example Export of Bios"
 
 This is useful for exporting information to an external webpage about your team. The items stored on this page are
 independent of the Sluggo instance and thus do not require Sluggo to be running in order to access the export.

@@ -14,7 +14,7 @@ from .. EventLogger import EventLogger
 from ..components import userValidator
 
 @action('help')
-@action.uses(userValidator, 'help.html')
+@action.uses(userValidator, 'help.html', auth.user)
 def help():
     return(
         dict(
