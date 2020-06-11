@@ -126,7 +126,7 @@ let init = (app) => {
             }
 
             // check if the assigned user is correct
-            if(!app.data.selected_users.map(e => e.id).includes(ticket.assigned_user) &&
+            if(!app.data.selected_users.map(e => e.user).includes(ticket.assigned_user) &&
                 app.data.selected_users.length > 0) return false;
 
             if((ticket.ticket_text && // see if the ticket_text is null before comparing it to the search text
@@ -213,7 +213,7 @@ let init = (app) => {
                 app.filter_list();
             }
             if(assignee_id != "None") {
-                foundAssignee = app.data.project_users.find(user => user.id == assignee_id);
+                foundAssignee = app.data.project_users.find(user => user.user == assignee_id);
                 app.data.selected_users.push(foundAssignee);
                 app.filter_list();
             }
