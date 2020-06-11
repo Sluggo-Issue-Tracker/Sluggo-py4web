@@ -16,6 +16,7 @@ let init = (app) => {
         options: tags,
         bio_empty: false,
         tag_empty: false,
+        tag_wrong: false,
         admin: admin === "True" ? true : false,
 
         // Complete.
@@ -29,6 +30,13 @@ let init = (app) => {
         }
 
         if(app.data.bio_text.trim().length !== 0) {
+
+
+            if(sluggo.checkTagsList(app.data.selected) == false) {
+                app.data.tag_wrong = true;
+                return;
+            }
+
             axios.post(add_user_url, {
                 bio: app.data.bio_text,
                 tags: app.data.selected

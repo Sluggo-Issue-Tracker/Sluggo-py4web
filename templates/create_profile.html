@@ -32,6 +32,7 @@
                             </template>
                         </v-select>
                         <p v-if="tag_empty" class="has-text-danger">Please create at least one tag</p>
+                        <p v-if="tag_wrong" class="has-text-danger">Tags must be one word and alphanumeric.</p>
                     </div>
                     <div class="field">
                         <span class="subtitle">Bio</span>
