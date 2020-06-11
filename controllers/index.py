@@ -13,8 +13,13 @@ from .. EventLogger import EventLogger
 from ..components import userValidator
 
 @action('clean')
-@action.uses(auth.user, db)
+@action.uses(userValidator, auth.user, db)
 def clean():
+
+    user = db(db.users.user == Helper.get_user()).select().first()
+    if user == None or user['role'] != "admin":
+        redirect(URL('index'))
+
     db(db.users).delete()
     db(db.tickets).delete()
     db(db.global_tag).delete()
@@ -52,7 +57,7 @@ def tickets():
     recentUpdates = EventLogger.get_recent_updates_for_user(Helper.get_user())
     Helper.attach_web_names_for_events(recentUpdates)
     Helper.attach_web_profile_user_id_to_events(recentUpdates)
-    
+
     print(Helper.safe_json_dumps(recentUpdates))
 
     return(dict(
