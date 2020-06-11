@@ -65,12 +65,48 @@
       <div class="container">
       <div class="column is-four-fifth">
 
-        <!-- Approving Tags -->
+        <!-- Admin Dashboard-->
         <div v-if="page === 'start_view' ">
           <p class="title">
             Welcome to the Admin Page, [[=username]].
           </p>
 
+          <!-- Where all the info will be -->
+          <div class="content is-medium">
+            <p>
+              This page will be where you and your fellow admins can control some settings and data for Sluggo!
+            </p>
+
+            <p>
+              As an admin, you can approve/unapprove tags for tickets, edit their names, or delete them.
+            </p>
+
+            <p>
+              In addition, as new members of your team join, they can be approved in the approval pane and even promoted to admin as necessary.
+            </p>
+
+            <p>
+              Note that this page you are currently on will not be visible to users if they are not considered Admins, so make sure to give the admin role to any users that needs it.
+            </p>
+
+            <p class="has-text-weight-semibold has-text-link">
+              Check out these features through the menu on the left!
+            </p>
+          </div>
+          <!--
+          Development Code to have when testing, enable for debug, otherwise ignore.
+          <div class="content is-medium">
+            <p>
+              Here you can perform some simple actions. For example, hit the Reset Sluggo button to refresh Sluggo from the ground up, it will delete all users, tags, tickets, and pins, but not the user login info. Once done hitting Reset you can just reload the page and you'll be greated with creating a new profile.
+            </p>
+            <div class="columns">
+              <div class="column is-half">
+                <button class="button is-large is-link" @click="clean">
+                  Reset Sluggo.
+                </button>
+              </div>
+            </div>
+          </div> -->
         </div>
 
 

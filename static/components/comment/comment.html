@@ -24,9 +24,13 @@
         </div>
         <!-- this is where the main comment information is stored -->
         <div class="columns">
-            <!--div class="column is-one-fifth">
-                <img src="https://laughingsquid.com/wp-content/uploads/2014/11/Screenshot-2014-11-19-17.41.33.png">
-            </div-->
+
+            <div class="column is-one-fifth">
+                <figure class="image is-128x128">
+                  <img :src="comment.img_url">
+                </figure>
+            </div>
+
             <div class="column">
                 <div v-if="!comment.edit">
                     {{comment.content}}

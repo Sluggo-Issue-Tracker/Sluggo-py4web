@@ -3,31 +3,24 @@
     <div class="column is-half">
       <div class="field has-addons">
         <p class="control">
-          <div class="file" v-bind:class="{'is-danger': fileerror || sizeerror || servererror, 'is-success': success, 'is-info': !fileerror && !success && !sizeerror && !servererror}">
+          <div class="file" v-bind:class="{'is-danger': error, 'is-success': success, 'is-info': !error && !success}">
             <label class="file-label">
               <input class="file-input" type="file" @change="upload_file($event)" accept="image/*">
               <span class="file-cta">
                 <span class="file-icon" >
                   <i v-if="uploading" class="fa fa-spinner fa-pulse fa-fw"></i>
-                  <i v-if="!uploading && (fileerror || sizeerror || servererror)" class="fa fa-exclamation-circle fa-fw"></i>
-
+                  <i v-if="error" class="fa fa-exclamation-circle fa-fw"></i>
                   <i v-else class="fa fa-upload fa-fw"></i>
                 </span>
                 <span class="file-label">
-                  <span v-if="!uploading && !fileerror && !sizeerror && !success && !servererror">
+                  <span v-if="!uploading && !error && !success">
                     Change Profile Pic
                   </span>
-                  <span v-if="!uploading && fileerror && !sizeerror && !success && !servererror">
-                    Wrong Filetype
+                  <span v-if="error">
+                    {{error_text}}
                   </span>
-                  <span v-if="!uploading && !fileerror && !sizeerror && success && !servererror">
+                  <span v-if="success">
                     Pic Updated
-                  </span>
-                  <span v-if="!uploading && !fileerror && sizeerror && !success && !servererror">
-                    File Too Large
-                  </span>
-                  <span v-if="!uploading && !fileerror && !sizeerror && !success && servererror">
-                    Server Error Occured
                   </span>
                 </span>
               </span>

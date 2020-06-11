@@ -148,8 +148,6 @@ def del_tag():
 @action.uses(userValidator, "bios_template.html", signed_url.verify(), auth.user,
              db)  # this has to be manually triggered - long term automate this
 def generate_bios():
-    # TODO: Migrate to proper image resource
-    IMGSRC = "https://slugbotics.com/res/images/team/woahtreesman1920.jpg"  # Tree pic SB web
     # Grab users, separated from users and nonusers
     admins = db(db.users.role == "admin").select().as_list()
     nonAdmins = db(db.users.role == "approved").select().as_list()
@@ -158,7 +156,7 @@ def generate_bios():
     def attach_auth_users(users):
         newUsers = list()
         for user in users:
-            newDict = dict(user, img_url="https://slugbotics.com/res/images/team/woahtreesman1920.jpg",
+            newDict = dict(user, img_url=Helper.get_user_icon(user["icon"]),
                            auth_user=db(db.auth_user.id == user["user"]).select().as_list()[0])
             newUsers.append(newDict)
         return newUsers

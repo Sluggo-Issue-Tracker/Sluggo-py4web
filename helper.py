@@ -5,6 +5,7 @@ from datetime import datetime, date, timezone, timedelta
 import json
 from . common import db, Field, auth
 import pathlib
+import base64
 
 class Helper:
 
@@ -317,3 +318,17 @@ class Helper:
         path = pathlib.Path(__file__).resolve().parent / 'static' / 'images' / 'profile_pics' / img_name
         if path.exists():
             path.unlink()
+
+    @staticmethod
+    def get_user_icon(icon_name):
+        """Returns a single image, URL encoded."""
+        # Reads the image.
+        img_name = icon_name
+        img_file = pathlib.Path(__file__).resolve().parent / 'static' / 'images' / 'profile_pics' / img_name
+        if not img_file.exists():
+            img_file = pathlib.Path(__file__).resolve().parent.parent / 'static' / 'images' / 'profile_pics' /  "default.jpg"
+        with img_file.open(mode='rb') as f:
+            img_bytes = f.read()
+            b64_image = base64.b64encode(img_bytes).decode('utf-8')
+        # Returns the image bytes, base64 encoded, and with the correct prefix.
+        return f"data:image/jpeg;base64,{b64_image}"

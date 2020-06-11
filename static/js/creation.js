@@ -15,12 +15,19 @@ let init = (app) => {
         bio_text: "",
         options: tags,
         bio_empty: false,
+        tag_empty: false,
         admin: admin === "True" ? true : false,
 
         // Complete.
     };
 
     app.add_user = () => {
+
+        if (app.data.admin === true && app.data.selected.length == 0) {
+            app.data.tag_empty = true;
+            return;
+        }
+
         if(app.data.bio_text.trim().length !== 0) {
             axios.post(add_user_url, {
                 bio: app.data.bio_text,

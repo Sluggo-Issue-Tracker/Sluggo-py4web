@@ -21,7 +21,13 @@
                     <div class="field">
                         <span class="subtitle">Tags</span>
                         <v-select v-if="!admin" multiple placeholder="Choose some interests" v-model="selected" :options="options"> </v-select>
-                        <v-select v-if="admin" taggable multiple push-tags placeholder="Choose some interests" v-model="selected" :options="options"> </v-select>
+
+                        <v-select v-if="admin" taggable multiple push-tags placeholder="Create some tags" v-model="selected" :options="options">
+                            <template #no-options="{ search, searching, loading }">
+                                Feel free to create some tags
+                            </template>
+                        </v-select>
+                        <p v-if="tag_empty" class="has-text-danger">Please create at least one tag</p>
                     </div>
                     <div class="field">
                         <span class="subtitle">Bio</span>
