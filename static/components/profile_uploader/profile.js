@@ -70,11 +70,11 @@
 
 
 			// If the file is too large or small, tell the user and return
-			if(file.size > 1000000 || file.size <= 0) {
+			if(file.size > 10000000 || file.size <= 0) {
 				self.uploading = false;
 				self.success = false;
 				self.error = true;
-				self.error_text = "File Too Large";
+				self.error_text = "File Too Large (10MB Limit)";
 				app.sleep(3000)()
 				.then(() => {
 					self.error = false;
