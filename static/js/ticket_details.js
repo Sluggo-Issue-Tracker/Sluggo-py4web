@@ -42,7 +42,8 @@ let init = (app) => {
             2: "is-success"
         },
         delete_status: false,
-        time_zone: luxon.DateTime.local().zoneName
+        time_zone: luxon.DateTime.local().zoneName,
+        pinned: false
     };
 
     /** prepare the new ticket for sending to the backend
@@ -239,6 +240,15 @@ let init = (app) => {
         return list;
     };
 
+    app.togglePinStatus = (ticket) => {
+        // make a server call
+        axios.post(pin_ticket_url, {
+            ticket_id: app.data.ticket_id
+        }).then((result) => {
+            Vue.set(app.data, "pinned", !app.data.pinned);
+        })
+    };
+
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
@@ -251,7 +261,8 @@ let init = (app) => {
         cancel_edit: app.cancel_edit,
         select_user: app.select_user,
         delete_ticket: app.delete_ticket,
-        check_user: app.check_user
+        check_user: app.check_user,
+        togglePinStatus: app.togglePinStatus
     };
 
     // This creates the Vue instance.
@@ -275,6 +286,17 @@ let init = (app) => {
                 return e;
             });
 
+        }).then(() => {
+            // fetch if it's pinned or not
+            axios.get(get_pinned_tickets_url).then((response) => {
+                if(response.status !== 200) {
+                    console.log("Error fetching pinned tickets");
+                    return;
+                }
+                
+                // check things
+                Vue.set(app.data, "pinned", (response.data.pinned_tickets.includes(app.data.ticket_id)));
+            })
         });
 
         axios.get(get_all_tags).then((result) => {
