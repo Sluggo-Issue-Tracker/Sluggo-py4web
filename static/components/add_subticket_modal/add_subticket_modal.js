@@ -11,10 +11,24 @@ Vue.component('v-select', VueSelect.VueSelect);
     add_subticket_modal.data = function(){
         return {
             ticket: null,
+            error: false
+        };
+    };
+
+    add_subticket_modal.methods.sleep = function(ms) {
+        return function (x) {
+            return new Promise(resolve => setTimeout(() => resolve(x), ms));
         };
     };
 
     add_subticket_modal.methods.submit = function() {
+        if(!this.ticket) {
+            this.error = true;
+            this.sleep(2000)().then(() => {
+                this.error = false;
+            });
+            return;
+        }
         this.selected.id = this.ticket.id;
         this.$emit('submit');
     };

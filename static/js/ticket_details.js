@@ -241,6 +241,7 @@ let init = (app) => {
             });
             app.data.ticket_list = app.data.ticket_list.filter(x => x.id !== app.data.ticket.id);
             app.data.show_subticket_modal = true;
+            app.data.show_settings = false;
         });
     };
 
