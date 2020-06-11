@@ -50,7 +50,7 @@
             <br v-if="priority_tickets.length === 0 || priority_tickets.length === 3">
              <div>
                 <p class="is-size-4 has-text-weight-semibold">Recent Updates</p>
-                <article v-for="e in recent_events" @click="placeholder()" class="notification">
+                <article v-for="e in recent_events" @click="goToTicket(e.related_ticket)" class="notification">
                    <div class="columns">
                       <!-- <div class="column">
                          <div class="">
