@@ -201,7 +201,7 @@ def edit_user():
 
         if (t_id == None):
             # if tag isn't stored in database, create new tags
-            t_id = db.global_tag.insert(tag_name=tag.lower())
+            t_id = db.global_tag.insert(tag_name=tag.lower(),approved=(True if row["role"] == "admin" else False))
 
         # now we insert tags in this many to many relationship
         db.user_tag.update_or_insert((db.user_tag.user_id == request.json.get('id')) & (db.user_tag.tag_id == t_id),
