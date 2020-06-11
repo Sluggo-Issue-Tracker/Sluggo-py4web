@@ -6,8 +6,8 @@
                 <div class="column is-three-quarters">
                     <div class="field">
                         <span class="subtitle">Title</span>
-                        <input type="text" v-model="ticket.ticket_title" class="input" :class="{'is-danger' : error}" placeholder="Enter new title here">
-                        <span class="has-text-danger" v-if="error">Required Field</span>
+                        <input type="text" v-model="ticket.ticket_title" class="input" :class="{'is-danger' : text_error}" placeholder="Enter new title here">
+                        <span class="has-text-danger" v-if="text_error">Required Field</span>
                     </div>
                     <div class="field">
                         <span class="subtitle">Tags</span>
@@ -21,7 +21,8 @@
                 <div class="column">
                     <div class="field">
                         <span class="subtitle">Due Date</span>
-                        <input class="input" type="date" placeholder="mm / dd / yyyy" v-model="due_date">
+                        <input class="input" :class= "{'is-danger': date_error}" type="date" placeholder="mm / dd / yyyy" v-model="due_date">
+                        <span v-if="date_error" class="has-text-danger">Invalid Format</span>
                     </div>
                     <div class="field">
                         <span class="subtitle">Assignee</span>
