@@ -57,6 +57,13 @@ let init = (app) => {
 
         if(user !== false) {
             app.data.is_pending = true;
+            if(user.full_name.split(" ").length < 2) {
+                app.data.button_text = "Name must be First and Last";
+                app.show_value(0);
+                return;
+            }
+
+
             axios.post(edit_user_url, { bio : user.bio,
                                         role : app.data.selected,
                                         tags_list : user.tags_list,
@@ -68,8 +75,8 @@ let init = (app) => {
                 app.data.is_pending = false;
                 app.show_value(1);
             }).catch((error) => {
-                console.log(error);
-                app.show_value(0);
+                    app.data.button_text = "A Server Error Occured";
+                    app.show_value(0);
             });
         }
     };
@@ -87,7 +94,6 @@ let init = (app) => {
         if(flag === 0) {
             app.data.error = true;
             app.data.success = false;
-            app.data.button_text = "There was an error";
         }
         else if(flag == 1) {
             app.data.error = false;

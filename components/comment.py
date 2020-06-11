@@ -89,11 +89,11 @@ class Comment(Fixture):
         user_id = self.auth.current_user.get('id') if self.auth.current_user else None
         first_name = self.auth.current_user.get('first_name') if self.auth.current_user else None
         last_name = self.auth.current_user.get('last_name') if self.auth.current_user else None
-
+        user = self.db(self.db.users.user == user_id).select().first()
         EventLogger.log_comment(content, ticket_id, user_id)
 
         return dict(id=self.db.comment.insert(ticket_id=ticket_id, content=content, user_id=user_id),
-                    first_name=first_name, last_name=last_name)
+                    first_name=first_name, last_name=last_name, img_url=Helper.get_user_icon(user["icon"]))
 
     # edit a comment associated with this ticket
     # using post for ids
