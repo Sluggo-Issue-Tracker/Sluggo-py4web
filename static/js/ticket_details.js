@@ -102,22 +102,26 @@ let init = (app) => {
      * resets the fields to their previous value kept track in ticket object
      */
     app.cancel_edit = () => {
+        app.set_fields(app.data.ticket);
         app.data.edit = false;
     };
 
     /**
      * submits the modified values to the backend
      * on success, updates the displayed values
+     * TODO: convert the timestamps
      */
     app.submit_edit = () => {
         if(app.data.ticket === null)
             return;
+
+        let date = app.data.due_date ? luxon.DateTime.fromSQL(app.data.due_date) : app.data.due_date;
         axios.post(edit_ticket_url, {
             id: app.data.ticket_id,
             title: app.data.title,
             text: app.data.description,
             tag_list: app.data.selected_tags,
-            due_date: app.data.due_date,
+            due_date: date ? date.setZone("utc").toString() : date,
         }).then((response) => {
             return axios.post(get_users_by_tag_list_url, {tag_list: app.data.selected_tags})
         }).then((result) => {
@@ -157,7 +161,9 @@ let init = (app) => {
         app.data.author = ticket_object.ticket_author;
         app.data.status = ticket_object.status;
         app.data.current_status = app.data.status;
-        app.data.due_date = ticket_object.due;
+
+        let utc_t = luxon.DateTime.fromSQL(ticket_object.due);
+        app.data.due_date = !utc_t.invalid ? utc_t.setZone(app.data.time_zone).toFormat("y-MM-dd") : null;
     };
 
     app.set_assigned = (user_object) => {
@@ -170,7 +176,7 @@ let init = (app) => {
     };
 
     app.select_user = () => {
-        let post_object = app.data.assigned ? {user_id : app.data.assigned.id, ticket_id: app.data.ticket_id}
+        let post_object = app.data.assigned ? {user_id : app.data.assigned.user, ticket_id: app.data.ticket_id}
                                             : {user_id : null, ticket_id: app.data.ticket_id};
         axios.post(assign_user_url,post_object).then((response) => {
            console.log(response);
@@ -239,19 +245,22 @@ let init = (app) => {
             });
 
         });
+
         axios.get(get_all_tags).then((result) => {
             app.data.tag_options = result.data.tags.map((e) => {
                 e.label = e.tag_name;
                 return e;
             });
-            return axios.post(get_users_by_tag_list_url, {tag_list: app.data.selected_tags})
+            return axios.get(get_users_url)
         }).then((result) => {
             app.data.possible_users = app.reindex(result.data.users);
         });
+
         axios.get(get_all_progress).then((result) => {
            app.data.status_strings = result.data.valid_statuses;
         });
         app.data.current_user = JSON.parse(current_user.replace(/'/g,'"'));
+
         axios.get(get_ticket_completion_url).then((result) => {
            app.data.progress = result.data.percentage;
         });

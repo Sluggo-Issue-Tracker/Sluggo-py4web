@@ -73,73 +73,16 @@ let init = (app) => {
     app.submit_add = () => {
         let error = false;
         let ticket = app.data.selected_ticket;
-        if(app.check_ticket_text(ticket)) {
-            // do a post request
-            axios.post(add_tickets_url, ticket).then((response) => {
-                console.log(response.data.ticket);
-                app.data.tickets.unshift(response.data.ticket);
-                app.reindex(app.data.tickets);
-                app.data.showModal = false;
-                app.data.submitCallback = null;
-            }).catch((error) => {
-                console.log(error);
-            });
-        }
-    };
-
-    app.edit_ticket = (ticket_idx) => {
-        // this initializes the modal to handle editing
-        app.data.submitCallback = app.submit_edit;
-        let ticket = app.data.tickets[ticket_idx];
-
-        if(ticket !== false) {
-            app.data.selected_ticket = {
-                _idx: ticket._idx,
-                id: ticket.id,
-                ticket_title: ticket.ticket_title,
-                ticket_text: ticket.ticket_text,
-                ticket_priority: ticket.ticket_priority,
-                ticket_status: ticket.ticket_status
-            };
-            app.data.showModal = true;
-        }
-    };
-
-    app.submit_edit = () => {
-        console.log(app.data.selected_ticket);
-        let ticket = app.data.selected_ticket;
-
-        if(ticket !== false) {
-
-            axios.post(edit_ticket_url, ticket).then((response) => {
-                let old_ticket = app.data.tickets[ticket._idx];
-
-                old_ticket.ticket_title = ticket.ticket_title;
-                old_ticket.ticket_text = ticket.ticket_text;
-                old_ticket.ticket_priority = ticket.ticket_priority;
-                old_ticket.ticket_status = ticket.ticket_status;
-
-                app.reindex(app.data.tickets);
-            }).catch((error) => {
-                console.log(error);
-            });
-
-        }
-
-        app.data.showModal = false;
-    };
-
-    app.check_ticket_text = (ticket) => {
-      return ticket.ticket_title.trim().length > 0;
-    };
-
-    app.delete_ticket = (ticket_idx) => {
-        let t = app.data.tickets[ticket_idx];
-
-        axios.post(delete_tickets_url, {id:t.id}).then(() => {
-            app.data.tickets.splice(ticket_idx, 1);
+        // validation *should* be done by the modal
+        axios.post(add_tickets_url, ticket).then((response) => {
+            console.log(response.data.ticket);
+            app.data.tickets.unshift(response.data.ticket);
             app.reindex(app.data.tickets);
-        })
+            app.data.showModal = false;
+            app.data.submitCallback = null;
+        }).catch((error) => {
+            console.log(error);
+        });
     };
 
     app.close_modal = () => {
@@ -169,30 +112,27 @@ let init = (app) => {
 
     app.filter_list = () => {
         app.data.tickets = app.data.master.filter((ticket) => {
-
             // check if the tag lists match the currently selected tags
             if(!app.data.selected_tags.map(e => e.tag_name).filter(x => ticket.tag_list.map(e => e.tag_name).includes(x)).length > 0 &&
-                app.data.selected_tags.length > 0) return false;
+                app.data.selected_tags.length > 0){
+                return false;
+            }
 
             // check if the ticket is completed
             let status = app.data.selected_progress.map(x => app.data.status_map[x]);
             if(!status.includes(ticket.status) &&
-                app.data.selected_progress.length > 0) return false;
+                app.data.selected_progress.length > 0) {
+                return false;
+            }
 
             // check if the assigned user is correct
             if(!app.data.selected_users.map(e => e.id).includes(ticket.assigned_user) &&
                 app.data.selected_users.length > 0) return false;
 
-            if(ticket.ticket_text.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ||
-               ticket.ticket_title.toLowerCase().includes(app.data.searchText.trim().toLowerCase())) {
+            if((ticket.ticket_text && // see if the ticket_text is null before comparing it to the search text
+                ticket.ticket_text.toLowerCase().includes(app.data.searchText.trim().toLowerCase()) ) ||
+               ticket.ticket_title.toLowerCase().includes(app.data.searchText.trim().toLowerCase()))
                 return true;
-            }
-
-            for(tag of ticket.tag_list) {
-                if(tag.tag_name.toLowerCase().includes(app.data.searchText.trim().toLowerCase())) {
-                    return true;
-                }
-            }
 
             return false;
 
@@ -232,9 +172,6 @@ let init = (app) => {
     app.methods = {
         // Complete.
         add_ticket: app.add_ticket,
-        check_ticket_text: app.check_ticket_text,
-        delete_ticket: app.delete_ticket,
-        edit_ticket: app.edit_ticket,
         close_modal: app.close_modal,
         submit_add: app.submit_add,
         filter_list: app.filter_list,

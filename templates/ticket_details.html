@@ -45,7 +45,7 @@
             <div class="columns has-background-light">
                 <div class="column is-three-quarters">
                    <div class="box">
-                       <div class="columns">
+                       <div class="columns" style="border-bottom: darkgray 1px solid; padding-bottom: 10px;">
                            <div class="column is-half">
                                <span class="subtitle">Tags</span>
                                <v-select class="has-background-white" v-if="!edit" multiple placeholder="Tags"
@@ -58,7 +58,8 @@
                            </div>
                            <div class="column">
                                <span class="subtitle">Due Date</span>
-                               <div class="field">
+                               <div v-if="!edit && (!due_date || due_date.length === 0)">No Date Selected</div>
+                               <div class="field" v-if="edit || (due_date && due_date.length > 0)">
                                    <input class="input" type="date" placeholder="mm / dd / yyyy" :disabled = "!edit"
                                           :value="due_date" @input="due_date = $event.target.value">
                                </div>
@@ -76,7 +77,7 @@
                     <div style="border-bottom: darkgray 1px solid">
                         <div class="level" >
                             <div class="level-left">
-                                <div class="level-item"><span>Progress</span></div>
+                                <div class="level-item"><span>Completion</span></div>
                             </div>
                         </div>
                         <progress class="progress" :value="progress" max="1"></progress>
@@ -105,7 +106,7 @@
                             </div>
 
                         </div>
-                        <v-select class="has-background-white" v-model="assigned" :options="possible_users" @input="select_user"></v-select>
+                        <v-select class="has-background-white" v-model="assigned" :disabled="!editable" :options="possible_users" @input="select_user"></v-select>
                         <br>
                     </div>
                     <br>
@@ -164,7 +165,7 @@
    let update_progress_url="[[=XML(update_progress_url)]]";
    let get_all_tags="[[=XML(get_all_tags)]]";
    let get_all_progress="[[=XML(get_all_progress)]]";
-   let get_users_by_tag_list_url="[[=XML(get_users_by_tag_list_url)]]";
+   let get_users_url="[[=XML(get_users_url)]]";
    let assign_user_url = "[[=XML(assign_user_url)]]";
    let current_user = "[[=XML(user)]]";
    let get_ticket_completion_url = "[[=XML(get_ticket_completion_url)]]";
