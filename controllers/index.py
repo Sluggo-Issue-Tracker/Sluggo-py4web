@@ -53,7 +53,7 @@ def index():
     # Grab recent updates
     recentUpdates = EventLogger.get_recent_updates_for_user(Helper.get_user())
     Helper.attach_web_names_for_events(recentUpdates)
-    print(recentUpdates)
+    print(Helper.safe_json_dumps(recentUpdates))
 
     return(dict(
         user_email=Helper.get_user_email(),
