@@ -17,10 +17,9 @@ sluggo.isOverdue = (dueDate) => {
     // get current date
     let currDateTime = new Date(new Date().toDateString());
     // round due date 
-    let roundedDueDate = new Date(dueDate.toDateString());
+    let fixedDueDate = new Date(new Date(dueDate).getTime() + (new Date()).getTimezoneOffset()*60*1000)
 
-    // compare to due date (in UTC already)
-    let difference = currDateTime - dueDate;
+    let difference = currDateTime.getTime() - fixedDueDate.getTime();
     
     console.log(difference);
 
