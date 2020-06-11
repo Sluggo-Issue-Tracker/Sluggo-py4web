@@ -148,8 +148,6 @@ def get_ticket_by_id(ticket_id=None):
     assigned_user = list(map(lambda x: {**x["users"], **x["auth_user"]}, assigned_user))
 
     for user in assigned_user:
-        user["icon"] = "%s-%s.jpg" % \
-                       (user.get('first_name').lower(), user.get('last_name').lower()) if user else "Unknown"
         user["full_name"] = "%s %s" % \
                             (user.get('first_name'), user.get('last_name')) if user else "Unknown"
         user['user_email'] = user.get('email')
