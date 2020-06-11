@@ -62,6 +62,10 @@ This screen will appear for all new accounts added to Sluggo, and enables you to
 in Sluggo. If you are an Admin, it will also enable you to create new interests. These interests are stored as
 tags in the database.
 
+If you are creating a second account, you must have this account approved by someone with admin status.
+Otherwise, you will not be able to edit tickets, along with a variety of actions. This is to prevent
+unauthorized members from wreaking havoc on your organization.
+
 ## Homepage
 
 ![The Default Homepage][blankhome]
@@ -82,7 +86,7 @@ click to be taken to the relevant ticket.
 This is a section where you can star tickets of interest to you. You can click on any ticket to view its details.
 
 To star a ticket, go to any ticket's details and click the star button. This will add the starred ticket to your homepage,
-and subscribe you to comments and status changes in the Recent Updates section.
+and subscribe you to new comments and completion status changes in the Recent Updates section.
 
 ### Your Tags
 This is a section which contains your interest. Clicking on any tag will bring you to the Tickets screen filtered by
