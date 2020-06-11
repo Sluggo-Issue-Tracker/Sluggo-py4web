@@ -21,29 +21,28 @@
         </div>
       </div>
       <br>
-     <div class="columns is-multiline">
+      <div class="columns is-multiline">
          <!-- Member Selection Panel -->
-         <div class="column is-one-third" v-for="user in users" >
-           <div class="box has-background-grey-lighter" @click="show_user(user._idx)">
-             <article class="media">
-               <div class="media-left">
-                 <figure class="image is-96x96">
-                   <img v-bind:src="user.url" alt="Image">
-                 </figure>
+        <div class="column is-one-third" v-for="user in users" >
+         <div class="box has-background-grey-lighter" @click="show_user(user._idx)">
+           <article class="media">
+             <div class="media-left">
+               <figure class="image is-96x96">
+                 <img v-bind:src="user.url" alt="Image">
+               </figure>
+             </div>
+             <div class="media-content">
+               <div class="content">
+                 <p>
+                   <strong class="is-4">{{user.full_name}}</strong>
+                   <br>
+                 </p>
                </div>
-               <div class="media-content">
-                 <div class="content">
-                   <p>
-                     <strong class="is-4">{{user.full_name}}</strong>
-                     <br>
-                   </p>
-                 </div>
-               </div>
-             </article>
-           </div>
+             </div>
+           </article>
          </div>
-
-       </div>
+        </div>
+      </div>
    </div>
 </div>
 
