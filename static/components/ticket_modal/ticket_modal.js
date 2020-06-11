@@ -17,7 +17,8 @@ Vue.component('v-select', VueSelect.VueSelect);
             date: "",
             due_date: "",
             assigned_user: "",
-            error: false,
+            text_error: false,
+            date_error: false,
             time_zone: luxon.DateTime.local().zoneName
         };
     };
@@ -57,24 +58,36 @@ Vue.component('v-select', VueSelect.VueSelect);
 
     ticket_modal.methods.submit = function () {
         let i = 0;
+        let error = false;
         for(let a of this.selected) {
             this.ticket.tag_list.unshift(a);
         }
 
         date = this.due_date ? ticket_modal.methods.check_date(this.due_date) : this.due_date;
-        if(!this.ticket.ticket_title || this.ticket.ticket_title.length === 0 || date.invalid) {
-            this.error = true;
+        if(date.invalid) {
+            this.date_error = true;
             this.sleep(2000)().then(() => {
-                this.error = false;
+                this.date_error = false;
             });
-            return;
+            error = true;
+        }
+        
+        if(!this.ticket.ticket_title || this.ticket.ticket_title.length === 0) {
+            this.text_error = true;
+            this.sleep(2000)().then(() => {
+                this.text_error = false;
+            });
+            error = true;
         }
 
-        // TODO: convert the timestamp
-        this.ticket.due_date = date ? date.setZone("utc").toString() : date;
-        this.ticket.assigned_user = this.assigned_user;
+        if(!error) {
 
-        this.$emit('submit');
+            // TODO: convert the timestamp
+            this.ticket.due_date = date ? date.setZone("utc").toString() : date;
+            this.ticket.assigned_user = this.assigned_user;
+
+            this.$emit('submit');
+        }
     };
 
     ticket_modal.methods.close = function () {
