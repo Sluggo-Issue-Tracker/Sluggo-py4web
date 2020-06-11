@@ -51,6 +51,8 @@ def tickets():
     # Grab recent updates
     recentUpdates = EventLogger.get_recent_updates_for_user(Helper.get_user())
     Helper.attach_web_names_for_events(recentUpdates)
+    Helper.attach_web_profile_user_id_to_events(recentUpdates)
+    
     print(Helper.safe_json_dumps(recentUpdates))
 
     return(dict(
