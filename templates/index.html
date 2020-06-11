@@ -112,6 +112,7 @@
                      <div class="column is-10" @click="goToTicket(pt.id)">
                         <p class="is-size-5">Ticket {{pt.id}} | {{pt.tag_string}} | {{pt.ticket_title}} 
                         </p>
+                        <p v-if="typeof(pt.web_due) !== 'undefined'">Due {{formatBadDate(pt.web_due)}}</p>
                         <!-- <p>Due May 25, 2020.</p> -->
                      </div>
                      <div class="column is-2">
