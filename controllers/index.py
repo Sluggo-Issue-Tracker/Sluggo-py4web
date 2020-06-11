@@ -10,6 +10,7 @@ from py4web import action, request, abort, redirect, URL, Field
 from .. common import db, session, T, cache, auth, signed_url
 from .. helper import Helper
 from .. EventLogger import EventLogger
+from ..components import userValidator
 
 @action('clean')
 @action.uses(auth.user, db)
@@ -27,12 +28,8 @@ def clean():
 
 # MARK: Index
 @action('index')
-@action.uses('index.html', signed_url, auth.user)
-def index():
-    user = db(db.users.user == Helper.get_user()).select().first()
-    if user == None:
-        redirect(URL('create_profile'))
-        # TODO: is this ^ a comprehensive enough redirect?
+@action.uses(userValidator, 'index.html', signed_url, auth.user)
+def tickets():
 
     # Grab pinned tickets
     pinned_tickets = Helper.get_tickets_for_ids(Helper.get_pinned_ticket_ids_for_user(Helper.get_user()))
@@ -44,8 +41,7 @@ def index():
     user_tags = Helper.get_web_tag_list_for_user_id(Helper.get_user())
 
     # Grab priority tickets
-    user_id = Helper.get_our_user_id(Helper.get_user())
-    priority_tickets = Helper.get_priority_ticket_ids_for_user(user_id)
+    priority_tickets = Helper.get_priority_ticket_ids_for_user(Helper.get_user())
 
     # Attach data to priority tickets
     Helper.attach_tags_for_tickets(priority_tickets)
@@ -68,7 +64,6 @@ def index():
         priority_tickets = Helper.safe_json_dumps(priority_tickets),
         assigned_tickets_count = Helper.fetch_assigned_count_for_user(Helper.get_user()),
         user_tags = Helper.safe_json_dumps(user_tags),
-        recent_events = Helper.safe_json_dumps(recentUpdates),
-        admin=Helper.get_role() == 'Admin'
+        recent_events = Helper.safe_json_dumps(recentUpdates)
     ))
 

@@ -60,8 +60,9 @@
                                <span class="subtitle">Due Date</span>
                                <div v-if="!edit && (!due_date || due_date.length === 0)">No Date Selected</div>
                                <div class="field" v-if="edit || (due_date && due_date.length > 0)">
-                                   <input class="input" type="date" placeholder="mm / dd / yyyy" :disabled = "!edit"
+                                   <input class="input" :class="{'is-danger': date_error}" type="date" placeholder="mm / dd / yyyy" :disabled = "!edit"
                                           :value="due_date" @input="due_date = $event.target.value">
+                                    <span class="has-text-danger" v-if="date_error">Invalid Format</span>
                                </div>
                            </div>
                        </div>

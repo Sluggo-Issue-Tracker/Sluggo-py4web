@@ -9,7 +9,8 @@ app.data = {
     user_tags: [],
     user_tags: [],
     recent_events: [],
-    assigned_tickets_count: assigned_tickets_count
+    assigned_tickets_count: assigned_tickets_count,
+    approved: approved  == "True"
 }
 
 app.setFormattedDate = () => {
@@ -87,7 +88,7 @@ app.vm = new Vue({
 
 app.init = () => {
     app.setFormattedDate();
-    
+
     // Add the pinned tickets from the passed date
     Vue.set(app.data, "pinned_tickets", JSON.parse(pinned_tickets));
 

@@ -29,7 +29,8 @@
         <p class="title is-size-4">Project Tags</p>
         <p class="subtitle is-size-6 is-italic">Note, all new tags will not be visable until an admin approve them. Please ping your admin on Slack when you want new tags to be approved.</p>
         <div class="field">
-          <v-select v-if="checkUser() || checkAdmin()" taggable multiple push-tags v-model="current_user.tags_list" :options="options"> </v-select>
+          <v-select v-if="checkUnapproved()" multiple v-model="current_user.tags_list" :options="options"> </v-select>
+          <v-select v-else-if="checkUser() || checkAdmin()" taggable multiple push-tags v-model="current_user.tags_list" :options="options"> </v-select>
           <v-select v-else disabled multiple v-model="current_user.tags_list"> </v-select>
         </div>
 
@@ -65,19 +66,26 @@
 
         <div>
           <div class="buttons is-pulled-left">
-            <button class="button is-link" @click="goback">
-              <i class="fa fa-chevron-left" aria-hidden="true"> </i>Back
+            <button class="button is-info" @click="goback">
+              <span class="icon">
+                <i class="fa fa-chevron-left"></i>
+              </span>
+              <span>Back</span>
             </button>
           </div>
           <!-- Update and Cancel button -->
           <div class="buttons is-right" v-if="checkAdmin() || checkUser()">
-            <span v-if="success" class="has-text-primary"> <i class="fa fa-check-square-o fa-fw"></i> </span>
-            <span v-if="error" class="has-text-danger"> <i class="fa fa fa-exclamation-triangle"></i> </span>
-            <button class="button is-primary" :class="is_pending ? 'is-loading' : ''" @click="updateCurrent">
-              Update
+            <button class="button" v-bind:class="{'is-danger': error, 'is-success': success, 'is-loading': is_pending, 'is-info': !pending }" @click="updateCurrent">
+              <span class="icon is-small">
+                <i class="fa fa-check"></i>
+              </span>
+              <span>{{button_text}}</span>
             </button>
             <button class="button is-warning" @click="resetCurrent">
-              Reset
+              <span class="icon is-small">
+                <i class="fa fa-times"></i>
+              </span>
+              <span>{{reset_text}}</span>
             </button>
           </div>
         </div>
@@ -98,6 +106,7 @@
   let username = "[[=XML(username)]]";
   let id = "[[=XML(id)]]";
   let admin = "[[=XML(admin)]]";
+  let approved = "[[=XML(approved)]]";
 </script>
 <script src="js/vue-select.min.js"></script>
 <script src="components/profile_uploader/profile.js"></script>

@@ -5,12 +5,6 @@ Vue.component('v-select', VueSelect.VueSelect);
 // and be used to initialize it.
 let app = {};
 
-/** Sam's thoughts
- * title, description, and tags are the only places where we want to confirm our changes
- * progress, assignment, and subtickets can be registered instantly
- */
-
-
 // Given an empty app object, initializes it filling its attributes,
 // creates a Vue instance, and then initializes the Vue instance.
 let init = (app) => {
@@ -41,6 +35,7 @@ let init = (app) => {
         edit: false,
         editable: false,
         show_modal: false,
+        date_error: false,
         color_class: {
             0: "is-link",
             1: "is-warning",
@@ -106,6 +101,35 @@ let init = (app) => {
         app.data.edit = false;
     };
 
+    app.check_date = (date) => {
+        let month, day, year;
+        month = day = year = null;
+
+        format = date.match(/[\/-]/g);
+
+        if(format && format.length === 2 && format[0] === format[1]) {
+            date_array = date.split(format[0]);
+
+            if(date_array.length === 3) {
+                if(format[0] === "/")
+                    date_array.unshift(date_array.pop());
+
+                year = parseInt(date_array[0]);
+                month = parseInt(date_array[1]);
+                day = parseInt(date_array[2]);
+
+            }
+        }
+
+        return luxon.DateTime.local(year, month, day);
+    }
+
+    app.sleep = (ms) => {
+        return function (x) {
+            return new Promise(resolve => setTimeout(() => resolve(x), ms));
+        };
+    };
+
     /**
      * submits the modified values to the backend
      * on success, updates the displayed values
@@ -115,7 +139,14 @@ let init = (app) => {
         if(app.data.ticket === null)
             return;
 
-        let date = app.data.due_date ? luxon.DateTime.fromSQL(app.data.due_date) : app.data.due_date;
+        let date = app.data.due_date ? app.check_date(app.data.due_date) : app.data.due_date;
+        if (date.invalid) {
+            app.data.date_error = true;
+            app.sleep(2000)().then(() => {
+                app.data.date_error = false;
+            });
+            return;
+        }
         axios.post(edit_ticket_url, {
             id: app.data.ticket_id,
             title: app.data.title,
@@ -123,7 +154,7 @@ let init = (app) => {
             tag_list: app.data.selected_tags,
             due_date: date ? date.setZone("utc").toString() : date,
         }).then((response) => {
-            return axios.post(get_users_by_tag_list_url, {tag_list: app.data.selected_tags})
+            return axios.get(get_users_url)
         }).then((result) => {
             app.data.possible_users = app.reindex(result.data.users);
         }).catch((error) => {
@@ -253,7 +284,7 @@ let init = (app) => {
             });
             return axios.get(get_users_url)
         }).then((result) => {
-            app.data.possible_users = app.reindex(result.data.users);
+            app.data.possible_users = app.reindex(result.data.users).filter((user) => { return user.role != "unapproved"});
         });
 
         axios.get(get_all_progress).then((result) => {

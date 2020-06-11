@@ -73,6 +73,9 @@ def ticket_details(ticket_id=None):
     user = auth.get_user()
     user["role"] = full_user.role if full_user else None
 
+    if not full_user or full_user.role == "unapproved":
+        redirect(URL('tickets'))
+
     if not ticket_id.isnumeric() or not db(db.tickets.id == ticket_id).select().first():
         redirect(URL('tickets'))
 

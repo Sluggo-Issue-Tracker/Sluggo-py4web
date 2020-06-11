@@ -9,7 +9,10 @@
        <div class="columns">
           <div class="column is-two-thirds">
              <p class="title">Hey, [[=username]]</p>
-             <p class="subtitle">It's {{formatted_date}}. Here's your overview:</p>
+             <p v-if="approved" class="subtitle">It's {{formatted_date}}. Here's your overview:</p>
+             <p v-else class="subtitle has-text-danger">
+              Thank you for registering for Sluggo! Currently your account is unapproved, so you won't be able to do much, but feel free to poke around where you can, an Admin will approve you shortly.
+             </p>
              <div class="level">
                 <div class="level-item level-left">
                    <p class="is-size-4 has-text-weight-semibold">Assigned to You</p>
@@ -54,7 +57,7 @@
                             <div class="level-item">
                                <img src="[[=URL('static', 'images/default.JPG')]]" width="80">
                             </div>
-                            
+
                          </div> -->
                       <!-- </div> -->
                       <div class="column is-2">
@@ -72,8 +75,8 @@
                            {{e.web_action_user_name}} just marked Ticket {{e.related_ticket}} "{{e.description}}."
                            <span v-if="e.description == 'Completed'"> Awesome!</span>
                          </p>
-                         <!-- <p><span class="has-text-weight-bold">Andrew Gavgavian posted on Ticket 21 "Submitting software proposal for...": </span> 
-                         </p><p>"Great work! I think we can start moving this proposal forward. I cleaned up some of the wording 
+                         <!-- <p><span class="has-text-weight-bold">Andrew Gavgavian posted on Ticket 21 "Submitting software proposal for...": </span>
+                         </p><p>"Great work! I think we can start moving this proposal forward. I cleaned up some of the wording
                             and described some more technical mechanisms.""
                          </p> -->
                       </div>
@@ -85,7 +88,7 @@
              <div class="box">
                 <div class="level">
                    <div class="level-item level-left">
-                      <p class="is-size-4 has-text-weight-semibold">Pinned Tickets</p>
+                      <p class="is-size-4 has-text-weight-semibold">Starred Tickets</p>
                    </div>
                    <!-- TODO: Implement easy pinned ticket modification -->
                    <!-- <div class="level-item level-right buttons">
@@ -128,7 +131,7 @@
                 <div class="tile is-ancestor">
                    <div class="tile is-parent is-vertical">
                       <article class="sluggo_hp_tag tile is-child notification is-grey-lighter" v-for="tag in user_tags" @click="goToTag(tag.tag_id)">
-                         <p>{{formatTag(tag.tag_name)}} <span v-if="tag.overdue_count > 0" class="has-text-danger">({{tag.overdue_count}} 
+                         <p>{{formatTag(tag.tag_name)}} <span v-if="tag.overdue_count > 0" class="has-text-danger">({{tag.overdue_count}}
                             <span v-if="tag.overdue_count == 1">ticket</span><span v-if="tag.overdue_count > 1">tickets</span>
                              overdue)</span></p>
                       </article>
@@ -139,7 +142,7 @@
        </div>
     </div>
     </div>
-    
+
     [[block page_scripts]]
     <script>
       let user_id = "[[=XML(user_id)]]";
@@ -152,6 +155,7 @@
       let tickets_url = '[[=XML(tickets_url)]]';
       let user_tags = '[[=XML(user_tags)]]';
       let recent_events ='[[=XML(recent_events)]]';
+      let approved = '[[=XML(approved)]]';
     </script>
     <script src="js/index.js"></script>
     [[end]]
