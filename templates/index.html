@@ -86,6 +86,11 @@
                       </div>
                    </div> -->
                 </div>
+                <div class="columns" v-if="pinned_tickets.length == 0">
+                  <div class="column">
+                     <p>You don't have any starred tickets.</p>
+                  </div>
+               </div>
                <div class="sluggo_pinned_ticket notification is-info" v-for="pt in pinned_tickets">
                   <div class="columns is-mobile">
                      <div class="column is-10" @click="goToTicket(pt.id)">
