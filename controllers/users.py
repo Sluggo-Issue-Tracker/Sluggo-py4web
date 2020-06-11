@@ -107,6 +107,7 @@ def attach_user_information(users):
                             (person.get('first_name'), person.get('last_name')) if person else "Unknown"
         user['tags_list'] = Helper.get_user_tag_by_name(user)
         user['user_email'] = person.get('email')
+        user['role'] = user['role'].capitalize()
 
 
 @action('users/get_users')

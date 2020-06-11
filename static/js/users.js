@@ -44,11 +44,24 @@ let init = (app) => {
         });
     };
 
+    app.getColor = (user_index) => {
+        let user = app.data.users[user_index];
+
+        if (user.role === "Admin")
+            return 'has-text-success';
+
+        else if (user.role === "Approved")
+            return 'has-text-info';
+
+        return 'has-text-danger';
+    };
+
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
         show_user: app.show_user,
         filter_list: app.filter_list,
+        getColor: app.getColor
     };
 
     // This creates the Vue instance.
