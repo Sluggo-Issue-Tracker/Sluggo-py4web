@@ -22,6 +22,8 @@ let init = (app) => {
         id: id,
         selected: "",
         isAdmin: admin == "True",
+        button_text: "Update Your Profile",
+        reset_text: "Reset Changes"
 
         // Complete.
     };
@@ -41,6 +43,11 @@ let init = (app) => {
 
     app.resetCurrent = () => {
         app.data.current_user = {...app.data.master};
+        app.data.reset_text = "Reset Successfull!";
+        app.sleep(2000)()
+            .then(() => {
+                app.data.reset_text = "Reset Changes";
+            });
     };
 
 
@@ -79,19 +86,22 @@ let init = (app) => {
         if(flag === 0) {
             app.data.error = true;
             app.data.success = false;
+            app.data.button_text = "There was an error";
         }
         else if(flag == 1) {
             app.data.error = false;
             app.data.success = true;
+            app.data.button_text = "Profile Updated";
         }
         else {
-            app.data.error = false;
+            // more cases will be here as needed
         }
         app.data.is_pending = false;
-        app.sleep(1000)()
+        app.sleep(2000)()
             .then(() => {
                 app.data.error = false;
                 app.data.success = false;
+                app.data.button_text = "Update Your Profile";
             });
     };
 
