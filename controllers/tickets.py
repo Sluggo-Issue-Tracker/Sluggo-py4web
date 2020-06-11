@@ -134,7 +134,7 @@ def get_ticket_by_id(ticket_id=None):
     ticket["status"] = generate_ticket_status(ticket)
     ticket["sub_tickets"] = Helper.get_sub_tickets_by_parent_id(ticket.get('id'))
 
-    assigned_user = db(db.users.id == ticket.get('assigned_user')).select(
+    assigned_user = db(db.auth_user.id == ticket.get('assigned_user')).select(
         db.users.ALL, db.auth_user.first_name, db.auth_user.last_name, db.auth_user.email,
         left=(db.auth_user.on(db.auth_user.id == db.users.user))).as_list()
 
