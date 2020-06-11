@@ -85,7 +85,7 @@ app.goToSelfAssignee = () => {
 }
 
 app.fetchEventIconForEvent = (event) => {
-    return axios.get(get_icons_url + '?id=' + event.action_user).then((response) => {
+    return axios.get(get_icons_url + '?id=' + event.web_profile_user).then((response) => {
         console.log(response);
         Vue.set(event, "image", response.data.imgbytes);
     })

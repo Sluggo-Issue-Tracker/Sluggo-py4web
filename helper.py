@@ -306,3 +306,9 @@ class Helper:
     def fetch_assigned_count_for_user(auth_user_id):
         return len(db((db.tickets.assigned_user == auth_user_id) & \
             (db.tickets.completed == None)).select().as_list())
+
+    @staticmethod
+    def attach_web_profile_user_id_to_events(events):
+        for event in events:
+            # God help us if this doesn't exist
+            event["web_profile_user"] = db(db.users.user == event["action_user"]).select().first().id
