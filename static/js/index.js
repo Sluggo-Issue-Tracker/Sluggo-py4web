@@ -61,6 +61,13 @@ app.goToSelfAssignee = () => {
     window.location.href = tickets_url + "?assignee_id=" + user_id;
 }
 
+app.fetchEventIconForEvent = (event) => {
+    return axios.get(get_icons_url + '?id=' + event.action_user).then((response) => {
+        console.log(response);
+        Vue.set(event, "image", response.data.imgbytes);
+    })
+}
+
 app.methods = {
     setFormattedDate: app.setFormattedDate,
     placeholder: app.placeholder,
@@ -91,7 +98,11 @@ app.init = () => {
     // Add the user tags from the passed user tags
     Vue.set(app.data, "user_tags", JSON.parse(user_tags));
 
-    Vue.set(app.data, "recent_events", JSON.parse(recent_events))
+    Vue.set(app.data, "recent_events", JSON.parse(recent_events));
+    for(event of app.data.recent_events) {
+        // make a request
+        app.fetchEventIconForEvent(event);
+    }
 }
 
 app.init();

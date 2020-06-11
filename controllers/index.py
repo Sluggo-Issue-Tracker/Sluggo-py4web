@@ -49,7 +49,7 @@ def tickets():
     # Grab recent updates
     recentUpdates = EventLogger.get_recent_updates_for_user(Helper.get_user())
     Helper.attach_web_names_for_events(recentUpdates)
-    print(recentUpdates)
+    print(Helper.safe_json_dumps(recentUpdates))
 
     return(dict(
         user_email=Helper.get_user_email(),
@@ -59,6 +59,7 @@ def tickets():
         date=str(Helper.get_time().isoformat()),
         ticket_details_url = URL('ticket_details'),
         tickets_url = URL('tickets'),
+        get_icons_url = URL('users', 'get_icons'),
         pinned_tickets = Helper.safe_json_dumps(pinned_tickets),
         priority_tickets = Helper.safe_json_dumps(priority_tickets),
         assigned_tickets_count = Helper.fetch_assigned_count_for_user(Helper.get_user()),
