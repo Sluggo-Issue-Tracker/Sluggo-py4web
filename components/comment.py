@@ -7,6 +7,7 @@ from yatl.helpers import XML
 from py4web.utils.url_signer import URLSigner
 from py4web.core import Fixture, HTTP
 from ..EventLogger import EventLogger
+from ..models import Helper
 
 
 class Comment(Fixture):
@@ -71,6 +72,7 @@ class Comment(Fixture):
 
         for comment in comments:
             comment['editable'] = comment.get('user_id') == self.auth.current_user.get('id') or user.role == "admin"
+            comment['img_url'] = Helper.get_user_icon(user["icon"])
 
         return dict(comments=comments)
 

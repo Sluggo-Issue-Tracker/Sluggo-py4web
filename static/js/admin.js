@@ -187,7 +187,15 @@ let init = (app) => {
     app.gotoBiosExport = () => {
         console.log(bios_export_url);
         window.location.href = bios_export_url;
-    }
+    };
+
+
+    app.clean = () => {
+        axios.get("../clean").then((response) => {
+            console.log(response);
+            location.reload();
+        });
+    };
 
 
     app.getColor = (user_index) => {
@@ -213,6 +221,7 @@ let init = (app) => {
         cancelEdit : app.cancelEdit,
         saveTag : app.saveTag,
         addTag : app.addTag,
+        clean : app.clean,
     };
 
 

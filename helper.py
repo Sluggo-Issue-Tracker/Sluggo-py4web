@@ -5,6 +5,7 @@ from datetime import datetime, date, timezone, timedelta
 import json
 from . common import db, Field, auth
 import pathlib
+import base64
 
 class Helper:
 
@@ -212,14 +213,6 @@ class Helper:
     # MARK: Priority Tickets
     @staticmethod
     def get_priority_ticket_ids_for_user(given_user_id):
-        # TODO optimize all queries; these are terrible
-        # Priority Ticket Ordering:
-        # 1. Assigned to you and overdue
-        # 2. In your tags and overdue
-        # 3. Assigned to you, not overdue
-        # 4. Your Tags
-        # TODO: We need a better way to track what you're assigned to and also add this to homepage
-
         # Overdue methods
         def get_overdue(ticket):
             # Get the date
@@ -240,20 +233,8 @@ class Helper:
         assignedTickets = []
 
         # Fetch assigned tickets
-        assignedTickets += db(db.tickets.assigned_user == given_user_id).select().as_list()
-
-        # Fetch your tags' tickets
-        allTagTickets = []
-        user_tags = Helper.get_user_tags_ids_for_user_id(given_user_id)
-        for tag_id in user_tags:
-            allTagTickets += db(db.tickets.id == tag_id).select().as_list()
-
-        # Deduplicate tagTickets
-        # stupid and O(n^2)
-        tagTickets = []
-        for ticket in allTagTickets:
-            if ticket not in tagTickets and ticket not in assignedTickets:
-                tagTickets.append(ticket)
+        assignedTickets += db((db.tickets.assigned_user == given_user_id) & \
+            (db.tickets.completed == None)).select().as_list()
 
         # Now we filter and return in the desired order
         orderedPriorityTickets = []
@@ -263,20 +244,12 @@ class Helper:
         overdueAssignedTickets.sort(key=get_overdue, reverse=True)
         orderedPriorityTickets += overdueAssignedTickets
 
-        # Add tag tickets which are overdue
-        overdueTagTickets = list(filter(lambda x: is_overdue(x), tagTickets))
-        overdueTagTickets.sort(key=get_overdue, reverse=True)
-        orderedPriorityTickets += overdueTagTickets
-
         # Add assigned tickets which are not overdue
         assignedNotOverdueTickets = list(filter(lambda x: not is_overdue(x), assignedTickets))
         assignedNotOverdueTickets.sort(key=get_overdue, reverse=True)
         orderedPriorityTickets += assignedNotOverdueTickets
 
-        # Add tag tickets which are not overdue
-        tagNotOverdueTickets = list(filter(lambda x: not is_overdue(x), tagTickets))
-        tagNotOverdueTickets.sort(key=get_overdue, reverse=True)
-        orderedPriorityTickets += tagNotOverdueTickets
+        print(orderedPriorityTickets)
 
         orderedPriorityTickets = orderedPriorityTickets[:3]
 
@@ -317,3 +290,22 @@ class Helper:
         path = pathlib.Path(__file__).resolve().parent / 'static' / 'images' / 'profile_pics' / img_name
         if path.exists():
             path.unlink()
+
+    @staticmethod
+    def get_user_icon(icon_name):
+        """Returns a single image, URL encoded."""
+        # Reads the image.
+        img_name = icon_name
+        img_file = pathlib.Path(__file__).resolve().parent / 'static' / 'images' / 'profile_pics' / img_name
+        if not img_file.exists():
+            img_file = pathlib.Path(__file__).resolve().parent.parent / 'static' / 'images' / 'profile_pics' /  "default.jpg"
+        with img_file.open(mode='rb') as f:
+            img_bytes = f.read()
+            b64_image = base64.b64encode(img_bytes).decode('utf-8')
+        # Returns the image bytes, base64 encoded, and with the correct prefix.
+        return f"data:image/jpeg;base64,{b64_image}"
+    
+    @staticmethod 
+    def fetch_assigned_count_for_user(auth_user_id):
+        return len(db((db.tickets.assigned_user == auth_user_id) & \
+            (db.tickets.completed == None)).select().as_list())

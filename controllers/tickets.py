@@ -40,6 +40,7 @@ def generate_ticket_status(ticket):
 @action.uses(userValidator, 'tickets.html', signed_url, auth.user)
 def tickets():
     tag_id = request.query.get("tag_id")
+    assignee_id = request.query.get("assignee_id")
     return dict(
         get_tickets_url=URL('get_tickets', signer=signed_url),
         add_tickets_url=URL('add_tickets', signer=signed_url),
@@ -56,7 +57,8 @@ def tickets():
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
         user=auth.get_user(),
-        tag_id=tag_id
+        tag_id=tag_id,
+        assignee_id = assignee_id
     )
 
 
@@ -83,10 +85,9 @@ def ticket_details(ticket_id=None):
         delete_tickets_url=URL('delete_tickets', signer=signed_url),
         get_all_tags=URL('get_tags'),
         get_all_progress=URL('get_all_progress'),
-        get_users_url=URL('users/get_users'),
+        get_users_url=URL('users/get_users', signer=signed_url),
         delete_tag_url=URL('delete_tag', signer=signed_url),
         update_progress_url=URL('update_ticket_progress', signer=signed_url),
-        get_users_by_tag_list_url=URL('get_users_by_tag_list'),
         assign_user_url=URL('assign_user', signer=signed_url),
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
@@ -135,7 +136,7 @@ def get_ticket_by_id(ticket_id=None):
     ticket["status"] = generate_ticket_status(ticket)
     ticket["sub_tickets"] = Helper.get_sub_tickets_by_parent_id(ticket.get('id'))
 
-    assigned_user = db(db.users.id == ticket.get('assigned_user')).select(
+    assigned_user = db(db.auth_user.id == ticket.get('assigned_user')).select(
         db.users.ALL, db.auth_user.first_name, db.auth_user.last_name, db.auth_user.email,
         left=(db.auth_user.on(db.auth_user.id == db.users.user))).as_list()
 
@@ -225,11 +226,13 @@ def add_tickets():
     ticket_due_date = request.json.get('due_date')
     assigned_user = request.json.get('assigned_user')
 
+    print("the due date is " + ticket_due_date)
+
     ticket_id = db.tickets.insert(
         ticket_title=ticket_title,
         ticket_text=ticket_text,
-        due=ticket_due_date,
-        assigned_user=assigned_user.get('id') if type(assigned_user) is dict else None
+        due=parse(ticket_due_date) if ticket_due_date else None,
+        assigned_user=assigned_user.get('user') if type(assigned_user) is dict else None
     )
 
     # apply tags
@@ -284,13 +287,13 @@ def edit_ticket():
         print("wrong type for tag_list")
         abort(500, "wrong type for tag_list")
 
-    if type(title) is not str or type(text) is not str:
+    if type(title) is not str:
         print("wrong values for title or text")
         abort(500, "wrong values for title and text")
 
     ticket.update_record(ticket_title=title.strip(),
-                         ticket_text=text.strip(),
-                         due=due_date)
+                         ticket_text=text.strip() if text else "",
+                         due=parse(due_date) if due_date else None)
 
     current_tickets = Helper.get_ticket_tags_by_id(ticket_id)
 

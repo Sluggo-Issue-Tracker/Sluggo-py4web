@@ -59,11 +59,13 @@ def tickets():
         user_email=Helper.get_user_email(),
         username=Helper.get_user_title(),
         user=auth.get_user(),
+        user_id = Helper.get_user(),
         date=str(Helper.get_time().isoformat()),
         ticket_details_url = URL('ticket_details'),
         tickets_url = URL('tickets'),
         pinned_tickets = Helper.safe_json_dumps(pinned_tickets),
         priority_tickets = Helper.safe_json_dumps(priority_tickets),
+        assigned_tickets_count = Helper.fetch_assigned_count_for_user(Helper.get_user()),
         user_tags = Helper.safe_json_dumps(user_tags),
         recent_events = Helper.safe_json_dumps(recentUpdates),
         admin=Helper.get_role() == 'Admin'

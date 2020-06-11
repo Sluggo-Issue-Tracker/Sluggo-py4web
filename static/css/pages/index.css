@@ -1,3 +1,7 @@
 .sluggo_hp_tag {
     cursor: pointer;
 }
+
+.sluggo_clickable {
+    cursor: pointer;
+}

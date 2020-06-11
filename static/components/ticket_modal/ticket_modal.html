@@ -6,11 +6,12 @@
                 <div class="column is-three-quarters">
                     <div class="field">
                         <span class="subtitle">Title</span>
-                        <input type="text" v-model="ticket.ticket_title" class="input" placeholder="Enter new title here">
+                        <input type="text" v-model="ticket.ticket_title" class="input" :class="{'is-danger' : error}" placeholder="Enter new title here">
+                        <span class="has-text-danger" v-if="error">Required Field</span>
                     </div>
                     <div class="field">
                         <span class="subtitle">Tags</span>
-                        <v-select class="tag-chooser" maxHeight="100px" multiple placeholder="Choose some interests" v-model="selected" :options="options"></v-select>
+                        <v-select class="tag-chooser" maxHeight="100px" multiple placeholder="Choose Tags" v-model="selected" :options="options"></v-select>
                     </div>
                     <div class="field">
                         <span class="subtitle">Description</span>

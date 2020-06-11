@@ -12,10 +12,18 @@
              <p class="subtitle">It's {{formatted_date}}. Here's your overview:</p>
              <div class="level">
                 <div class="level-item level-left">
-                   <p class="is-size-4 has-text-weight-semibold">Priority Tasks</p>
+                   <p class="is-size-4 has-text-weight-semibold">Assigned to You</p>
                 </div>
              </div>
-             <div v-for="t in priority_tickets" @click="goToTicket(t.id)" class="notification is-info">
+             <div v-if="priority_tickets.length === 0">
+                <div class="columns">
+                   <div class="column">
+                     <p>You don't have any incomplete tickets assigned to you.</p>
+                   </div>
+                </div>
+             </div>
+             <div v-for="t in priority_tickets" @click="goToTicket(t.id)" class="notification sluggo_clickable"
+               v-bind:class = "{'is-info': !checkOverdue(t), 'is-warning': !checkOverdue(t) && checkStarted(t), 'is-danger': checkOverdue(t)}">
                 <div class="columns">
                    <div class="column">
                       <p class="is-size-5">Ticket {{t.id}} | {{t.tag_string}} | {{t.ticket_title}}</p>
@@ -31,7 +39,12 @@
                    </div> -->
                 </div>
              </div>
-    
+             <div v-if="assigned_tickets_count > 3" class="columns">
+                <div class="column">
+                  <a @click="goToSelfAssignee()" class="sluggo_clickable">See all tickets assigned to you &rarr;</a>
+                </div>
+             </div>
+            <br v-if="priority_tickets.length === 0 || priority_tickets.length === 3">
              <div>
                 <p class="is-size-4 has-text-weight-semibold">Recent Updates</p>
                 <article v-for="e in recent_events" @click="placeholder()" class="notification">
@@ -126,9 +139,11 @@
     
     [[block page_scripts]]
     <script>
+      let user_id = "[[=XML(user_id)]]";
       let date = "[[=XML(date)]]";
       let pinned_tickets = '[[=XML(pinned_tickets)]]';
       let priority_tickets = '[[=XML(priority_tickets)]]';
+      let assigned_tickets_count = '[[=XML(assigned_tickets_count)]]';
       let ticket_details_url = '[[=XML(ticket_details_url)]]';
       let tickets_url = '[[=XML(tickets_url)]]';
       let user_tags = '[[=XML(user_tags)]]';
