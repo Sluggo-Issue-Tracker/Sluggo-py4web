@@ -54,7 +54,7 @@ Vue.component('v-select', VueSelect.VueSelect);
         }
 
         return luxon.DateTime.local(year, month, day);
-    }
+    };
 
     ticket_modal.methods.submit = function () {
         let i = 0;

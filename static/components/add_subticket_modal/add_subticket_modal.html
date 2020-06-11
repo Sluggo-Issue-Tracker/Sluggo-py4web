@@ -1,0 +1,18 @@
+<div class="modal is-active">
+    <div class="modal-background" @click="close"></div>
+    <div class="modal-content existing_modal">
+        <section class="box ">
+                <div class="field">
+                    <span class="subtitle">Tickets</span>
+                    <v-select class="ticket_chooser" placeholder=""
+                              v-model="ticket" :options="options"></v-select>
+                    <span v-if="error" class="has-text-danger">Field Required</span>
+                    <div>Select an existing ticket</div>
+                </div>
+                <br>
+                <br>
+            <button class="button is-success" @click="submit">Save changes</button>
+            <button class="button" @click="close">Cancel</button>
+        </section>
+    </div>
+</div>
