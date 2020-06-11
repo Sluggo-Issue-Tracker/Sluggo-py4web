@@ -61,6 +61,13 @@ app.goToSelfAssignee = () => {
     window.location.href = tickets_url + "?assignee_id=" + user_id;
 }
 
+app.unpinTicket = (pinnedTicket) => {
+    Vue.set(app.data, "pinned_tickets", app.data.pinned_tickets.filter(pt => pt.id !== pinnedTicket.id));
+    axios.post(pin_ticket_url, {
+        ticket_id: pinnedTicket.id
+    });
+}
+
 app.methods = {
     setFormattedDate: app.setFormattedDate,
     placeholder: app.placeholder,
@@ -70,7 +77,8 @@ app.methods = {
     formatDate: app.formatDate,
     checkOverdue: app.checkOverdue,
     goToSelfAssignee: app.goToSelfAssignee,
-    checkStarted: app.checkStarted
+    checkStarted: app.checkStarted,
+    unpinTicket: app.unpinTicket
 }
 
 app.vm = new Vue({

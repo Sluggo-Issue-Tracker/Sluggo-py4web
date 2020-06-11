@@ -86,11 +86,15 @@
                       </div>
                    </div> -->
                 </div>
-               <div class="sluggo_pinned_ticket notification is-info" v-for="pt in pinned_tickets" @click="goToTicket(pt.id)">
-                  <div class="columns">
-                     <div class="column">
-                        <p class="is-size-5">Ticket {{pt.id}} | {{pt.tag_string}} | {{pt.ticket_title}} </p>
+               <div class="sluggo_pinned_ticket notification is-info" v-for="pt in pinned_tickets">
+                  <div class="columns is-mobile">
+                     <div class="column is-10" @click="goToTicket(pt.id)">
+                        <p class="is-size-5">Ticket {{pt.id}} | {{pt.tag_string}} | {{pt.ticket_title}} 
+                        </p>
                         <!-- <p>Due May 25, 2020.</p> -->
+                     </div>
+                     <div class="column is-2">
+                        <span @click="unpinTicket(pt)"><i class="fa fa-star"></i></span>
                      </div>
                      <!-- TODO: Determine how to expose ticket completion
                      endpoints on the homepage -->
@@ -141,6 +145,7 @@
       let assigned_tickets_count = '[[=XML(assigned_tickets_count)]]';
       let ticket_details_url = '[[=XML(ticket_details_url)]]';
       let tickets_url = '[[=XML(tickets_url)]]';
+      let pin_ticket_url = '[[=XML(pin_ticket_url)]]';
       let user_tags = '[[=XML(user_tags)]]';
       let recent_events ='[[=XML(recent_events)]]';
       let approved = '[[=XML(approved)]]';
