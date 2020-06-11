@@ -224,11 +224,6 @@ class Helper:
         def is_overdue(ticket):
             return get_overdue(ticket) > 0
 
-        # Get auth user ID
-        authUserID = db(db.users.id == given_user_id).select().first().user
-        if authUserID is None:
-            print("Error fetching priority tickets - no user ID")
-            return None
 
         assignedTickets = []
 
@@ -304,8 +299,8 @@ class Helper:
             b64_image = base64.b64encode(img_bytes).decode('utf-8')
         # Returns the image bytes, base64 encoded, and with the correct prefix.
         return f"data:image/jpeg;base64,{b64_image}"
-    
-    @staticmethod 
+
+    @staticmethod
     def fetch_assigned_count_for_user(auth_user_id):
         return len(db((db.tickets.assigned_user == auth_user_id) & \
             (db.tickets.completed == None)).select().as_list())
