@@ -40,7 +40,7 @@ def tickets():
     Helper.attach_web_due_for_tickets(pinned_tickets)
 
     # Grab user tags
-    user_tags = Helper.get_web_tag_list_for_user_id(Helper.get_user())
+    user_tags = Helper.get_web_tag_list_for_user_id(Helper.get_our_user_id(Helper.get_user()))
 
     # Grab priority tickets
     priority_tickets = Helper.get_priority_ticket_ids_for_user(Helper.get_user())
