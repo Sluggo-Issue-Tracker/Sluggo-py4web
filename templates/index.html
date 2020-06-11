@@ -45,8 +45,16 @@
                          </div> -->
                       <!-- </div> -->
                       <div class="column">
-                         <p>User {{e.web_action_user_name}} performed action {{e.type}} with content {{e.description}}
+                         <!-- generic debug -->
+                         <!-- <p>User {{e.web_action_user_name}} performed action {{e.type}} with content {{e.description}}
                             on ticket {{e.related_ticket}}
+                         </p> --> 
+                         <p v-if="e.type === 'post-comment'">{{e.web_action_user_name}} posted on Ticket
+                            {{e.related_ticket}}: "{{e.description}}"
+                         </p>
+                         <p v-if="e.type === 'ticket-status-change'">
+                           {{e.web_action_user_name}} just marked Ticket {{e.related_ticket}} {{e.description}}.
+                           <span v-if="e.description == 'Completed'"> Awesome!</span>
                          </p>
                          <!-- <p><span class="has-text-weight-bold">Andrew Gavgavian posted on Ticket 21 "Submitting software proposal for...": </span> 
                          </p><p>"Great work! I think we can start moving this proposal forward. I cleaned up some of the wording 
