@@ -19,6 +19,8 @@ Vue.component('v-select', VueSelect.VueSelect);
             assigned_user: "",
             text_error: false,
             date_error: false,
+            title_type_error: false,
+            text_type_error: false,
             time_zone: luxon.DateTime.local().zoneName
         };
     };
@@ -28,8 +30,8 @@ Vue.component('v-select', VueSelect.VueSelect);
             return new Promise(resolve => setTimeout(() => resolve(x), ms));
         };
     };
-    
-    
+
+
     // the data can either come in mm / dd / yyyy (on mac) or
     // yyyy-mm-dd because using normal things is not the safari way
     // so we have a function that handles that hogwash for us
@@ -71,7 +73,7 @@ Vue.component('v-select', VueSelect.VueSelect);
             });
             error = true;
         }
-        
+
         if(!this.ticket.ticket_title || this.ticket.ticket_title.length === 0) {
             this.text_error = true;
             this.sleep(2000)().then(() => {
@@ -80,6 +82,23 @@ Vue.component('v-select', VueSelect.VueSelect);
             error = true;
         }
 
+        if(sluggo.checkNameString(this.ticket.ticket_title) === false) {
+            this.title_type_error = true;
+            this.sleep(2000)().then(() => {
+                this.title_type_error = false;
+            });
+            error = true;
+
+        }
+
+        if(sluggo.checkNameString(this.ticket.ticket_text) === false) {
+            this.text_type_error = true;
+            this.sleep(2000)().then(() => {
+                this.text_type_error = false;
+            });
+            error = true;
+
+        }
         if(!error) {
 
             // TODO: convert the timestamp

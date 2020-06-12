@@ -19,7 +19,8 @@
             add_url: this.add_url,
             edit_url: this.edit_url,
             delete_url: this.delete_url,
-            error: false
+            error: false,
+            text_type_error: false,
         };
 
         data = comment.methods.load(data);
@@ -33,6 +34,7 @@
             c.show_settings = false;
             c.edit = false;
             c.error = false;
+            c.text_type_error = false;
         }
         return comments;
     };
@@ -74,6 +76,16 @@
             });
             return;
         }
+
+        if (!this.new_comment || sluggo.checkNameString(this.new_comment) === false) {
+            this.text_type_error = true;
+            this.sleep(2000)().then(() => {
+                this.text_type_error = false;
+            });
+            return;
+        }
+
+
 
         axios.post(this.add_url, {
             content: this.new_comment,
@@ -120,7 +132,16 @@
             selected.error = true;
             this.comments.splice(idx, 1, selected);
             this.sleep(2000)().then(() => {
-                selected.error = false;
+                selected.text_type_error = false;
+                this.comments.splice(idx, 1, selected);
+            });
+            return;
+        }
+        if (sluggo.checkNameString(selected.new_content) === false) {
+            selected.text_type_error = true;
+            this.comments.splice(idx, 1, selected);
+            this.sleep(2000)().then(() => {
+                selected.text_type_error = false;
                 this.comments.splice(idx, 1, selected);
             });
             return;

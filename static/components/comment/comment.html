@@ -35,9 +35,10 @@
                 <div v-if="!comment.edit">
                     {{comment.content}}
                 </div>
-                <textarea v-if="comment.edit" :class="{'is-danger' : comment.error}"
+                <textarea v-if="comment.edit" :class="{'is-danger' : comment.error || comment.text_type_error}"
                           v-model="comment.new_content" class="textarea"></textarea>
                 <span class="has-text-danger" v-if="comment.error">Required Field</span>
+                <span class="has-text-danger" v-if="comment.text_type_error">Field must be Alphanumeric</span>
             </div>
         </div>
         <div class="level" v-if="comment.edit">
@@ -55,12 +56,10 @@
     </div>
     <div class="box" v-if="edit">
         <div class="columns">
-            <!--div class="column is-one-fifth">
-                <img src="https://laughingsquid.com/wp-content/uploads/2014/11/Screenshot-2014-11-19-17.41.33.png">
-            </div-->
             <div class="column">
-                <textarea :class="{'is-danger' : error}" v-model="new_comment" class="textarea"></textarea>
+                <textarea :class="{'is-danger' : error || text_type_error}" v-model="new_comment" class="textarea"></textarea>
                 <span v-if="error" class="has-text-danger">Required Field</span>
+                <span class="has-text-danger" v-if="text_type_error">Field must be Alphanumeric</span>
             </div>
         </div>
         <!-- i'm not sure why, but to get a level-right to display correctly, there needs to be a level left -->

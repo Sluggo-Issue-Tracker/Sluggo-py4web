@@ -29,6 +29,10 @@ sluggo.isOverdue = (dueDate) => {
 
 sluggo.checkTagsList = (tag_list) => {
 
+    if(!tag_list) {
+        return false;
+    }
+
     if(tag_list.length === 0) {
         return true;
     }
@@ -47,6 +51,10 @@ sluggo.checkTagsList = (tag_list) => {
 
 
 sluggo.checkTagsString = (tag) => {
+
+    if(!tag) {
+        return false;
+    }
 
     if(tag.length === 0) {
         return true;
@@ -68,6 +76,11 @@ sluggo.checkTagsString = (tag) => {
 
 
 sluggo.checkNameString = (name) => {
+
+
+    if(!name) {
+        return false;
+    }
 
     if(name.length === 0) {
         return true;
