@@ -6,8 +6,9 @@
                 <div class="column is-three-quarters">
                     <div class="field">
                         <span class="subtitle">Title</span>
-                        <input type="text" v-model="ticket.ticket_title" class="input" :class="{'is-danger' : text_error}" placeholder="Enter new title here">
+                        <input type="text" v-model="ticket.ticket_title" class="input" :class="{'is-danger' : text_error || title_type_error}" placeholder="Enter new title here">
                         <span class="has-text-danger" v-if="text_error">Required Field</span>
+                        <span class="has-text-danger" v-if="title_type_error">Field must be Alphanumeric</span>
                     </div>
                     <div class="field">
                         <span class="subtitle">Tags</span>
@@ -15,7 +16,8 @@
                     </div>
                     <div class="field">
                         <span class="subtitle">Description</span>
-                        <textarea v-model="ticket.ticket_text" class="textarea is-fullwidth" placeholder="Enter new ticket here"></textarea>
+                        <textarea v-model="ticket.ticket_text" class="textarea is-fullwidth" :class="{'is-danger' : text_type_error}" placeholder="Enter new ticket here"></textarea>
+                        <span class="has-text-danger" v-if="text_type_error">Field must be Alphanumeric</span>
                     </div>
                 </div>
                 <div class="column">
