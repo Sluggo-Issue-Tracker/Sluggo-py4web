@@ -91,7 +91,7 @@ Vue.component('v-select', VueSelect.VueSelect);
 
         }
 
-        if(sluggo.checkNameString(this.ticket.ticket_text) === false) {
+        if(this.ticket.ticket_text && sluggo.checkNameString(this.ticket.ticket_text) === false) {
             this.text_type_error = true;
             this.sleep(2000)().then(() => {
                 this.text_type_error = false;
