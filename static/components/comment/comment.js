@@ -132,11 +132,13 @@
             selected.error = true;
             this.comments.splice(idx, 1, selected);
             this.sleep(2000)().then(() => {
-                selected.text_type_error = false;
+                selected.error = false;
                 this.comments.splice(idx, 1, selected);
             });
             return;
         }
+
+
         if (sluggo.checkNameString(selected.new_content) === false) {
             selected.text_type_error = true;
             this.comments.splice(idx, 1, selected);
