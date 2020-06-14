@@ -22,5 +22,6 @@ static/js/vue.min.js linguist-vendored
 static/css/bulma.css linguist-vendored
 static/css/elements.css linguist-vendored 
 static/css/vue-select.css linguist-vendored 
+static/font-awesome-4.7.0/* linguist-vendored
 
 # We count internal py4web files as part of the project since ostensibly we need to maintain those files
