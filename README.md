@@ -1,4 +1,7 @@
 # Sluggo
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
+[![Platform: py4web](https://img.shields.io/badge/platform-py4web-informational.svg)](https://github.com/web2py/py4web)
+
 A modern, simple issue tracker for teams. App for the py4web framework.
 
 # Installation Instructions
@@ -20,5 +23,4 @@ graders to read through before giving our application a try.
 You can find attribution for third party libraries in ATTRIBUTION.md
 
 ## License
-Currently, Sluggo's rights are reserved to the Sluggo team, and of course to the CSE 183 course staff for testing.
-We are looking into various open source licenses, and will be sharing Sluggo as an open source project later.
+Sluggo is licensed under the Mozilla Public License v2; see LICENSE for details.
