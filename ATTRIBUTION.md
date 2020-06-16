@@ -1,6 +1,13 @@
 # Attributions for Sluggo
 The following includes licenses for all third-party depedencies on the frontend and backend of Sluggo.
 
+## Sluggo License (MPLv2)
+    Copyright (c) 2020 Slugbotics, All Rights Reserved.
+    see git repository history for individual committers
+    
+    Sluggo is licensed under the Mozilla Public License v2.0. You may obtain
+    a copy of this license here: https://www.mozilla.org/en-US/MPL/2.0/
+
 ## Axios License (MIT)
     Copyright (c) 2014-present Matt Zabriskie
 

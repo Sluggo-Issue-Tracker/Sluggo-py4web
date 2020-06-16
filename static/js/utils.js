@@ -1,4 +1,7 @@
-
+/*
+    utils.js - part of py4web (not Sluggo)
+    under py4web's BSD 3-clause license
+*/
 // ASSUMES Vue and Axios
 
 if (!String.prototype.format) {
