@@ -1,5 +1,5 @@
 /*
-    ticket_details.js - JavaScript code for users page
+    ticket_details.js - JavaScript code for ticket details page
     part of Sluggo, a free and open source issue tracker
     Copyright (c) 2020 Slugbotics - see git repository history for individual committers
 
