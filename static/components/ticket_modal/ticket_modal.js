@@ -69,11 +69,7 @@ Vue.component('v-select', VueSelect.VueSelect);
     };
 
     ticket_modal.methods.submit = function () {
-        let i = 0;
         let error = false;
-        for(let a of this.selected) {
-            this.ticket.tag_list.unshift(a);
-        }
 
         date = this.due_date ? ticket_modal.methods.check_date(this.due_date) : this.due_date;
         if(date.invalid) {
@@ -109,11 +105,16 @@ Vue.component('v-select', VueSelect.VueSelect);
             error = true;
 
         }
+
         if(!error) {
 
             // TODO: convert the timestamp
             this.ticket.due_date = date ? date.setZone("utc").toString() : date;
             this.ticket.assigned_user = this.assigned_user;
+
+            for(let a of this.selected) {
+                this.ticket.tag_list.unshift(a);
+            }
 
             this.$emit('submit');
         }
