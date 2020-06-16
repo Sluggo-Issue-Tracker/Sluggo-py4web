@@ -1,3 +1,8 @@
+/*
+    utils.js - part of py4web (not Sluggo)
+    under py4web's BSD 3-clause license
+*/
+
 (function(){
 
     var auth = { props: ['plugins'], data: null, methods: {}};

@@ -1,3 +1,12 @@
+# admin.py - backend code for admin page and related functions
+# part of Sluggo, a free and open source issue tracker
+# Copyright (c) 2020 Slugbotics - see git repository history for individual committers
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+#
+
 """
 This file defines the actions related to index and homepages
 possibly should be in the controller as users idk tho
