@@ -2,16 +2,16 @@
   index.html - template file for homepage
   part of Sluggo, a free and open source issue tracker
   Copyright (c) 2020 Slugbotics - see git repository history for individual committers
-  
+
   This Source Code Form is subject to the terms of the Mozilla Public
   License, v. 2.0. If a copy of the MPL was not distributed with this
   file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
-
 [[extend "layout.html"]]
 
 [[block page_head]]
 <link rel="stylesheet" href="[[=URL('static', 'css/pages/index.css')]]">
+<title>Sluggo</title>
 [[end]]
 
 <div v-cloak id="hp-target" class="section">
@@ -81,7 +81,7 @@
                          <!-- generic debug -->
                          <!-- <p>User {{e.web_action_user_name}} performed action {{e.type}} with content {{e.description}}
                             on ticket {{e.related_ticket}}
-                         </p> --> 
+                         </p> -->
                          <p v-if="e.type === 'post-comment'">{{e.web_action_user_name}} posted on Ticket
                             {{e.related_ticket}}: "{{e.description}}"
                          </p>
@@ -116,11 +116,11 @@
                      <p>You don't have any starred tickets.</p>
                   </div>
                </div>
-               <div class="sluggo_pinned_ticket notification" v-for="pt in pinned_tickets" 
+               <div class="sluggo_pinned_ticket notification" v-for="pt in pinned_tickets"
                v-bind:class="{'is-info': !checkOverdue(pt) && !checkStarted(pt) && !checkCompleted(pt), 'is-warning': !checkOverdue(pt) && checkStarted(pt) && !checkCompleted(pt), 'is-danger': checkOverdue(pt) && !checkCompleted(pt), 'is-success': checkCompleted(pt)}">
                   <div class="columns is-mobile">
                      <div class="column is-10" @click="goToTicket(pt.id)">
-                        <p class="is-size-5">Ticket {{pt.id}} | {{pt.tag_string}} | {{pt.ticket_title}} 
+                        <p class="is-size-5">Ticket {{pt.id}} | {{pt.tag_string}} | {{pt.ticket_title}}
                         </p>
                         <p v-if="typeof(pt.web_due) !== 'undefined'">Due {{formatBadDate(pt.web_due)}}</p>
                         <!-- <p>Due May 25, 2020.</p> -->
