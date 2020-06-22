@@ -90,7 +90,8 @@
                        <div v-if="!edit" style="padding-bottom: 10px; word-wrap: break-word;">
                            {{description}}
                        </div>
-                       <textarea  v-if="edit" v-model="description" class="textarea"></textarea>
+                       <textarea  v-if="edit" v-model="description" class="textarea" :class="{'is-danger' : text_type_error}"></textarea>
+                       <span class="has-text-danger" v-if="text_type_error">Field must be Alphanumeric</span>
                    </div>
                    [[=comments]]
                 </div>

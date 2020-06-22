@@ -48,6 +48,7 @@ let init = (app) => {
         show_modal: false,
         show_subticket_modal: false,
         date_error: false,
+        text_type_error: false,
         show_settings: false,
         color_class: {
             0: "is-link",
@@ -162,6 +163,15 @@ let init = (app) => {
             });
             return;
         }
+        if(!app.data.description || sluggo.checkNameString(app.data.description) === false) {
+            app.data.text_type_error = true;
+            app.sleep(2000)().then(() => {
+                app.data.text_type_error = false;
+            });
+            return;
+        }
+
+
         axios.post(edit_ticket_url, {
             id: app.data.ticket_id,
             title: app.data.title,
@@ -172,6 +182,9 @@ let init = (app) => {
             return axios.get(get_users_url)
         }).then((result) => {
             app.data.possible_users = app.reindex(result.data.users);
+            app.data.ticket.ticket_text = app.data.description;
+            app.data.ticket.due = date ? date.setZone("utc").toString() : date;
+
         }).catch((error) => {
             console.log(error);
         });
@@ -192,6 +205,7 @@ let init = (app) => {
         }).then((response) => {
             app.data.status = response.data.status;
             app.data.current_status = response.data.status;
+            app.data.ticket.status = app.data.status;
             return axios.get(get_ticket_completion_url)
         }).then((result) => {
             app.data.progress = result.data.percentage;
@@ -340,7 +354,7 @@ let init = (app) => {
                     console.log("Error fetching pinned tickets");
                     return;
                 }
-                
+
                 // check things
                 Vue.set(app.data, "pinned", (response.data.pinned_tickets.includes(app.data.ticket_id)));
             })

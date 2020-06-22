@@ -96,7 +96,7 @@ sluggo.checkNameString = (name) => {
         return true;
     }
 
-    let patt = /^[\w ]+$/;
+    let patt = /^[\w \.\*\+\?\$\^\/\\.\!\,\@\#\(\)\[\]\<\>]+$/;
 
     let matches = patt.test(name);
 
