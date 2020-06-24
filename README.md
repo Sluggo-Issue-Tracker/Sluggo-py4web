@@ -8,9 +8,8 @@ A modern, simple issue tracker for teams. Currently in the prototype stage. App 
 Begin by installing py4web, the server which powers Sluggo. py4web and relating installation instructions can be found
 here: https://github.com/web2py/py4web
 
-In addition to py4web, Sluggo relies on libraries specified in our requirements.txt file:
-
-`pip install -r requirements.txt`
+In addition to py4web, Sluggo relies on a few additional libraries. Install the following packages:
+```pip install python-dateutil```
 
 You should then have all necessary prerequisites to run Sluggo.
 
