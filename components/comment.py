@@ -81,7 +81,8 @@ class Comment(Fixture):
 
         for comment in comments:
             comment['editable'] = comment.get('user_id') == self.auth.current_user.get('id') or user.role == "admin"
-            comment['img_url'] = Helper.get_user_icon(user["icon"])
+            comment_creator = self.db(self.db.users.user == comment.get('user_id')).select().first()
+            comment['img_url'] = Helper.get_user_icon(comment_creator["icon"])
 
         return dict(comments=comments)
 
