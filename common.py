@@ -49,7 +49,7 @@ auth = Auth(session, db,
             registration_requires_confirmation=False,
             password_complexity=False,
             use_username=False,
-            login_expiration_time=False)
+            login_expiration_time=14400)
 
 if auth.db:
     groups = Tags(db.auth_user, 'groups')
