@@ -7,7 +7,9 @@
   License, v. 2.0. If a copy of the MPL was not distributed with this
   file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
-[[block page_head]]<title>Sluggo/Admin</title>[[end]]
+[[block page_head]]
+<title>Sluggo/Admin</title>
+[[end]]
 
 
 
@@ -117,11 +119,11 @@
 
 
         <!-- Approving Tags -->
-        <div v-if="page === 'approve_tags' ">
+        <div v-if="page === 'approve_tags' " style="height:60vh;overflow-x:auto;overflow:auto;">
           <p class="title">
             Approve Tags
           </p>
-          <div class="section" style="height:60vh;overflow:auto;">
+          <div class="section">
             <table class="table is-striped is-fullwidth" >
               <thead>
                 <tr>
@@ -148,32 +150,45 @@
 
         <!-- Manage Tags -->
         <div v-if="page === 'manage_tags' ">
-          <div class="columns">
-            <div class="column is-four-fifth">
-              <p class="title">
-                Manage Tags
-              </p>
-            </div>
-            <div class="column is-one-fifth">
-              <div class="field has-addons is-pulled-right">
-                <div class="control">
-                  <input v-model="add_tag_text" class="input" type="text" placeholder="Add a Tag">
-                </div>
-                <div class="control">
-                  <a class="button is-info" @click="addTag">
-                    Add
-                  </a>
-                </div>
+
+          <!-- Top header as a level -->
+          <nav class="level">
+            <!-- Left side -->
+            <div class="level-left">
+              <div class="level-item">
+                <p class="title">
+                  Manage Tags
+                </p>
               </div>
-              <p v-if="length_check" class="has-text-danger">Tag cannot be blank </p>
-              <p v-if="tag_wrong" class="has-text-danger">Tags must be one word and alphanumeric.</p>
+
             </div>
-          </div>
+
+            <!-- Right side -->
+            <div class="level-right">
+              <div class="level-item">
+                <div class="field has-addons">
+                  <p class="control">
+                    <input v-model="add_tag_text" class="input" type="text" placeholder="Add a Tag">
+                  </p>
+                  <p class="control">
+                    <button class="button is-info" @click="addTag">
+                      Add
+                    </button>
+                  </p>
+                </div>
+
+              </div>
+              <div class="level-item">
+                <p v-if="length_check" class="has-text-danger">Tag cannot be blank </p>
+                <p v-if="tag_wrong" class="has-text-danger">Tags must be one word and alphanumeric.</p>
+              </div>
+            </div>
+          </nav>
 
 
           <!-- Table to show tags -->
-          <div class="section" style="height:60vh;overflow:auto;">
-            <table class="table is-striped is-fullwidth table-container" >
+          <div class="section"  style="height:60vh;overflow-x:auto;overflow:auto;" >
+            <table class="table is-striped is-fullwidth">
               <thead>
                 <tr>
                   <th>Tag</th>
@@ -209,7 +224,7 @@
         </div>
 
         <!-- Approving Users -->
-        <div v-if="page === 'approve_users' ">
+        <div v-if="page === 'approve_users' "  style="height:60vh;overflow-x:auto;overflow:auto;">
           <p class="title">
             Approve a Member
           </p>
@@ -242,7 +257,7 @@
 
 
         <!-- See all users -->
-        <div v-if="page === 'manage_members' ">
+        <div v-if="page === 'manage_members' " style="height:60vh;overflow-x:auto;overflow:auto;">
           <p class="title">
             Members
           </p>
